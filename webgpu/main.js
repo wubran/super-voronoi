@@ -41,130 +41,6 @@ function vbuffer_from_mesh(device, m){
 }
 
 
-// getting rid of this trash
-function bruh(r){
-    // PUT IT ALL TOGETHER
-    // create a uniform containing projection matrix (4x4) and object transformation matrix (4x4)
-    let depthTexture;
-    if(pause){
-        requestAnimationFrame(() => bruh(r))
-        return
-    }
-    for(let m of meshes){
-        if(m.isNew){
-        vbuffers.push(vbuffer_from_mesh(m))
-        m.isNew = false
-        }
-    }
-
-    canvas.width = canvas.offsetWidth
-    canvas.height = canvas.offsetHeight
-    const uniformValuesAsF32 = new Float32Array(36);
-    // const uniformValuesAsU32 = new Uint32Array(uniformValuesAsF32.buffer);
-    const uniformBuffer = device.createBuffer({
-        label: 'draw histogram uniform buffer',
-        size: uniformValuesAsF32.byteLength,
-        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-    });
-    const subpart = (view, offset, length) => view.subarray(offset, offset + length);
-    const cameraMatrix = subpart(uniformValuesAsF32, 0, 16);
-    const objectMatrix = subpart(uniformValuesAsF32, 16, 32);
-    const time = subpart(uniformValuesAsF32, 32, 33);
-    const padding = subpart(uniformValuesAsF32, 33, 36);
-    // mat4.perspective(3*Math.PI/2, 1, 0.1, 1000.0, cameraMatrix);
-    // cameraMatrix.set(mat4.perspective(3*Math.PI/2, 1, 0.1, 1000.0))
-    const WSCALE = 3;
-    const FOCUSZ = -10;
-    // NOTE: THIS IS TRANSPOSED!!!
-    const hardcodedCameraMatrix = new Float32Array([
-        1,0,0,0,
-        0,1,0,0,
-        0,0,1,-WSCALE/FOCUSZ,
-        0,0,0,WSCALE,
-    ]);
-    // console.log(mat4.translation( [1,2,3], hardcodedCameraMatrix))
-    cameraMatrix.set(hardcodedCameraMatrix)
-    time.set(new Float32Array([r]))
-    padding.set(new Float32Array([0, 0, 0]))
-
-
-    mat4.identity(objectMatrix);
-    mat4.translate(objectMatrix, [0,0,2], objectMatrix); // why are these transformations in reverse order!?
-    mat4.rotateX(objectMatrix, r, objectMatrix);
-    mat4.rotateZ(objectMatrix, r, objectMatrix);
-
-    // console.log("mine", objectMatrix)
-    // console.log("bruh", objectMatrix)
-
-    device.queue.writeBuffer(uniformBuffer, 0, uniformValuesAsF32);
-    // console.log(uniformValuesAsF32)
-
-
-    const bindGroup = device.createBindGroup({
-        layout: drawHistogramPipeline.getBindGroupLayout(0),
-        entries: [
-        { binding: 0, resource: { buffer: uniformBuffer } }, // matrices
-        { binding: 1, resource: texture.createView() }, // textures
-        ],
-    });
-
-    const canvasTexture = context.getCurrentTexture()
-
-    // Get the current texture from the canvas context and
-    // set it as the texture to render to.
-    const renderPassDescriptor = {
-        label: 'our basic canvas renderPass',
-        colorAttachments: [
-        {
-            view: canvasTexture.createView(),
-            clearValue: [0, 0.3, 0.3, 1],
-            loadOp: 'clear',
-            storeOp: 'store',
-        },
-        ],
-        depthStencilAttachment: {
-        // view: <- to be filled out when we render
-        depthClearValue: 1.0,
-        depthLoadOp: 'clear',
-        depthStoreOp: 'store',
-        },
-    };
-
-    if (!depthTexture ||
-        depthTexture.width !== canvasTexture.width ||
-        depthTexture.height !== canvasTexture.height) {
-        if (depthTexture) {
-        depthTexture.destroy();
-        }
-        depthTexture = device.createTexture({
-        size: [canvasTexture.width, canvasTexture.height],
-        format: 'depth24plus',
-        usage: GPUTextureUsage.RENDER_ATTACHMENT,
-        });
-    }
-    renderPassDescriptor.depthStencilAttachment.view = depthTexture.createView();
-
-
-    const encoder = device.createCommandEncoder({ label: 'render histogram' });
-    const pass = encoder.beginRenderPass(renderPassDescriptor);
-    pass.setPipeline(drawHistogramPipeline);
-    pass.setBindGroup(0, bindGroup);
-    for (let i = 0; i<meshes.length; i++){
-        if(i != meshes.length-1){
-        continue
-        }
-        pass.setVertexBuffer(0, vbuffers[i]); // Slot 0 should be used here
-        pass.draw(meshes[i].array.length/8, 1, 0, 0); // 8 floats per vertex
-    }
-
-    pass.end();
-
-    const commandBuffer = encoder.finish();
-    device.queue.submit([commandBuffer]);
-    requestAnimationFrame(() => bruh(r+0.01))
-}
-
-
 function prepareCanvas(device, presentationFormat){
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('webgpu');
@@ -422,14 +298,13 @@ async function main() {
             }
             pass.setVertexBuffer(0, vbuffers[i]); // Slot 0 should be used here
             // pass.draw(meshes[i].array.length/8, 1, 0, 0); // 8 floats per vertex
-            pass.draw(6, 1, 0, 0); // 8 floats per vertex
+            pass.draw(vbuffers[i].size/32, 1, 0, 0); // 8 floats per vertex
         }
-
         pass.end();
 
         const commandBuffer = encoder.finish();
         device.queue.submit([commandBuffer]);
-        requestAnimationFrame(() => renderLoop(r))
+        requestAnimationFrame(() => renderLoop(r+0.01))
         // requestAnimationFrame(() => renderLoop(r))
     }
 
