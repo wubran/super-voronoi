@@ -22,7 +22,7 @@ struct Uniforms {
 };
 
 struct Site {
-    pos: vec2<f32>,
+    pos: vec3<f32>,
 };
 
 @group(0) @binding(0) var<uniform> uni: Uniforms;
@@ -113,11 +113,11 @@ fn voronoi_fs(fsInput: OurVertexShaderOutput) -> @location(0) u32 {
   let spaceFreq = 0.1;
   let timeFreq = 0.01;
   var loc = coord + noiseScale*(vectorNoise(spaceFreq*coord, timeFreq*uni.time)*2.0 - 1.0);
-  var minDist1 = distanceMetric(voronoiSites[0].pos, loc); // NEEDS PROOF
-  var numSites = uni.numSites;
-  for (var i = 0u; i < u32(numSites); i++) {
-    let site = voronoiSites[i].pos;
-    let dist = distanceMetric(site, loc);
+var minDist1 = distanceMetric(voronoiSites[0].pos.xy, loc); // NEEDS PROOF
+    var numSites = uni.numSites;
+    for (var i = 0u; i < u32(numSites); i++) {
+        let site = voronoiSites[i].pos;
+        let dist = distanceMetric(site.xy, loc);
 
     if (dist < minDist1) {
       minDist1 = dist;

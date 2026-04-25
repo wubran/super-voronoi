@@ -133,7 +133,7 @@ function makeUniforms(device, numSites){
 
 function createSitesBuffer(device, maxSites) {
     return device.createBuffer({
-        size: maxSites * 2 * 4, // vec2<f32>
+        size: maxSites * 4 * 4, // vec3<f32> with implicit padding to 16 bytes per element
         usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
     });
 }
@@ -149,15 +149,17 @@ function createEdgeBindGroup(device, pipeline, uniformBuffer, texture, idTexture
     });
 }
 
-// length of sites must be <= maxSites * 2
+// length of sites must be <= maxSites * 4 because each site stores a vec3 and padding
 function updateSitesBuffer(device, buffer, sites) {
     device.queue.writeBuffer(buffer, 0, sites);
 }
 
 function updateSitesArray(sites, sitesArray) {
     for (let i = 0; i < sites.length; i++) {
-        sitesArray[2*i] = sites[i].pos.x;
-        sitesArray[2*i+1] = sites[i].pos.y;
+        sitesArray[4*i] = sites[i].pos.x;
+        sitesArray[4*i+1] = sites[i].pos.y;
+        sitesArray[4*i+2] = sites[i].pos.z;
+        sitesArray[4*i+3] = 0;
     }
 }
 
@@ -307,12 +309,16 @@ async function main() {
     const sites = [];
 
     for (let i = 0; i < maxSites; i++) {
-        const site = new Site2D([Math.random()*canvas.width, Math.random()*canvas.height]);
+        const site = new Site3D([
+            Math.random() * canvas.width,
+            Math.random() * canvas.height,
+            0,
+        ]);
         sites.push(site);
     }
 
     const numSites = sites.length;
-    const voronoiSites = new Float32Array(maxSites * 2);
+    const voronoiSites = new Float32Array(maxSites * 4);
     updateSitesArray(sites, voronoiSites);
     const voronoiSitesBuffer = createSitesBuffer(device, maxSites);
 
