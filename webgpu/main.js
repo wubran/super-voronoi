@@ -319,7 +319,7 @@ async function main() {
         }
     });
 
-    const imgBitmap = await loadImageBitmap('resources/images/hoco pic.jpg'); /* webgpufundamentals: url */
+    const imgBitmap = await loadImageBitmap('resources/images/image.png'); /* webgpufundamentals: url */
     const texture = createTextureFromSource(device, imgBitmap);
     idTexture = device.createTexture({
       size: [canvas.width, canvas.height],
