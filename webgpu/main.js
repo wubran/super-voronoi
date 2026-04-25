@@ -171,8 +171,9 @@ function describeRenderPassAndResize(device, context) {
     const width = Math.floor(canvas.clientWidth * dpr);
     const height = Math.floor(canvas.clientHeight * dpr);
     let resized = false;
-
+    
     if (width !== lastWidth || height !== lastHeight) {
+        console.log("Resized to", width, height);
         lastWidth = width;
         lastHeight = height;
         resized = true;
@@ -306,7 +307,7 @@ async function main() {
     const sites = [];
 
     for (let i = 0; i < maxSites; i++) {
-        const site = new Site2D([Math.random(), Math.random()]);
+        const site = new Site2D([Math.random()*canvas.width, Math.random()*canvas.height]);
         sites.push(site);
     }
 

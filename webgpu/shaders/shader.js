@@ -106,13 +106,13 @@ fn vectorNoise(p: vec2<f32>, t: f32) -> vec2<f32> {
 fn voronoi_fs(fsInput: OurVertexShaderOutput) -> @location(0) u32 {
     // let random_value = hash(vec2(fsInput.position[0], fsInput.position[1])); // v_uv is the texture coordinate
   var color = vec4f(1.0, 1.0, 1.0, 1.0); // default white
-  // let color = vec4f(1.0, 1-fsInput.position[2], fsInput.position[2], 1.0); // yellow-red
+  let coord = fsInput.position.xy;
   var closestSite1 = 0u;
   // not handling less than 3 sites for now
-  let noiseScale = 0.005;
-  let spaceFreq = 100.0;
+  let noiseScale = 2.0;
+  let spaceFreq = 0.1;
   let timeFreq = 0.01;
-  var loc = fsInput.texCoords + noiseScale*(vectorNoise(spaceFreq*fsInput.texCoords, timeFreq*uni.time)*2.0 - 1.0);
+  var loc = coord + noiseScale*(vectorNoise(spaceFreq*coord, timeFreq*uni.time)*2.0 - 1.0);
   var minDist1 = distanceMetric(voronoiSites[0].pos, loc); // NEEDS PROOF
   var numSites = uni.numSites;
   for (var i = 0u; i < u32(numSites); i++) {

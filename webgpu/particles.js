@@ -12,8 +12,8 @@ class Site2D {
     }
     calc() {
         // initially nothing.
-        this.acc.x += (Math.random()-0.5) * 0.00001;
-        this.acc.y += (Math.random()-0.5) * 0.00001;
+        this.acc.x += (Math.random()-0.5) * 0.005;
+        this.acc.y += (Math.random()-0.5) * 0.005;
     }
     update() {
         // console.log(this.pos, this.vel, this.acc)
