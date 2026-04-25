@@ -11,6 +11,11 @@ import {
 const DEFAULT_MAX_SITES = 50;
 const FLOATS_PER_VERTEX = 8;
 const VERTEX_BUFFER_STRIDE = FLOATS_PER_VERTEX * 4;
+const PLANE_Z_SENSITIVITY = 0.012;
+const PLANE_Z_DAMPING = 0.86;
+const PLANE_Z_MIN = -200;
+const PLANE_Z_MAX = 200;
+const PLANE_Z_MAX_VELOCITY = 10;
 
 const pointerState = {
   x: 0,
@@ -35,6 +40,18 @@ function setupPointerInteraction(canvas) {
   canvas.addEventListener('pointerleave', () => { pointerState.pressed = false; });
 
   return pointerState;
+}
+
+function setupPlaneZScroll(canvas, onDeltaZ) {
+  canvas.addEventListener('wheel', (event) => {
+    event.preventDefault();
+    const deltaZ = event.deltaY * PLANE_Z_SENSITIVITY;
+    onDeltaZ(deltaZ);
+  }, { passive: false });
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
 }
 
 let pause = false;
@@ -99,7 +116,7 @@ function simpleRectangleMesh(){
     return array;
 }
 
-function updateUniforms(buffer, device, r, numSites){
+function updateUniforms(buffer, device, r, planeZ, numSites){
     const uniformValuesAsF32 = new Float32Array(36);
     const cameraMatrix = uniformValuesAsF32.subarray(0, 16);
     const objectMatrix = uniformValuesAsF32.subarray(16, 32);
@@ -115,7 +132,8 @@ function updateUniforms(buffer, device, r, numSites){
     mat4.identity(objectMatrix);
 
     uniformValuesAsF32[32] = r;
-    uniformValuesAsF32[33] = numSites;
+    uniformValuesAsF32[33] = planeZ;
+    uniformValuesAsF32[34] = numSites;
 
     device.queue.writeBuffer(buffer, 0, uniformValuesAsF32);
 }
@@ -127,7 +145,7 @@ function makeUniforms(device, numSites){
         size: 36 * 4, // 36 floats
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
-    updateUniforms(uniformBuffer, device, 0, numSites)
+    updateUniforms(uniformBuffer, device, 0, 0, numSites)
     return uniformBuffer
 }
 
@@ -230,6 +248,12 @@ async function main() {
     const [canvas, context] = prepareCanvas(device, presentationFormat);
     setupPointerInteraction(canvas);
 
+    let planeZ = 0;
+    let planeZVelocity = 0;
+    setupPlaneZScroll(canvas, (deltaZ) => {
+      planeZVelocity = clamp(planeZVelocity + deltaZ * 7.5, -PLANE_Z_MAX_VELOCITY, PLANE_Z_MAX_VELOCITY);
+    });
+
     const voronoiModule = device.createShaderModule({
         label: 'voronoi shader',
         code: voronoi,
@@ -312,7 +336,7 @@ async function main() {
         const site = new Site3D([
             Math.random() * canvas.width,
             Math.random() * canvas.height,
-            0,
+            (Math.random() - 0.5)*(PLANE_Z_MAX-PLANE_Z_MIN), // need a time scale...
         ]);
         sites.push(site);
     }
@@ -344,8 +368,14 @@ async function main() {
 
             updateSitesArray(sites, voronoiSites);
             updateSitesBuffer(device, voronoiSitesBuffer, voronoiSites);
-            updateUniforms(uniformBuffer, device, r, numSites);
         }
+
+        planeZ += planeZVelocity;
+        planeZ = clamp(planeZ, PLANE_Z_MIN, PLANE_Z_MAX);
+        planeZVelocity *= PLANE_Z_DAMPING;
+        if (Math.abs(planeZVelocity) < 0.001) planeZVelocity = 0;
+
+        updateUniforms(uniformBuffer, device, r, planeZ, numSites);
 
         const [renderPassDescriptor, resized] = describeRenderPassAndResize(device, context);
         if (resized) {

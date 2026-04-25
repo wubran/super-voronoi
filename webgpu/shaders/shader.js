@@ -17,6 +17,7 @@ struct Uniforms {
   cameraM: mat4x4f,
   objectM: mat4x4f,
   time: f32,
+  planeZ: f32,
   numSites: f32,
   // 8 padding bytes
 };
@@ -39,7 +40,7 @@ struct Site {
   return vsOutput;
 }
 
-fn distanceMetric(x: vec2<f32>, p: vec2<f32>) -> f32 {
+fn distanceMetric(x: vec3<f32>, p: vec3<f32>) -> f32 {
   let v = x - p;
   // return max(abs(v.x), abs(v.y)); // L-infinity distance (square cells)
   return sqrt(dot(v, v));
@@ -112,12 +113,13 @@ fn voronoi_fs(fsInput: OurVertexShaderOutput) -> @location(0) u32 {
   let noiseScale = 2.0;
   let spaceFreq = 0.1;
   let timeFreq = 0.01;
-  var loc = coord + noiseScale*(vectorNoise(spaceFreq*coord, timeFreq*uni.time)*2.0 - 1.0);
-var minDist1 = distanceMetric(voronoiSites[0].pos.xy, loc); // NEEDS PROOF
-    var numSites = uni.numSites;
-    for (var i = 0u; i < u32(numSites); i++) {
-        let site = voronoiSites[i].pos;
-        let dist = distanceMetric(site.xy, loc);
+  let loc2 = coord + noiseScale*(vectorNoise(spaceFreq*coord, timeFreq*uni.time)*2.0 - 1.0);
+  let loc3 = vec3<f32>(loc2, uni.planeZ);
+  var minDist1 = distanceMetric(voronoiSites[0].pos.xyz, loc3); // NEEDS PROOF
+  var numSites = uni.numSites;
+  for (var i = 0u; i < u32(numSites); i++) {
+      let site = voronoiSites[i].pos;
+      let dist = distanceMetric(site.xyz, loc3);
 
     if (dist < minDist1) {
       minDist1 = dist;
