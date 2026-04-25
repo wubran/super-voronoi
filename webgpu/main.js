@@ -1,12 +1,12 @@
 import voronoi from "./shaders/shader.js"
 
 // see https://webgpufundamentals.org/webgpu/lessons/webgpu-utils.html#wgpu-matrix
-import { mat4 } from '../3rdparty/wgpu-matrix.module.js';
+import { mat4 } from '../vendor/wgpu-matrix.module.js';
 // see https://webgpufundamentals.org/webgpu/lessons/webgpu-utils.html#webgpu-utils
 import {
   loadImageBitmap,
   createTextureFromSource,
-} from '../3rdparty/webgpu-utils-1.x.module.js';
+} from '../vendor/webgpu-utils-1.x.module.js';
 
 const DEFAULT_MAX_SITES = 64;
 const FLOATS_PER_VERTEX = 8;
