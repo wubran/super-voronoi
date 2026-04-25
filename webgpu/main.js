@@ -138,6 +138,16 @@ function createSitesBuffer(device, maxSites) {
     });
 }
 
+function createEdgeBindGroup(device, pipeline, uniformBuffer, texture, idTexture) {
+    return device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
+        entries: [
+            { binding: 0, resource: { buffer: uniformBuffer } },
+            { binding: 1, resource: texture.createView() },
+            { binding: 3, resource: idTexture.createView() },
+        ],
+    });
+}
 
 // length of sites must be <= maxSites * 2
 function updateSitesBuffer(device, buffer, sites) {
@@ -160,10 +170,12 @@ function describeRenderPassAndResize(device, context) {
     const dpr = window.devicePixelRatio || 1;
     const width = Math.floor(canvas.clientWidth * dpr);
     const height = Math.floor(canvas.clientHeight * dpr);
+    let resized = false;
 
     if (width !== lastWidth || height !== lastHeight) {
         lastWidth = width;
         lastHeight = height;
+        resized = true;
 
         canvas.width = width;
         canvas.height = height;
@@ -172,6 +184,18 @@ function describeRenderPassAndResize(device, context) {
             device,
             format: navigator.gpu.getPreferredCanvasFormat(),
             alphaMode: "opaque",
+        });
+
+        if (idTexture) {
+            idTexture.destroy();
+        }
+
+        idTexture = device.createTexture({
+            size: [width, height],
+            format: "r32uint",
+            usage:
+                GPUTextureUsage.RENDER_ATTACHMENT |
+                GPUTextureUsage.TEXTURE_BINDING,
         });
     }
 
@@ -187,7 +211,7 @@ function describeRenderPassAndResize(device, context) {
         ],
     };
 
-    return renderPassDescriptor;
+    return [renderPassDescriptor, resized];
 }
 
 
@@ -300,14 +324,7 @@ async function main() {
             { binding: 2, resource: { buffer: voronoiSitesBuffer } },
         ],
     });
-    const edgeBindGroup = device.createBindGroup({
-        layout: edgePipeline.getBindGroupLayout(0),
-        entries: [
-            { binding: 0, resource: { buffer: uniformBuffer } },
-            { binding: 1, resource: texture.createView() },
-            { binding: 3, resource: idTexture.createView() },
-        ],
-    });
+    let edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, texture, idTexture);
 
     function renderLoop(r) {
         if (!pause) {
@@ -323,7 +340,10 @@ async function main() {
             updateUniforms(uniformBuffer, device, r, numSites);
         }
 
-        const renderPassDescriptor = describeRenderPassAndResize(device, context);
+        const [renderPassDescriptor, resized] = describeRenderPassAndResize(device, context);
+        if (resized) {
+            edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, texture, idTexture);
+        }
 
         const encoder = device.createCommandEncoder({ label: 'render voronoi' });
         const pass = encoder.beginRenderPass(renderPassDescriptor);
