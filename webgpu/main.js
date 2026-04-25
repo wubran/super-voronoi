@@ -8,13 +8,13 @@ import {
   createTextureFromSource,
 } from '../3rdparty/webgpu-utils-1.x.module.js';
 
-const DEFAULT_MAX_SITES = 50;
+const DEFAULT_MAX_SITES = 64;
 const FLOATS_PER_VERTEX = 8;
 const VERTEX_BUFFER_STRIDE = FLOATS_PER_VERTEX * 4;
 const PLANE_Z_SENSITIVITY = 0.012;
 const PLANE_Z_DAMPING = 0.86;
-const PLANE_Z_MIN = -200;
-const PLANE_Z_MAX = 200;
+const PLANE_Z_MIN = -500;
+const PLANE_Z_MAX = 500;
 const PLANE_Z_MAX_VELOCITY = 10;
 
 const pointerState = {
@@ -331,12 +331,21 @@ async function main() {
 
     const maxSites = DEFAULT_MAX_SITES;
     const sites = [];
+    const cols = Math.ceil(Math.sqrt(maxSites));
+    const rows = Math.ceil(maxSites / cols);
+    const cellWidth = canvas.width / cols;
+    const cellHeight = canvas.height / rows;
+    const jitterFac = 0.6;
 
     for (let i = 0; i < maxSites; i++) {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const jitterX = (0.2 + Math.random() * jitterFac) * cellWidth;
+        const jitterY = (0.2 + Math.random() * jitterFac) * cellHeight;
         const site = new Site3D([
-            Math.random() * canvas.width,
-            Math.random() * canvas.height,
-            (Math.random() - 0.5)*(PLANE_Z_MAX-PLANE_Z_MIN), // need a time scale...
+            col * cellWidth + jitterX,
+            row * cellHeight + jitterY,
+            (Math.random() - 0.5) * (PLANE_Z_MAX - PLANE_Z_MIN),
         ]);
         sites.push(site);
     }
@@ -360,7 +369,7 @@ async function main() {
     function renderLoop(r) {
         if (!pause) {
             for (const site of sites) {
-                site.calc();
+                // site.calc();
             }
             for (const site of sites) {
                 site.update();

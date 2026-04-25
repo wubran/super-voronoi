@@ -40,16 +40,16 @@ struct Site {
   return vsOutput;
 }
 
-fn distanceMetric(x: vec3<f32>, p: vec3<f32>) -> f32 {
+fn distance3(x: vec3<f32>, p: vec3<f32>) -> f32 {
   let v = x - p;
   // return max(abs(v.x), abs(v.y)); // L-infinity distance (square cells)
   return sqrt(dot(v, v));
 }
-// fn noisyDistanceMetric(x: vec2<f32>, p: vec2<f32>) -> f32 {
-//   let v = (x + - p;
-//   // return max(abs(v.x), abs(v.y)); // L-infinity distance (square cells)
-//   return sqrt(dot(v, v));
-// }
+fn distance2(x: vec2<f32>, p: vec2<f32>) -> f32 {
+  let v = x - p;
+  // return max(abs(v.x), abs(v.y)); // L-infinity distance (square cells)
+  return sqrt(dot(v, v));
+}
 
 fn scaleUpTo1(x: f32) -> f32 {
   return x / (x + 1.0);
@@ -105,28 +105,34 @@ fn vectorNoise(p: vec2<f32>, t: f32) -> vec2<f32> {
 
 @fragment
 fn voronoi_fs(fsInput: OurVertexShaderOutput) -> @location(0) u32 {
-    // let random_value = hash(vec2(fsInput.position[0], fsInput.position[1])); // v_uv is the texture coordinate
-  var color = vec4f(1.0, 1.0, 1.0, 1.0); // default white
-  let coord = fsInput.position.xy;
-  var closestSite1 = 0u;
-  // not handling less than 3 sites for now
   let noiseScale = 2.0;
   let spaceFreq = 0.1;
   let timeFreq = 0.01;
+
+  let coord = fsInput.position.xy;
   let loc2 = coord + noiseScale*(vectorNoise(spaceFreq*coord, timeFreq*uni.time)*2.0 - 1.0);
   let loc3 = vec3<f32>(loc2, uni.planeZ);
-  var minDist1 = distanceMetric(voronoiSites[0].pos.xyz, loc3); // NEEDS PROOF
-  var numSites = uni.numSites;
-  for (var i = 0u; i < u32(numSites); i++) {
-      let site = voronoiSites[i].pos;
-      let dist = distanceMetric(site.xyz, loc3);
 
-    if (dist < minDist1) {
-      minDist1 = dist;
-      closestSite1 = i;
+  var minDist = distance3(voronoiSites[0].pos.xyz, loc3); // NEEDS PROOF
+  var closestSite = 0u;
+  for (var i = 0u; i < u32(uni.numSites); i++) {
+      let site = voronoiSites[i].pos;
+      let dist = distance3(site.xyz, loc3);
+
+    if (dist < minDist) {
+      minDist = dist;
+      closestSite = i;
     }
   }
-  return closestSite1;
+
+  let siteRadius = 5.0; // pixels
+  let dist2 = distance2(voronoiSites[closestSite].pos.xy, coord);
+  // let dist2 = distance2(voronoiSites[closestSite].pos.xy, loc2);
+  if (dist2 < siteRadius) {
+    return u32(uni.numSites);
+  }
+
+  return closestSite;
 }
 
 
