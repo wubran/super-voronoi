@@ -8,6 +8,34 @@ import {
   createTextureFromSource,
 } from '../3rdparty/webgpu-utils-1.x.module.js';
 
+const DEFAULT_MAX_SITES = 50;
+const FLOATS_PER_VERTEX = 8;
+const VERTEX_BUFFER_STRIDE = FLOATS_PER_VERTEX * 4;
+
+const pointerState = {
+  x: 0,
+  y: 0,
+  normalizedX: 0,
+  normalizedY: 0,
+  pressed: false,
+};
+
+function setupPointerInteraction(canvas) {
+  const updatePointer = (event) => {
+    const rect = canvas.getBoundingClientRect();
+    pointerState.x = event.clientX - rect.left;
+    pointerState.y = event.clientY - rect.top;
+    pointerState.normalizedX = rect.width > 0 ? pointerState.x / rect.width : 0;
+    pointerState.normalizedY = rect.height > 0 ? pointerState.y / rect.height : 0;
+  };
+
+  canvas.addEventListener('pointermove', updatePointer);
+  canvas.addEventListener('pointerdown', (event) => { updatePointer(event); pointerState.pressed = true; });
+  canvas.addEventListener('pointerup', () => { pointerState.pressed = false; });
+  canvas.addEventListener('pointerleave', () => { pointerState.pressed = false; });
+
+  return pointerState;
+}
 
 let pause = false;
 
@@ -71,51 +99,35 @@ function simpleRectangleMesh(){
     return array;
 }
 
-function makeUniforms(device, r, numSites){
+function updateUniforms(buffer, device, r, numSites){
     const uniformValuesAsF32 = new Float32Array(36);
+    const cameraMatrix = uniformValuesAsF32.subarray(0, 16);
+    const objectMatrix = uniformValuesAsF32.subarray(16, 32);
+
+    const hardcodedCameraMatrix = new Float32Array([
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1,
+    ]);
+
+    cameraMatrix.set(hardcodedCameraMatrix);
+    mat4.identity(objectMatrix);
+
+    uniformValuesAsF32[32] = r;
+    uniformValuesAsF32[33] = numSites;
+
+    device.queue.writeBuffer(buffer, 0, uniformValuesAsF32);
+}
+
+function makeUniforms(device, numSites){
     // const uniformValuesAsU32 = new Uint32Array(uniformValuesAsF32.buffer);
     const uniformBuffer = device.createBuffer({
-        label: 'draw histogram uniform buffer',
-        size: uniformValuesAsF32.byteLength,
+        label: 'voronoi uniform buffer',
+        size: 36 * 4, // 36 floats
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
-    const subpart = (view, offset, length) => view.subarray(offset, offset + length);
-    const cameraMatrix = subpart(uniformValuesAsF32, 0, 16);
-    const objectMatrix = subpart(uniformValuesAsF32, 16, 32);
-    const time = subpart(uniformValuesAsF32, 32, 33);
-    const nSites = subpart(uniformValuesAsF32, 33, 34);
-    const padding = subpart(uniformValuesAsF32, 34, 36);
-    // mat4.perspective(3*Math.PI/2, 1, 0.1, 1000.0, cameraMatrix);
-    // cameraMatrix.set(mat4.perspective(3*Math.PI/2, 1, 0.1, 1000.0))
-    const WSCALE = 3;
-    const FOCUSZ = -10;
-    // NOTE: THIS IS TRANSPOSED!!!
-    // const hardcodedCameraMatrix = new Float32Array([
-    //     1,0,0,0,
-    //     0,1,0,0,
-    //     0,0,1,-WSCALE/FOCUSZ,
-    //     0,0,0,WSCALE,
-    // ]);
-    const hardcodedCameraMatrix = new Float32Array([
-        1,0,0,0,
-        0,1,0,0,
-        0,0,1,0,
-        0,0,0,1,
-    ]);
-    // console.log(mat4.translation( [1,2,3], hardcodedCameraMatrix))
-    cameraMatrix.set(hardcodedCameraMatrix)
-    time.set(new Float32Array([r]))
-    nSites.set(new Uint32Array([numSites])) // doesnt actually work. gets casted to float...
-    padding.set(new Float32Array([0, 0]))
-
-
-    mat4.identity(objectMatrix);
-    // mat4.translate(objectMatrix, [0,0,2], objectMatrix); // why are these transformations in reverse order!?
-    // mat4.rotateX(objectMatrix, r, objectMatrix);
-    // mat4.rotateZ(objectMatrix, r, objectMatrix);
-
-    device.queue.writeBuffer(uniformBuffer, 0, uniformValuesAsF32);
-    // console.log(uniformValuesAsF32)
+    updateUniforms(uniformBuffer, device, 0, numSites)
     return uniformBuffer
 }
 
@@ -139,60 +151,16 @@ function updateSitesArray(sites, sitesArray) {
     }
 }
 
-
-// function describeRenderPassAndResize(device, context){
-//     let depthTexture;
-//     context.canvas.width = context.canvas.offsetWidth
-//     context.canvas.height = context.canvas.offsetHeight
-//     const canvasTexture = context.getCurrentTexture()
-//     // Get the current texture from the canvas context and
-//     // set it as the texture to render to.
-//     const renderPassDescriptor = {
-//         label: 'our basic canvas renderPass',
-//         colorAttachments: [
-//         {
-//             view: canvasTexture.createView(),
-//             clearValue: [0, 0.3, 0.3, 1],
-//             loadOp: 'clear',
-//             storeOp: 'store',
-//         },
-//         ],
-//         depthStencilAttachment: {
-//         // view: <- to be filled out when we render
-//         depthClearValue: 1.0,
-//         depthLoadOp: 'clear',
-//         depthStoreOp: 'store',
-//         },
-//     };
-
-//     if (!depthTexture ||
-//         depthTexture.width !== canvasTexture.width ||
-//         depthTexture.height !== canvasTexture.height) {
-//         if (depthTexture) {
-//         depthTexture.destroy();
-//         }
-//         depthTexture = device.createTexture({
-//         size: [canvasTexture.width, canvasTexture.height],
-//         format: 'depth24plus',
-//         usage: GPUTextureUsage.RENDER_ATTACHMENT,
-//         });
-//     }
-//     renderPassDescriptor.depthStencilAttachment.view = depthTexture.createView();
-//     return [renderPassDescriptor, canvasTexture]
-// }
-
-let depthTexture = null;
+let idTexture = null;
 let lastWidth = 0;
 let lastHeight = 0;
 
 function describeRenderPassAndResize(device, context) {
     const canvas = context.canvas;
-
     const dpr = window.devicePixelRatio || 1;
     const width = Math.floor(canvas.clientWidth * dpr);
     const height = Math.floor(canvas.clientHeight * dpr);
 
-    // ✅ Only resize when needed
     if (width !== lastWidth || height !== lastHeight) {
         lastWidth = width;
         lastHeight = height;
@@ -205,41 +173,21 @@ function describeRenderPassAndResize(device, context) {
             format: navigator.gpu.getPreferredCanvasFormat(),
             alphaMode: "opaque",
         });
-
-        // ✅ Recreate depth texture ONLY on resize
-        if (depthTexture) {
-            depthTexture.destroy();
-        }
-
-        depthTexture = device.createTexture({
-            size: [width, height],
-            format: 'depth24plus',
-            usage: GPUTextureUsage.RENDER_ATTACHMENT,
-        });
     }
 
-    // ✅ Always get fresh swapchain texture
-    const canvasTexture = context.getCurrentTexture();
-
     const renderPassDescriptor = {
-        label: 'our basic canvas renderPass',
+        label: 'voronoi id render pass',
         colorAttachments: [
             {
-                view: canvasTexture.createView(),
-                clearValue: [0, 0.3, 0.3, 1],
+                view: idTexture.createView(),
+                clearValue: [0, 0, 0, 0],
                 loadOp: 'clear',
                 storeOp: 'store',
             },
         ],
-        depthStencilAttachment: {
-            view: depthTexture.createView(),
-            depthClearValue: 1.0,
-            depthLoadOp: 'clear',
-            depthStoreOp: 'store',
-        },
     };
 
-    return [renderPassDescriptor, canvasTexture];
+    return renderPassDescriptor;
 }
 
 
@@ -252,18 +200,17 @@ async function main() {
     }
 
     const presentationFormat = navigator.gpu.getPreferredCanvasFormat();
-    var [canvas, context] = prepareCanvas(device, presentationFormat);
+    const [canvas, context] = prepareCanvas(device, presentationFormat);
+    setupPointerInteraction(canvas);
 
-
-    const drawHistogramModule = device.createShaderModule({
-        label: 'draw histogram shader',
+    const voronoiModule = device.createShaderModule({
+        label: 'voronoi shader',
         code: voronoi,
     });
 
-    
-    let m = {array: simpleRectangleMesh(), isNew: true}
-    // let meshes = [m]
-    let vbuffers = [vbuffer_from_mesh(device, m)]
+    const meshArray = simpleRectangleMesh();
+    const vbuffer = vbuffer_from_mesh(device, { array: meshArray });
+    const vertexCount = meshArray.length / FLOATS_PER_VERTEX;
  
 
     const vertexBufferLayout = {
@@ -286,117 +233,122 @@ async function main() {
         },
         ],
     };
-    const drawHistogramPipeline = device.createRenderPipeline({
-        label: 'draw histogram',
+    const voronoiPipeline = device.createRenderPipeline({
+        label: 'voronoi pipeline',
         layout: 'auto',
         vertex: {
-        module: drawHistogramModule,
-        entryPoint: 'vs',
-        buffers: [vertexBufferLayout],  // The layout of the vertex buffer.
+            module: voronoiModule,
+            entryPoint: 'vs',
+            buffers: [vertexBufferLayout],  // The layout of the vertex buffer.
         },
         fragment: {
-        module: drawHistogramModule,
-        entryPoint: 'fs',
-        targets: [{ format: presentationFormat }],
+            module: voronoiModule,
+            entryPoint: 'voronoi_fs',
+            targets: [{format: "r32uint"}],
         },
         primitive: {
             topology: 'triangle-list',  // Draw triangles from the vertices.
         },
-        depthStencil: {
-        depthWriteEnabled: true,
-        depthCompare: 'less',
-        format: 'depth24plus',
-        },
     });
-    // const edgePipeline = device.createRenderPipeline({
-    //     layout: "auto",
-    //     vertex: {
-    //         module: vertexModule,
-    //         entryPoint: "vs_main",
-    //     },
-    //     fragment: {
-    //         module: edgeShaderModule,
-    //         entryPoint: "fs_main",
-    //         targets: [{
-    //         format: presentationFormat
-    //         }]
-    //     },
-    //     primitive: {
-    //         topology: "triangle-list"
-    //     }
-    // });
+    const edgePipeline = device.createRenderPipeline({
+        label: 'edge pipeline',
+        layout: "auto",
+        vertex: {
+            module: voronoiModule,
+            entryPoint: "vs",
+            buffers: [vertexBufferLayout],  // The layout of the vertex buffer.
+        },
+        fragment: {
+            module: voronoiModule,
+            entryPoint: "edge_fs",
+            targets: [{format: presentationFormat}]
+        },
+        primitive: {
+            topology: "triangle-list"
+        }
+    });
 
     const imgBitmap = await loadImageBitmap('resources/images/hoco pic.jpg'); /* webgpufundamentals: url */
     const texture = createTextureFromSource(device, imgBitmap);
-    // const sampler = device.createSampler({
-    //     magFilter: "linear",
-    //     minFilter: "linear",
-    // });
-    const idTexture = device.createTexture({
-    size: [texture.width, texture.height],
-    format: "r32uint",
-    usage:
+    idTexture = device.createTexture({
+      size: [canvas.width, canvas.height],
+      format: "r32uint",
+      usage:
         GPUTextureUsage.RENDER_ATTACHMENT |
-        GPUTextureUsage.TEXTURE_BINDING
+        GPUTextureUsage.TEXTURE_BINDING,
     });
-    const maxSites = 50;
 
+    const maxSites = DEFAULT_MAX_SITES;
     const sites = [];
-    const siteTree = new Quadtree(0, 0, 1, 1);
+
     for (let i = 0; i < maxSites; i++) {
         const site = new Site2D([Math.random(), Math.random()]);
         sites.push(site);
-        siteTree.insert(site.pos.x, site.pos.y);
     }
-    const numSites = sites.length
-    const voronoiSites = new Float32Array(maxSites * 2);
-    updateSitesArray(sites, voronoiSites)
-    let voronoiSitesBuffer = createSitesBuffer(device, maxSites);
 
-    let uniformBuffer = makeUniforms(device, 0, numSites)
-    const bindGroup = device.createBindGroup({
-        layout: drawHistogramPipeline.getBindGroupLayout(0),
+    const numSites = sites.length;
+    const voronoiSites = new Float32Array(maxSites * 2);
+    updateSitesArray(sites, voronoiSites);
+    const voronoiSitesBuffer = createSitesBuffer(device, maxSites);
+
+    const uniformBuffer = makeUniforms(device, numSites);
+    const voronoiBindGroup = device.createBindGroup({
+        layout: voronoiPipeline.getBindGroupLayout(0),
         entries: [
-        { binding: 0, resource: { buffer: uniformBuffer } }, // matrices
-        { binding: 1, resource: texture.createView() }, // textures
-        // { binding: 2, resource: sampler },
-        { binding: 2, resource: { buffer: voronoiSitesBuffer } }, // voronoi sites
+            { binding: 0, resource: { buffer: uniformBuffer } },
+            { binding: 1, resource: texture.createView() },
+            { binding: 2, resource: { buffer: voronoiSitesBuffer } },
+        ],
+    });
+    const edgeBindGroup = device.createBindGroup({
+        layout: edgePipeline.getBindGroupLayout(0),
+        entries: [
+            { binding: 0, resource: { buffer: uniformBuffer } },
+            { binding: 1, resource: texture.createView() },
+            { binding: 3, resource: idTexture.createView() },
         ],
     });
 
-    function renderLoop(r){
-        if(!pause){
-            for(let site of sites){
+    function renderLoop(r) {
+        if (!pause) {
+            for (const site of sites) {
                 site.calc();
             }
-            for(let site of sites){
+            for (const site of sites) {
                 site.update();
             }
-            updateSitesArray(sites, voronoiSites)
-            updateSitesBuffer(device, voronoiSitesBuffer, voronoiSites)
+
+            updateSitesArray(sites, voronoiSites);
+            updateSitesBuffer(device, voronoiSitesBuffer, voronoiSites);
+            updateUniforms(uniformBuffer, device, r, numSites);
         }
 
-        let [renderPassDescriptor, canvasTexture] = describeRenderPassAndResize(device, context)
+        const renderPassDescriptor = describeRenderPassAndResize(device, context);
 
-        const encoder = device.createCommandEncoder({ label: 'render histogram' });
+        const encoder = device.createCommandEncoder({ label: 'render voronoi' });
         const pass = encoder.beginRenderPass(renderPassDescriptor);
-        pass.setPipeline(drawHistogramPipeline);
-        pass.setBindGroup(0, bindGroup);
-        // console.log(vbuffers)
-        for (let i = 0; i<vbuffers.length; i++){
-            if(i != vbuffers.length-1){
-                continue
-            }
-            pass.setVertexBuffer(0, vbuffers[i]); // Slot 0 should be used here
-            // pass.draw(meshes[i].array.length/8, 1, 0, 0); // 8 floats per vertex
-            pass.draw(vbuffers[i].size/32, 1, 0, 0); // 8 floats per vertex
-        }
+        pass.setPipeline(voronoiPipeline);
+        pass.setBindGroup(0, voronoiBindGroup);
+        pass.setVertexBuffer(0, vbuffer);
+        pass.draw(vertexCount, 1, 0, 0);
         pass.end();
+
+        const pass2 = encoder.beginRenderPass({
+            colorAttachments: [{
+                view: context.getCurrentTexture().createView(),
+                loadOp: 'clear',
+                storeOp: 'store',
+            }],
+        });
+        pass2.setPipeline(edgePipeline);
+        pass2.setBindGroup(0, edgeBindGroup);
+        pass2.setVertexBuffer(0, vbuffer);
+        pass2.draw(vertexCount, 1, 0, 0);
+        pass2.end();
 
         const commandBuffer = encoder.finish();
         device.queue.submit([commandBuffer]);
-        requestAnimationFrame(() => renderLoop(r))
-        // requestAnimationFrame(() => renderLoop(r))
+        requestAnimationFrame(() => renderLoop(r + 1));
     }
 
     renderLoop(0);
