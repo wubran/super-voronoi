@@ -21,5 +21,14 @@
   <body>
   </body>
   <!-- <script type="text/javascript" src="stl_loader.js"></script> -->
+  <script type="text/javascript" src="vec2.js"></script>
+  <script type="text/javascript" src="particles.js"></script>
+  <script type="text/javascript" src="quadtree.js"></script>
+  <script>
+    test = new Quadtree(0, 0, 100, 100);
+    test.insert({x: 10, y: 10});
+    test.insert({x: 20, y: 20});
+    console.log(test);
+  </script>
   <script type="module" src="main.js"></script>
 </html>

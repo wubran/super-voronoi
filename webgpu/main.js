@@ -71,7 +71,7 @@ function simpleRectangleMesh(){
     return array;
 }
 
-function makeCameraMatrix(device, r){
+function makeUniforms(device, r, numSites){
     const uniformValuesAsF32 = new Float32Array(36);
     // const uniformValuesAsU32 = new Uint32Array(uniformValuesAsF32.buffer);
     const uniformBuffer = device.createBuffer({
@@ -83,116 +83,164 @@ function makeCameraMatrix(device, r){
     const cameraMatrix = subpart(uniformValuesAsF32, 0, 16);
     const objectMatrix = subpart(uniformValuesAsF32, 16, 32);
     const time = subpart(uniformValuesAsF32, 32, 33);
-    const padding = subpart(uniformValuesAsF32, 33, 36);
+    const nSites = subpart(uniformValuesAsF32, 33, 34);
+    const padding = subpart(uniformValuesAsF32, 34, 36);
     // mat4.perspective(3*Math.PI/2, 1, 0.1, 1000.0, cameraMatrix);
     // cameraMatrix.set(mat4.perspective(3*Math.PI/2, 1, 0.1, 1000.0))
     const WSCALE = 3;
     const FOCUSZ = -10;
     // NOTE: THIS IS TRANSPOSED!!!
+    // const hardcodedCameraMatrix = new Float32Array([
+    //     1,0,0,0,
+    //     0,1,0,0,
+    //     0,0,1,-WSCALE/FOCUSZ,
+    //     0,0,0,WSCALE,
+    // ]);
     const hardcodedCameraMatrix = new Float32Array([
         1,0,0,0,
         0,1,0,0,
-        0,0,1,-WSCALE/FOCUSZ,
-        0,0,0,WSCALE,
+        0,0,1,0,
+        0,0,0,1,
     ]);
     // console.log(mat4.translation( [1,2,3], hardcodedCameraMatrix))
     cameraMatrix.set(hardcodedCameraMatrix)
     time.set(new Float32Array([r]))
-    padding.set(new Float32Array([0, 0, 0]))
+    nSites.set(new Uint32Array([numSites])) // doesnt actually work. gets casted to float...
+    padding.set(new Float32Array([0, 0]))
 
 
     mat4.identity(objectMatrix);
-    mat4.translate(objectMatrix, [0,0,2], objectMatrix); // why are these transformations in reverse order!?
-    mat4.rotateX(objectMatrix, r, objectMatrix);
-    mat4.rotateZ(objectMatrix, r, objectMatrix);
-
-    // console.log("mine", objectMatrix)
-    // console.log("bruh", objectMatrix)
+    // mat4.translate(objectMatrix, [0,0,2], objectMatrix); // why are these transformations in reverse order!?
+    // mat4.rotateX(objectMatrix, r, objectMatrix);
+    // mat4.rotateZ(objectMatrix, r, objectMatrix);
 
     device.queue.writeBuffer(uniformBuffer, 0, uniformValuesAsF32);
     // console.log(uniformValuesAsF32)
     return uniformBuffer
 }
 
-function describeRenderPassAndResize(device, context){
-    let depthTexture;
-    context.canvas.width = context.canvas.offsetWidth
-    context.canvas.height = context.canvas.offsetHeight
-    const canvasTexture = context.getCurrentTexture()
-    // Get the current texture from the canvas context and
-    // set it as the texture to render to.
-    const renderPassDescriptor = {
-        label: 'our basic canvas renderPass',
-        colorAttachments: [
-        {
-            view: canvasTexture.createView(),
-            clearValue: [0, 0.3, 0.3, 1],
-            loadOp: 'clear',
-            storeOp: 'store',
-        },
-        ],
-        depthStencilAttachment: {
-        // view: <- to be filled out when we render
-        depthClearValue: 1.0,
-        depthLoadOp: 'clear',
-        depthStoreOp: 'store',
-        },
-    };
-
-    if (!depthTexture ||
-        depthTexture.width !== canvasTexture.width ||
-        depthTexture.height !== canvasTexture.height) {
-        if (depthTexture) {
-        depthTexture.destroy();
-        }
-        depthTexture = device.createTexture({
-        size: [canvasTexture.width, canvasTexture.height],
-        format: 'depth24plus',
-        usage: GPUTextureUsage.RENDER_ATTACHMENT,
-        });
-    }
-    renderPassDescriptor.depthStencilAttachment.view = depthTexture.createView();
-    return [renderPassDescriptor, canvasTexture]
+function createSitesBuffer(device, maxSites) {
+    return device.createBuffer({
+        size: maxSites * 2 * 4, // vec2<f32>
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+    });
 }
 
 
-// function renderLoop(device, context, drawHistogramPipeline, texture, renderPassDescriptor, vbuffers, r){
-//     if(pause){
-//         requestAnimationFrame(() => bruh(r))
-//         return
-//     }
-//     let uniformBuffer = makeCameraMatrix(device, r)
+// length of sites must be <= maxSites * 2
+function updateSitesBuffer(device, buffer, sites) {
+    device.queue.writeBuffer(buffer, 0, sites);
+}
 
-//     const bindGroup = device.createBindGroup({
-//         layout: drawHistogramPipeline.getBindGroupLayout(0),
-//         entries: [
-//         { binding: 0, resource: { buffer: uniformBuffer } }, // matrices
-//         { binding: 1, resource: texture.createView() }, // textures
+function updateSitesArray(sites, sitesArray) {
+    for (let i = 0; i < sites.length; i++) {
+        sitesArray[2*i] = sites[i].pos.x;
+        sitesArray[2*i+1] = sites[i].pos.y;
+    }
+}
+
+
+// function describeRenderPassAndResize(device, context){
+//     let depthTexture;
+//     context.canvas.width = context.canvas.offsetWidth
+//     context.canvas.height = context.canvas.offsetHeight
+//     const canvasTexture = context.getCurrentTexture()
+//     // Get the current texture from the canvas context and
+//     // set it as the texture to render to.
+//     const renderPassDescriptor = {
+//         label: 'our basic canvas renderPass',
+//         colorAttachments: [
+//         {
+//             view: canvasTexture.createView(),
+//             clearValue: [0, 0.3, 0.3, 1],
+//             loadOp: 'clear',
+//             storeOp: 'store',
+//         },
 //         ],
-//     });
+//         depthStencilAttachment: {
+//         // view: <- to be filled out when we render
+//         depthClearValue: 1.0,
+//         depthLoadOp: 'clear',
+//         depthStoreOp: 'store',
+//         },
+//     };
 
-//     describeRenderPassAndResize(device, context)
-
-//     const encoder = device.createCommandEncoder({ label: 'render histogram' });
-//     const pass = encoder.beginRenderPass(renderPassDescriptor);
-//     pass.setPipeline(drawHistogramPipeline);
-//     pass.setBindGroup(0, bindGroup);
-//     // console.log(vbuffers)
-//     for (let i = 0; i<vbuffers.length; i++){
-//         if(i != vbuffers.length-1){
-//             continue
+//     if (!depthTexture ||
+//         depthTexture.width !== canvasTexture.width ||
+//         depthTexture.height !== canvasTexture.height) {
+//         if (depthTexture) {
+//         depthTexture.destroy();
 //         }
-//         pass.setVertexBuffer(0, vbuffers[i]); // Slot 0 should be used here
-//         // pass.draw(meshes[i].array.length/8, 1, 0, 0); // 8 floats per vertex
-//         pass.draw(3, 1, 0, 0); // 8 floats per vertex
+//         depthTexture = device.createTexture({
+//         size: [canvasTexture.width, canvasTexture.height],
+//         format: 'depth24plus',
+//         usage: GPUTextureUsage.RENDER_ATTACHMENT,
+//         });
 //     }
-
-//     pass.end();
-
-//     const commandBuffer = encoder.finish();
-//     device.queue.submit([commandBuffer]);
-//     requestAnimationFrame(() => renderLoop(device, context, drawHistogramPipeline, texture, renderPassDescriptor, vbuffers, r+0.01))
+//     renderPassDescriptor.depthStencilAttachment.view = depthTexture.createView();
+//     return [renderPassDescriptor, canvasTexture]
 // }
+
+let depthTexture = null;
+let lastWidth = 0;
+let lastHeight = 0;
+
+function describeRenderPassAndResize(device, context) {
+    const canvas = context.canvas;
+
+    const dpr = window.devicePixelRatio || 1;
+    const width = Math.floor(canvas.clientWidth * dpr);
+    const height = Math.floor(canvas.clientHeight * dpr);
+
+    // ✅ Only resize when needed
+    if (width !== lastWidth || height !== lastHeight) {
+        lastWidth = width;
+        lastHeight = height;
+
+        canvas.width = width;
+        canvas.height = height;
+
+        context.configure({
+            device,
+            format: navigator.gpu.getPreferredCanvasFormat(),
+            alphaMode: "opaque",
+        });
+
+        // ✅ Recreate depth texture ONLY on resize
+        if (depthTexture) {
+            depthTexture.destroy();
+        }
+
+        depthTexture = device.createTexture({
+            size: [width, height],
+            format: 'depth24plus',
+            usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        });
+    }
+
+    // ✅ Always get fresh swapchain texture
+    const canvasTexture = context.getCurrentTexture();
+
+    const renderPassDescriptor = {
+        label: 'our basic canvas renderPass',
+        colorAttachments: [
+            {
+                view: canvasTexture.createView(),
+                clearValue: [0, 0.3, 0.3, 1],
+                loadOp: 'clear',
+                storeOp: 'store',
+            },
+        ],
+        depthStencilAttachment: {
+            view: depthTexture.createView(),
+            depthClearValue: 1.0,
+            depthLoadOp: 'clear',
+            depthStoreOp: 'store',
+        },
+    };
+
+    return [renderPassDescriptor, canvasTexture];
+}
 
 
 async function main() {
@@ -260,30 +308,73 @@ async function main() {
         format: 'depth24plus',
         },
     });
+    // const edgePipeline = device.createRenderPipeline({
+    //     layout: "auto",
+    //     vertex: {
+    //         module: vertexModule,
+    //         entryPoint: "vs_main",
+    //     },
+    //     fragment: {
+    //         module: edgeShaderModule,
+    //         entryPoint: "fs_main",
+    //         targets: [{
+    //         format: presentationFormat
+    //         }]
+    //     },
+    //     primitive: {
+    //         topology: "triangle-list"
+    //     }
+    // });
 
     const imgBitmap = await loadImageBitmap('resources/images/hoco pic.jpg'); /* webgpufundamentals: url */
     const texture = createTextureFromSource(device, imgBitmap);
-    const sampler = device.createSampler({
-        magFilter: "linear",
-        minFilter: "linear",
+    // const sampler = device.createSampler({
+    //     magFilter: "linear",
+    //     minFilter: "linear",
+    // });
+    const idTexture = device.createTexture({
+    size: [texture.width, texture.height],
+    format: "r32uint",
+    usage:
+        GPUTextureUsage.RENDER_ATTACHMENT |
+        GPUTextureUsage.TEXTURE_BINDING
     });
-    // let renderPassDescriptor, canvasTexture = describeRenderPassAndResize(device, context);
-    // let renderPassDescriptor, canvasTexture;
+    const maxSites = 50;
+
+    const sites = [];
+    const siteTree = new Quadtree(0, 0, 1, 1);
+    for (let i = 0; i < maxSites; i++) {
+        const site = new Site2D([Math.random(), Math.random()]);
+        sites.push(site);
+        siteTree.insert(site.pos.x, site.pos.y);
+    }
+    const numSites = sites.length
+    const voronoiSites = new Float32Array(maxSites * 2);
+    updateSitesArray(sites, voronoiSites)
+    let voronoiSitesBuffer = createSitesBuffer(device, maxSites);
+
+    let uniformBuffer = makeUniforms(device, 0, numSites)
+    const bindGroup = device.createBindGroup({
+        layout: drawHistogramPipeline.getBindGroupLayout(0),
+        entries: [
+        { binding: 0, resource: { buffer: uniformBuffer } }, // matrices
+        { binding: 1, resource: texture.createView() }, // textures
+        // { binding: 2, resource: sampler },
+        { binding: 2, resource: { buffer: voronoiSitesBuffer } }, // voronoi sites
+        ],
+    });
 
     function renderLoop(r){
-        if(pause){
-            requestAnimationFrame(() => bruh(r))
-            return
+        if(!pause){
+            for(let site of sites){
+                site.calc();
+            }
+            for(let site of sites){
+                site.update();
+            }
+            updateSitesArray(sites, voronoiSites)
+            updateSitesBuffer(device, voronoiSitesBuffer, voronoiSites)
         }
-        let uniformBuffer = makeCameraMatrix(device, r)
-        const bindGroup = device.createBindGroup({
-            layout: drawHistogramPipeline.getBindGroupLayout(0),
-            entries: [
-            { binding: 0, resource: { buffer: uniformBuffer } }, // matrices
-            { binding: 1, resource: texture.createView() }, // textures
-            { binding: 2, resource: sampler },
-            ],
-        });
 
         let [renderPassDescriptor, canvasTexture] = describeRenderPassAndResize(device, context)
 
@@ -304,7 +395,7 @@ async function main() {
 
         const commandBuffer = encoder.finish();
         device.queue.submit([commandBuffer]);
-        requestAnimationFrame(() => renderLoop(r+0.01))
+        requestAnimationFrame(() => renderLoop(r))
         // requestAnimationFrame(() => renderLoop(r))
     }
 
