@@ -16,6 +16,8 @@ const PLANE_Z_DAMPING = 0.86;
 const PLANE_Z_MIN = -500;
 const PLANE_Z_MAX = 500;
 const PLANE_Z_MAX_VELOCITY = 10;
+const ID_READBACK_BYTES_PER_ROW = 256;
+const ID_READBACK_SIZE = ID_READBACK_BYTES_PER_ROW * 1;
 
 const pointerState = {
   x: 0,
@@ -34,10 +36,10 @@ function setupPointerInteraction(canvas) {
     pointerState.normalizedY = rect.height > 0 ? pointerState.y / rect.height : 0;
   };
 
-  canvas.addEventListener('pointermove', updatePointer);
-  canvas.addEventListener('pointerdown', (event) => { updatePointer(event); pointerState.pressed = true; });
-  canvas.addEventListener('pointerup', () => { pointerState.pressed = false; });
-  canvas.addEventListener('pointerleave', () => { pointerState.pressed = false; });
+  canvas.addEventListener('pointermove', (event) => { updatePointer(event); needsIdRead = true; });
+  canvas.addEventListener('pointerdown', (event) => { updatePointer(event); pointerState.pressed = true; needsIdRead = true; });
+  canvas.addEventListener('pointerup', () => { pointerState.pressed = false; needsIdRead = true; });
+  canvas.addEventListener('pointerleave', () => { pointerState.pressed = false; needsIdRead = true; });
 
   return pointerState;
 }
@@ -55,6 +57,10 @@ function clamp(value, min, max) {
 }
 
 let pause = false;
+let needsIdRead = true;
+let isReadingId = false;
+let hoveredSiteId = DEFAULT_MAX_SITES;
+let idReadbackBuffer = null;
 
 document.addEventListener('keydown', (event) => {
     const keyName = event.key;
@@ -156,12 +162,13 @@ function createSitesBuffer(device, maxSites) {
     });
 }
 
-function createEdgeBindGroup(device, pipeline, uniformBuffer, texture, idTexture) {
+function createEdgeBindGroup(device, pipeline, uniformBuffer, texture, voronoiSitesBuffer, idTexture) {
     return device.createBindGroup({
         layout: pipeline.getBindGroupLayout(0),
         entries: [
             { binding: 0, resource: { buffer: uniformBuffer } },
             { binding: 1, resource: texture.createView() },
+            { binding: 2, resource: { buffer: voronoiSitesBuffer } },
             { binding: 3, resource: idTexture.createView() },
         ],
     });
@@ -177,7 +184,7 @@ function updateSitesArray(sites, sitesArray) {
         sitesArray[4*i] = sites[i].pos.x;
         sitesArray[4*i+1] = sites[i].pos.y;
         sitesArray[4*i+2] = sites[i].pos.z;
-        sitesArray[4*i+3] = 0;
+        sitesArray[4*i+3] = sites[i].massShown;
     }
 }
 
@@ -216,7 +223,9 @@ function describeRenderPassAndResize(device, context) {
             format: "r32uint",
             usage:
                 GPUTextureUsage.RENDER_ATTACHMENT |
-                GPUTextureUsage.TEXTURE_BINDING,
+                GPUTextureUsage.TEXTURE_BINDING |
+                GPUTextureUsage.COPY_SRC,   // ← add this
+
         });
     }
 
@@ -327,14 +336,26 @@ async function main() {
       usage:
         GPUTextureUsage.RENDER_ATTACHMENT |
         GPUTextureUsage.TEXTURE_BINDING,
+    });    idReadbackBuffer = device.createBuffer({
+      size: ID_READBACK_SIZE,
+      usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
     });
 
+    let bounds = {
+      xMin: 0,
+      xMax: canvas.width,
+      yMin: 0,
+      yMax: canvas.height,
+      zMin: PLANE_Z_MIN,
+      zMax: PLANE_Z_MAX,
+      margin: 80
+    };
     const maxSites = DEFAULT_MAX_SITES;
     const sites = [];
     const cols = Math.ceil(Math.sqrt(maxSites));
     const rows = Math.ceil(maxSites / cols);
-    const cellWidth = canvas.width / cols;
-    const cellHeight = canvas.height / rows;
+    const cellWidth = (canvas.width-2*bounds.margin) / cols;
+    const cellHeight = (canvas.height-2*bounds.margin) / rows;
     const jitterFac = 0.6;
 
     for (let i = 0; i < maxSites; i++) {
@@ -343,10 +364,10 @@ async function main() {
         const jitterX = (0.2 + Math.random() * jitterFac) * cellWidth;
         const jitterY = (0.2 + Math.random() * jitterFac) * cellHeight;
         const site = new Site3D([
-            col * cellWidth + jitterX,
-            row * cellHeight + jitterY,
-            (Math.random() - 0.5) * (PLANE_Z_MAX - PLANE_Z_MIN),
-        ]);
+            bounds.margin + col * cellWidth + jitterX,
+            bounds.margin + row * cellHeight + jitterY,
+            bounds.margin + (Math.random() - 0.5) * (PLANE_Z_MAX - PLANE_Z_MIN - 2*bounds.margin),
+        ], [0,0,0], [0,0,0], Math.random()+1);
         sites.push(site);
     }
 
@@ -364,12 +385,14 @@ async function main() {
             { binding: 2, resource: { buffer: voronoiSitesBuffer } },
         ],
     });
-    let edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, texture, idTexture);
+    let edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, texture, voronoiSitesBuffer, idTexture);
 
     function renderLoop(r) {
         if (!pause) {
-            for (const site of sites) {
-                // site.calc();
+            for (let i=0; i<sites.length-1; i++) {
+                let site = sites[i];
+                site.calcSites(sites, i, hoveredSiteId);
+                site.calcBounds(bounds);
             }
             for (const site of sites) {
                 site.update();
@@ -388,7 +411,16 @@ async function main() {
 
         const [renderPassDescriptor, resized] = describeRenderPassAndResize(device, context);
         if (resized) {
-            edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, texture, idTexture);
+            let bounds = {
+                xMin: 0,
+                xMax: canvas.width,
+                yMin: 0,
+                yMax: canvas.height,
+                zMin: PLANE_Z_MIN,
+                zMax: PLANE_Z_MAX,
+                margin: 80
+            };
+            edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, texture, voronoiSitesBuffer, idTexture);
         }
 
         const encoder = device.createCommandEncoder({ label: 'render voronoi' });
@@ -412,8 +444,44 @@ async function main() {
         pass2.draw(vertexCount, 1, 0, 0);
         pass2.end();
 
+        const shouldReadId = needsIdRead && !isReadingId && idReadbackBuffer;
+
+        if (shouldReadId) {
+            const mouseX = Math.floor(pointerState.normalizedX * canvas.width);
+            const mouseY = Math.floor(pointerState.normalizedY * canvas.height);
+
+            if (mouseX >= 0 && mouseX < canvas.width && mouseY >= 0 && mouseY < canvas.height) {
+                encoder.copyTextureToBuffer(
+                    { texture: idTexture, origin: { x: mouseX, y: mouseY, z: 0 } },
+                    { buffer: idReadbackBuffer, bytesPerRow: ID_READBACK_BYTES_PER_ROW, rowsPerImage: 1 },
+                    { width: 1, height: 1, depthOrArrayLayers: 1 }
+                );
+
+                needsIdRead = false;
+                isReadingId = true;
+            }
+        }
+
         const commandBuffer = encoder.finish();
         device.queue.submit([commandBuffer]);
+
+        if (shouldReadId) {
+            idReadbackBuffer.mapAsync(GPUMapMode.READ, 0, 4)
+            .then(() => {
+                const view = new Uint32Array(idReadbackBuffer.getMappedRange(0, 4));
+                hoveredSiteId = view[0];
+                idReadbackBuffer.unmap();
+
+                isReadingId = false;
+                window.hoveredSiteId = hoveredSiteId;
+            })
+            .catch((error) => {
+                console.error('id texture readback failed', error);
+                isReadingId = false;
+                needsIdRead = true;
+            });
+        }
+
         requestAnimationFrame(() => renderLoop(r + 1));
     }
 

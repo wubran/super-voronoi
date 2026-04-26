@@ -24,6 +24,7 @@ struct Uniforms {
 
 struct Site {
     pos: vec3<f32>,
+    mass: f32,
 };
 
 @group(0) @binding(0) var<uniform> uni: Uniforms;
@@ -40,10 +41,11 @@ struct Site {
   return vsOutput;
 }
 
-fn distance3(x: vec3<f32>, p: vec3<f32>) -> f32 {
+fn distance3(x: vec3<f32>, p: vec3<f32>, w: f32) -> f32 {
   let v = x - p;
   // return max(abs(v.x), abs(v.y)); // L-infinity distance (square cells)
-  return sqrt(dot(v, v));
+  // return sqrt(dot(v, v))/w;
+  return sqrt(dot(v, v)) - 50*w; // NEEDS SCALING
 }
 fn distance2(x: vec2<f32>, p: vec2<f32>) -> f32 {
   let v = x - p;
@@ -113,11 +115,11 @@ fn voronoi_fs(fsInput: OurVertexShaderOutput) -> @location(0) u32 {
   let loc2 = coord + noiseScale*(vectorNoise(spaceFreq*coord, timeFreq*uni.time)*2.0 - 1.0);
   let loc3 = vec3<f32>(loc2, uni.planeZ);
 
-  var minDist = distance3(voronoiSites[0].pos.xyz, loc3); // NEEDS PROOF
+  var minDist = distance3(voronoiSites[0].pos.xyz, loc3, voronoiSites[0].mass); // NEEDS PROOF
   var closestSite = 0u;
   for (var i = 0u; i < u32(uni.numSites); i++) {
       let site = voronoiSites[i].pos;
-      let dist = distance3(site.xyz, loc3);
+      let dist = distance3(site.xyz, loc3, voronoiSites[i].mass);
 
     if (dist < minDist) {
       minDist = dist;
@@ -126,8 +128,8 @@ fn voronoi_fs(fsInput: OurVertexShaderOutput) -> @location(0) u32 {
   }
 
   let siteRadius = 5.0; // pixels
-  let dist2 = distance2(voronoiSites[closestSite].pos.xy, coord);
-  // let dist2 = distance2(voronoiSites[closestSite].pos.xy, loc2);
+  // let dist2 = distance2(voronoiSites[closestSite].pos.xy, coord);
+  let dist2 = distance2(voronoiSites[closestSite].pos.xy, loc2);
   if (dist2 < siteRadius) {
     return u32(uni.numSites);
   }
@@ -169,10 +171,12 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
     }
   }
 
-  let e = select(0.0, 1.0, isEdge);
-
-  // white background, black edges
-  return vec4<f32>(1.0 - e, 1.0 - e, 1.0 - e, 1.0);
+  let edgeColor = vec4<f32>(0.0, 0.0, 0.0, 1.0);
+  let nearestSite = vec2<i32>(voronoiSites[i32(center)].pos.xy);
+  let imageCenter = vec2<i32>(textureDimensions(ourTexture, 0)/2);
+  // translate site center to image center
+  let othercolor = textureLoad(ourTexture, nearestSite-coord+imageCenter, 0);
+  return select(othercolor, edgeColor, isEdge);
 }
 `
 export default voronoi;
