@@ -14,7 +14,6 @@ class Site3D {
     calcSites(sites, i, hoveredId) {
         const easeRate = 0.1;
         const growFactor = 2;
-        let repulsionRadius = 300;
         const repulsionStrength = 40.0;
 
         if(i == hoveredId){
@@ -23,6 +22,8 @@ class Site3D {
         }else{
             this.massShown = easeRate*this.mass + (1-easeRate)*this.massShown;
         }
+        // increase this too much and the screen will just converge to a lattice
+        const repulsionRadius = 100*this.mass;
 
         // for (let j=i+1; j<sites.length; j++) {
         for (let j=0; j<sites.length; j++) {

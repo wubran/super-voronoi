@@ -19,7 +19,8 @@ struct Uniforms {
   time: f32,
   planeZ: f32,
   numSites: f32,
-  // 8 padding bytes
+  mouseID: f32,
+  // some padding bytes
 };
 
 struct Site {
@@ -31,6 +32,7 @@ struct Site {
 @group(0) @binding(1) var ourTexture: texture_2d<f32>;
 @group(0) @binding(2) var<storage, read> voronoiSites: array<Site>;
 @group(0) @binding(3) var idTex: texture_2d<u32>;
+@group(0) @binding(4) var ourSampler: sampler;
 
 @vertex fn vs(vert: Vertex) -> OurVertexShaderOutput {
   var vsOutput: OurVertexShaderOutput;
@@ -43,10 +45,12 @@ struct Site {
 
 fn distance3(x: vec3<f32>, p: vec3<f32>, w: f32) -> f32 {
   let v = x - p;
-  // return max(abs(v.x), abs(v.y)); // L-infinity distance (square cells)
-  // return sqrt(dot(v, v))/w;
   return sqrt(dot(v, v)) - 50*w; // NEEDS SCALING
 }
+// fn distance3(x: vec3<f32>, p: vec3<f32>, w: f32) -> f32 {
+//   let v = x - p;
+//   return max(max(abs(v.x), abs(v.y)), abs(v.z)) - 50*w; // L-infinity distance (square cells)
+// }
 fn distance2(x: vec2<f32>, p: vec2<f32>) -> f32 {
   let v = x - p;
   // return max(abs(v.x), abs(v.y)); // L-infinity distance (square cells)
@@ -127,16 +131,23 @@ fn voronoi_fs(fsInput: OurVertexShaderOutput) -> @location(0) u32 {
     }
   }
 
-  let siteRadius = 5.0; // pixels
-  // let dist2 = distance2(voronoiSites[closestSite].pos.xy, coord);
-  let dist2 = distance2(voronoiSites[closestSite].pos.xy, loc2);
-  if (dist2 < siteRadius) {
-    return u32(uni.numSites);
-  }
+  // let siteRadius = 5.0; // pixels
+  // // let dist2 = distance2(voronoiSites[closestSite].pos.xy, coord);
+  // let dist2 = distance2(voronoiSites[closestSite].pos.xy, loc2);
+  // if (dist2 < siteRadius) {
+  //   return u32(uni.numSites);
+  // }
 
   return closestSite;
 }
 
+fn blend4(x: vec4<f32>, y: vec4<f32>, z: vec4<f32>, t: f32, g: f32, r: f32) -> vec4<f32> {
+    let a = clamp(r*(t-g), 0.0, 1.0);
+    let b = clamp(r*(-t-g), 0.0, 1.0);
+    // let c = clamp(r*(abs(t)-g), 0.0, 1.0)
+
+    return a * x + b * y + (1-a-b) * z;
+}
 
 @fragment
 fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
@@ -172,11 +183,60 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   }
 
   let edgeColor = vec4<f32>(0.0, 0.0, 0.0, 1.0);
-  let nearestSite = vec2<i32>(voronoiSites[i32(center)].pos.xy);
-  let imageCenter = vec2<i32>(textureDimensions(ourTexture, 0)/2);
+  let nearest = voronoiSites[i32(center)];
+  let nearestSite = vec2<f32>(nearest.pos.xy);
+  let nearestZ = f32(nearest.pos.z);
+  let textureSize = vec2<f32>(textureDimensions(ourTexture, 0));
+  let imageCenter = textureSize * 0.5;
   // translate site center to image center
-  let othercolor = textureLoad(ourTexture, nearestSite-coord+imageCenter, 0);
-  return select(othercolor, edgeColor, isEdge);
+  let imageCoord = nearestSite - vec2<f32>(coord) + imageCenter;
+  let baseUv = (imageCoord + vec2<f32>(0.5, 0.5)) / textureSize;
+  let centerColor = textureSample(ourTexture, ourSampler, baseUv);
+  var blurColor = centerColor;
+  // silly blur
+  let isHovered = u32(uni.mouseID) == center;
+  // let blurSteps = select(max(16, 0), 0, isHovered);
+  let blurSteps = 16;
+  let sampleRing = array<vec2<f32>, 16>(
+    vec2<f32>(-6, -6),
+    vec2<f32>(-5,  2),
+    vec2<f32>(-4, -1),
+    vec2<f32>(-3,  5),
+    vec2<f32>(-2, -4),
+    vec2<f32>(-1,  1),
+    vec2<f32>( 0, -6),
+    vec2<f32>( 1,  3),
+    vec2<f32>( 2, -2),
+    vec2<f32>( 3,  6),
+    vec2<f32>( 4, -3),
+    vec2<f32>( 5,  0),
+    vec2<f32>( 6,  4),
+    vec2<f32>(-6,  3),
+    vec2<f32>( 2,  5),
+    vec2<f32>(-1, -5),
+);
+  for (var i = 0; i < blurSteps; i++) {
+    let offset = sampleRing[i];
+    let nx = imageCoord.x + offset.x;
+    let ny = imageCoord.y + offset.y;
+
+    // bounds check (important!)
+    // if (nx < 0 || ny < 0 || nx >= f32(dims.x) || ny >= f32(dims.y)) {
+    //     continue;
+    // }
+
+    let neighborCoord = vec2<f32>(nx, ny) + vec2<f32>(0.5, 0.5);
+    let neighborUv = neighborCoord / textureSize;
+    let neighbor = textureSample(ourTexture, ourSampler, neighborUv);
+    blurColor += neighbor;
+  }
+  blurColor /= f32(blurSteps+1);
+  let foregroundTint = vec4<f32>(1.0,0.0,0.0,1.0);
+  let backgroundTint = vec4<f32>(0.0,1.0,1.0,1.0);
+  let tintSlider = (uni.planeZ - nearestZ);
+  let faceColor = select(blurColor, centerColor, isHovered);
+  let tintColor = blend4(foregroundTint, backgroundTint, faceColor, tintSlider, 100, 0.005);
+  return select(tintColor, edgeColor, isEdge);
 }
 `
 export default voronoi;

@@ -11,7 +11,7 @@ import {
 const DEFAULT_MAX_SITES = 64;
 const FLOATS_PER_VERTEX = 8;
 const VERTEX_BUFFER_STRIDE = FLOATS_PER_VERTEX * 4;
-const PLANE_Z_SENSITIVITY = 0.012;
+const PLANE_Z_SENSITIVITY = 0.008;
 const PLANE_Z_DAMPING = 0.86;
 const PLANE_Z_MIN = -500;
 const PLANE_Z_MAX = 500;
@@ -20,10 +20,10 @@ const ID_READBACK_BYTES_PER_ROW = 256;
 const ID_READBACK_SIZE = ID_READBACK_BYTES_PER_ROW * 1;
 
 const pointerState = {
-  x: 0,
-  y: 0,
-  normalizedX: 0,
-  normalizedY: 0,
+  x: -1,
+  y: -1,
+  normalizedX: -1,
+  normalizedY: -1,
   pressed: false,
 };
 
@@ -39,8 +39,18 @@ function setupPointerInteraction(canvas) {
   canvas.addEventListener('pointermove', (event) => { updatePointer(event); needsIdRead = true; });
   canvas.addEventListener('pointerdown', (event) => { updatePointer(event); pointerState.pressed = true; needsIdRead = true; });
   canvas.addEventListener('pointerup', () => { pointerState.pressed = false; needsIdRead = true; });
-  canvas.addEventListener('pointerleave', () => { pointerState.pressed = false; needsIdRead = true; });
-
+  canvas.addEventListener('pointerleave', () => {
+    pointerState.pressed = false;
+    pointerState.x = -1;
+    pointerState.y = -1;
+    pointerState.normalizedX = -1;
+    pointerState.normalizedY = -1;
+    needsIdRead = false;
+    hoveredSiteId = DEFAULT_MAX_SITES;
+  });
+  canvas.addEventListener('pointerenter', () => {
+    hoveredSiteId = -1;
+  });
   return pointerState;
 }
 
@@ -57,7 +67,7 @@ function clamp(value, min, max) {
 }
 
 let pause = false;
-let needsIdRead = true;
+let needsIdRead = false;
 let isReadingId = false;
 let hoveredSiteId = DEFAULT_MAX_SITES;
 let idReadbackBuffer = null;
@@ -140,6 +150,7 @@ function updateUniforms(buffer, device, r, planeZ, numSites){
     uniformValuesAsF32[32] = r;
     uniformValuesAsF32[33] = planeZ;
     uniformValuesAsF32[34] = numSites;
+    uniformValuesAsF32[35] = hoveredSiteId;
 
     device.queue.writeBuffer(buffer, 0, uniformValuesAsF32);
 }
@@ -162,7 +173,7 @@ function createSitesBuffer(device, maxSites) {
     });
 }
 
-function createEdgeBindGroup(device, pipeline, uniformBuffer, texture, voronoiSitesBuffer, idTexture) {
+function createEdgeBindGroup(device, pipeline, uniformBuffer, texture, voronoiSitesBuffer, idTexture, sampler) {
     return device.createBindGroup({
         layout: pipeline.getBindGroupLayout(0),
         entries: [
@@ -170,6 +181,7 @@ function createEdgeBindGroup(device, pipeline, uniformBuffer, texture, voronoiSi
             { binding: 1, resource: texture.createView() },
             { binding: 2, resource: { buffer: voronoiSitesBuffer } },
             { binding: 3, resource: idTexture.createView() },
+            { binding: 4, resource: sampler },
         ],
     });
 }
@@ -330,6 +342,13 @@ async function main() {
 
     const imgBitmap = await loadImageBitmap('resources/images/image.png'); /* webgpufundamentals: url */
     const texture = createTextureFromSource(device, imgBitmap);
+    const linearSampler = device.createSampler({
+      magFilter: 'linear',
+      minFilter: 'linear',
+      mipmapFilter: 'linear',
+      addressModeU: 'clamp-to-edge',
+      addressModeV: 'clamp-to-edge',
+    });
     idTexture = device.createTexture({
       size: [canvas.width, canvas.height],
       format: "r32uint",
@@ -385,7 +404,7 @@ async function main() {
             { binding: 2, resource: { buffer: voronoiSitesBuffer } },
         ],
     });
-    let edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, texture, voronoiSitesBuffer, idTexture);
+    let edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, texture, voronoiSitesBuffer, idTexture, linearSampler);
 
     function renderLoop(r) {
         if (!pause) {
@@ -420,7 +439,7 @@ async function main() {
                 zMax: PLANE_Z_MAX,
                 margin: 80
             };
-            edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, texture, voronoiSitesBuffer, idTexture);
+            edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, texture, voronoiSitesBuffer, idTexture, linearSampler);
         }
 
         const encoder = device.createCommandEncoder({ label: 'render voronoi' });
@@ -469,11 +488,13 @@ async function main() {
             idReadbackBuffer.mapAsync(GPUMapMode.READ, 0, 4)
             .then(() => {
                 const view = new Uint32Array(idReadbackBuffer.getMappedRange(0, 4));
-                hoveredSiteId = view[0];
+                if(hoveredSiteId < DEFAULT_MAX_SITES){
+                    hoveredSiteId = view[0];
+                    window.hoveredSiteId = hoveredSiteId;
+                }
                 idReadbackBuffer.unmap();
 
                 isReadingId = false;
-                window.hoveredSiteId = hoveredSiteId;
             })
             .catch((error) => {
                 console.error('id texture readback failed', error);
