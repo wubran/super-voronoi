@@ -231,11 +231,13 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
     blurColor += neighbor;
   }
   blurColor /= f32(blurSteps+1);
-  let foregroundTint = vec4<f32>(1.0,0.0,0.0,1.0);
-  let backgroundTint = vec4<f32>(0.0,1.0,1.0,1.0);
+  let foregroundTint = vec4<f32>(1.0,1.0,1.0,1.0);
+  let backgroundTint = vec4<f32>(0.0,0.0,0.0,1.0);
   let tintSlider = (uni.planeZ - nearestZ);
   let faceColor = select(blurColor, centerColor, isHovered);
-  let tintColor = blend4(foregroundTint, backgroundTint, faceColor, tintSlider, 100, 0.005);
+  let tintGap = 50.0;
+  let tintRate = 0.0025;
+  let tintColor = blend4(foregroundTint, backgroundTint, faceColor, tintSlider, tintGap, tintRate);
   return select(tintColor, edgeColor, isEdge);
 }
 `

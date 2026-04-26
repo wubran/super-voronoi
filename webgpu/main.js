@@ -408,7 +408,8 @@ async function main() {
 
     function renderLoop(r) {
         if (!pause) {
-            for (let i=0; i<sites.length-1; i++) {
+            // for (let i=0; i<sites.length-1; i++) {
+            for (let i=0; i<sites.length; i++) {
                 let site = sites[i];
                 site.calcSites(sites, i, hoveredSiteId);
                 site.calcBounds(bounds);
