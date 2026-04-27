@@ -149,9 +149,16 @@ fn blend4(x: vec4<f32>, y: vec4<f32>, z: vec4<f32>, t: f32, g: f32, r: f32) -> v
     return a * x + b * y + (1-a-b) * z;
 }
 
+fn gapLinear(x: f32, m:f32, g: f32) ->  f32 {
+  return m*(max(x-0.5*g, 0) + min(x+0.5*g, 0));
+}
+fn softGapLinear(x: f32, m:f32, g: f32, s: f32) ->  f32 {
+  let t = gapLinear(x, m, g);
+  return t*abs(t)/(abs(t)+s*g); // magic s for softness
+}
+
 @fragment
 fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
-  // let random_value = hash(vec2(fsInput.position[0], fsInput.position[1])); // v_uv is the texture coordinate
   var color = vec4f(1.0, 1.0, 1.0, 1.0); // default white
   let dims = vec2<i32>(textureDimensions(idTex, 0));
   let coord = vec2<i32>(fsInput.position.xy);
@@ -186,44 +193,36 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let nearest = voronoiSites[i32(center)];
   let nearestSite = vec2<f32>(nearest.pos.xy);
   let nearestZ = f32(nearest.pos.z);
+  let nearestMass = nearest.mass;
+  let sliderGap = 20; // bigger allows for easier locating
+  let tintSlider = softGapLinear((uni.planeZ - nearestZ)/nearestMass, 5, 10, 20); // interpreting mass as "radius"
   let textureSize = vec2<f32>(textureDimensions(ourTexture, 0));
   let imageCenter = textureSize * 0.5;
+
+  // noise needs TO BE UNIFIED WITH ABOVE
+  // let noiseScale = 5.0;
+  let noiseScale = tintSlider;
+  let spaceFreq = 1.0;
+  let timeFreq = 0.004;
+  let isHovered = u32(uni.mouseID) == center;
+  let coordf = fsInput.position.xy;
+  let loc2 = coordf + noiseScale*(vectorNoise(spaceFreq*coordf, timeFreq*uni.time)*2.0 - 1.0);
+  let loc3 = vec3<f32>(loc2, uni.planeZ);
+
   // translate site center to image center
-  let imageCoord = nearestSite - vec2<f32>(coord) + imageCenter;
+  let imageCoord = nearestSite - coordf + imageCenter;
+  let noisyImageCoord = nearestSite - loc2.xy + imageCenter;
   let baseUv = (imageCoord + vec2<f32>(0.5, 0.5)) / textureSize;
-  let centerColor = textureSample(ourTexture, ourSampler, baseUv);
+  let noisyBaseUv = (noisyImageCoord + vec2<f32>(0.5, 0.5)) / textureSize;
+  let centerColor = textureSample(ourTexture, ourSampler, noisyBaseUv);
   var blurColor = centerColor;
   // silly blur
-  let isHovered = u32(uni.mouseID) == center;
   // let blurSteps = select(max(16, 0), 0, isHovered);
-  let blurSteps = 16;
-  let sampleRing = array<vec2<f32>, 16>(
-    vec2<f32>(-6, -6),
-    vec2<f32>(-5,  2),
-    vec2<f32>(-4, -1),
-    vec2<f32>(-3,  5),
-    vec2<f32>(-2, -4),
-    vec2<f32>(-1,  1),
-    vec2<f32>( 0, -6),
-    vec2<f32>( 1,  3),
-    vec2<f32>( 2, -2),
-    vec2<f32>( 3,  6),
-    vec2<f32>( 4, -3),
-    vec2<f32>( 5,  0),
-    vec2<f32>( 6,  4),
-    vec2<f32>(-6,  3),
-    vec2<f32>( 2,  5),
-    vec2<f32>(-1, -5),
-);
+  let blurSteps = 12;
   for (var i = 0; i < blurSteps; i++) {
-    let offset = sampleRing[i];
-    let nx = imageCoord.x + offset.x;
-    let ny = imageCoord.y + offset.y;
-
-    // bounds check (important!)
-    // if (nx < 0 || ny < 0 || nx >= f32(dims.x) || ny >= f32(dims.y)) {
-    //     continue;
-    // }
+    let offset = vec2<f32>(sampleRing5[i]);
+    let nx = noisyImageCoord.x + offset.x;
+    let ny = noisyImageCoord.y + offset.y;
 
     let neighborCoord = vec2<f32>(nx, ny) + vec2<f32>(0.5, 0.5);
     let neighborUv = neighborCoord / textureSize;
@@ -233,10 +232,10 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   blurColor /= f32(blurSteps+1);
   let foregroundTint = vec4<f32>(1.0,1.0,1.0,1.0);
   let backgroundTint = vec4<f32>(0.0,0.0,0.0,1.0);
-  let tintSlider = (uni.planeZ - nearestZ);
   let faceColor = select(blurColor, centerColor, isHovered);
-  let tintGap = 50.0;
-  let tintRate = 0.0025;
+  let tintGap = 100000.0;
+  // let tintGap = 50.0;
+  let tintRate = 0.0050;
   let tintColor = blend4(foregroundTint, backgroundTint, faceColor, tintSlider, tintGap, tintRate);
   return select(tintColor, edgeColor, isEdge);
 }
