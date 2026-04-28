@@ -75,4 +75,14 @@ class Site3D {
         this.vel.scale(friction)
         this.force.zero();
     }
+    inFocus(x, m, g, s){
+        function gapLinear(x, m, g) {
+            return m*(Math.max(x-0.5*g, 0) + Math.min(x+0.5*g, 0));
+        }
+        function softGapLinear(x, m, g, s) {
+            let t = gapLinear(x, m, g);
+            return t*Math.abs(t)/(Math.abs(t)+s*g); // magic s for softness
+        }
+        return (softGapLinear(x, m, g, s) == 0);
+    }
 }

@@ -194,8 +194,8 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let nearestSite = vec2<f32>(nearest.pos.xy);
   let nearestZ = f32(nearest.pos.z);
   let nearestMass = nearest.mass;
-  let sliderGap = 20; // bigger allows for easier locating
-  let tintSlider = softGapLinear((uni.planeZ - nearestZ)/nearestMass, 5, 10, 20); // interpreting mass as "radius"
+  let sliderGap = 30; // bigger allows for easier locating
+  let tintSlider = softGapLinear((uni.planeZ - nearestZ)/nearestMass, 5, 20, 20); // interpreting mass as "radius"
   let textureSize = vec2<f32>(textureDimensions(ourTexture, 0));
   let imageCenter = textureSize * 0.5;
 
@@ -203,7 +203,8 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   // let noiseScale = 5.0;
   let noiseScale = tintSlider;
   let spaceFreq = 1.0;
-  let timeFreq = 0.004;
+  let timeFreq = 0.00001;
+  // let timeFreq = 0.004;
   let isHovered = u32(uni.mouseID) == center;
   let coordf = fsInput.position.xy;
   let loc2 = coordf + noiseScale*(vectorNoise(spaceFreq*coordf, timeFreq*uni.time)*2.0 - 1.0);
@@ -229,6 +230,7 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
     let neighbor = textureSample(ourTexture, ourSampler, neighborUv);
     blurColor += neighbor;
   }
+  let transparent = vec4<f32>(0.0,0.0,0.0,0.0);
   blurColor /= f32(blurSteps+1);
   let foregroundTint = vec4<f32>(1.0,1.0,1.0,1.0);
   let backgroundTint = vec4<f32>(0.0,0.0,0.0,1.0);
@@ -237,7 +239,8 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   // let tintGap = 50.0;
   let tintRate = 0.0050;
   let tintColor = blend4(foregroundTint, backgroundTint, faceColor, tintSlider, tintGap, tintRate);
-  return select(tintColor, edgeColor, isEdge);
+  let finalColor = select(tintColor, edgeColor, isEdge);
+  return select(finalColor, transparent, isHovered && tintSlider == 0.0);
 }
 `
 export default voronoi;

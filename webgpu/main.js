@@ -108,6 +108,7 @@ function prepareCanvas(device, presentationFormat){
     context.configure({
         device,
         format: presentationFormat,
+        alphaMode: 'premultiplied',
     });
     // canvas.height = canvas.width;
 
@@ -223,7 +224,7 @@ function describeRenderPassAndResize(device, context) {
         context.configure({
             device,
             format: navigator.gpu.getPreferredCanvasFormat(),
-            alphaMode: "opaque",
+            alphaMode: "premultiplied",
         });
 
         if (idTexture) {
@@ -255,7 +256,6 @@ function describeRenderPassAndResize(device, context) {
 
     return [renderPassDescriptor, resized];
 }
-
 
 async function main() {
     const adapter = await navigator.gpu?.requestAdapter();
@@ -428,6 +428,16 @@ async function main() {
         if (Math.abs(planeZVelocity) < 0.001) planeZVelocity = 0;
 
         updateUniforms(uniformBuffer, device, r, planeZ, numSites);
+        let inFocus = false;
+        if (pointerState.x > 0 && pointerState.y > 0 && hoveredSiteId > 0 && hoveredSiteId < DEFAULT_MAX_SITES){
+            let dz = (planeZ - sites[hoveredSiteId].pos.z)/sites[hoveredSiteId].massShown;
+            inFocus = sites[hoveredSiteId].inFocus(dz, 5.0, 20.0, 20.0);
+
+            canvas.style.cursor = inFocus ? 'pointer' : 'default';
+            canvas.style.transform = 'translateZ(0)';
+            canvas.offsetHeight;
+            canvas.style.transform = '';
+        }
 
         const [renderPassDescriptor, resized] = describeRenderPassAndResize(device, context);
         if (resized) {
