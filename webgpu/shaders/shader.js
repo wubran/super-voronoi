@@ -28,11 +28,16 @@ struct Site {
     mass: f32,
 };
 
+struct ThumbnailInfo {
+    originalSize: vec2<f32>,
+};
+
 @group(0) @binding(0) var<uniform> uni: Uniforms;
 @group(0) @binding(1) var ourTexture: texture_2d_array<f32>;
 @group(0) @binding(2) var<storage, read> voronoiSites: array<Site>;
 @group(0) @binding(3) var idTex: texture_2d<u32>;
 @group(0) @binding(4) var ourSampler: sampler;
+@group(0) @binding(5) var<storage, read> thumbnailInfo: array<ThumbnailInfo>;
 
 @vertex fn vs(vert: Vertex) -> OurVertexShaderOutput {
   var vsOutput: OurVertexShaderOutput;
@@ -217,7 +222,14 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let noisyBaseUv = (noisyImageCoord + vec2<f32>(0.5, 0.5)) / textureSize;
   let layerCount = i32(textureNumLayers(ourTexture));
   let textureLayer = select(i32(center) % layerCount, 0, layerCount == 0);
-  let centerColor = textureSample(ourTexture, ourSampler, noisyBaseUv, u32(textureLayer));
+  let originalSize = thumbnailInfo[textureLayer].originalSize;
+  let aspect = select(originalSize.x / originalSize.y, 1.0, originalSize.y == 0.0);
+
+  let layerScale = select(vec2<f32>(1.0, 1.0 / aspect), vec2<f32>(aspect, 1.0), aspect < 1.0);
+  let layerOffset = (vec2<f32>(1.0) - layerScale) * 0.5;
+  let clampedUv = clamp(noisyBaseUv, vec2<f32>(0.0), vec2<f32>(1.0));
+  let patternUv = layerOffset + clampedUv * layerScale;
+  let centerColor = textureSample(ourTexture, ourSampler, patternUv, textureLayer);
   var blurColor = centerColor;
   // silly blur
   // let blurSteps = select(max(16, 0), 0, isHovered);
@@ -229,7 +241,8 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
 
     let neighborCoord = vec2<f32>(nx, ny) + vec2<f32>(0.5, 0.5);
     let neighborUv = neighborCoord / textureSize;
-    let neighbor = textureSample(ourTexture, ourSampler, neighborUv, u32(textureLayer));
+    let neighborPatternUv = layerOffset + clamp(neighborUv, vec2<f32>(0.0), vec2<f32>(1.0)) * layerScale;
+    let neighbor = textureSample(ourTexture, ourSampler, neighborPatternUv, textureLayer);
     blurColor += neighbor;
   }
   let transparent = vec4<f32>(0.0,0.0,0.0,0.0);

@@ -178,7 +178,7 @@ function createSitesBuffer(device, maxSites) {
     });
 }
 
-function createEdgeBindGroup(device, pipeline, uniformBuffer, texture, voronoiSitesBuffer, idTexture, sampler) {
+function createEdgeBindGroup(device, pipeline, uniformBuffer, texture, voronoiSitesBuffer, idTexture, sampler, thumbnailInfoBuffer) {
     return device.createBindGroup({
         layout: pipeline.getBindGroupLayout(0),
         entries: [
@@ -187,6 +187,7 @@ function createEdgeBindGroup(device, pipeline, uniformBuffer, texture, voronoiSi
             { binding: 2, resource: { buffer: voronoiSitesBuffer } },
             { binding: 3, resource: idTexture.createView() },
             { binding: 4, resource: sampler },
+            { binding: 5, resource: { buffer: thumbnailInfoBuffer } },
         ],
     });
 }
@@ -352,21 +353,25 @@ async function main() {
       addressModeV: 'clamp-to-edge',
     });
 
-    const thumbnailPaths = await retrieveThumbnailPaths();
-    const layerCount = Math.max(1, Math.min(thumbnailPaths.length, 64));
+    const thumbnailMetadata = await retrieveThumbnailMetadata();
+    const entries = thumbnailMetadata.slice(0, 64);
+    const layerCount = Math.max(1, entries.length);
     const thumbnailTextureArray = createPlaceholderThumbnailArrayTexture(device, 256, 256, layerCount);
-    const thumbnailUrls = thumbnailPaths.slice(0, layerCount);
+    const thumbnailInfoBuffer = createThumbnailInfoBuffer(device, layerCount);
+    const thumbnailUrls = entries.map((entry) => entry.url);
 
     window.thumbnailTextureArray = {
       texture: thumbnailTextureArray,
       sampler: linearSampler,
+      infoBuffer: thumbnailInfoBuffer,
       layerCount,
       width: 256,
       height: 256,
       urls: thumbnailUrls,
+      metadata: entries,
     };
 
-    const thumbnailTextureArrayPromise = fillThumbnailTextureArray(device, thumbnailTextureArray, thumbnailUrls, 256, 256);
+    const thumbnailTextureArrayPromise = fillThumbnailTextureArray(device, thumbnailTextureArray, thumbnailInfoBuffer, entries, 256, 256);
     window.thumbnailTextureArrayPromise = thumbnailTextureArrayPromise;
     thumbnailTextureArrayPromise
       .then(() => {
@@ -432,7 +437,7 @@ async function main() {
             { binding: 2, resource: { buffer: voronoiSitesBuffer } },
         ],
     });
-    let edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, thumbnailTextureArray, voronoiSitesBuffer, idTexture, linearSampler);
+    let edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, thumbnailTextureArray, voronoiSitesBuffer, idTexture, linearSampler, thumbnailInfoBuffer);
 
     function renderLoop(r) {
         if (!pause) {
@@ -480,7 +485,7 @@ async function main() {
                 zMax: PLANE_Z_MAX,
                 margin: 80
             };
-            edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, thumbnailTextureArray, voronoiSitesBuffer, idTexture, linearSampler);
+            edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, thumbnailTextureArray, voronoiSitesBuffer, idTexture, linearSampler, thumbnailInfoBuffer);
         }
 
         const encoder = device.createCommandEncoder({ label: 'render voronoi' });

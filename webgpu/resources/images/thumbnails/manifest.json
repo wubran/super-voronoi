@@ -1,26 +1,122 @@
 [
-  "resources/images/thumbnails/fish/earlyfish.jpg",
-  "resources/images/thumbnails/fish/naval_academy_cart.JPG",
-  "resources/images/thumbnails/fish/naval_academy_fish.JPG",
-  "resources/images/thumbnails/food/died_tomatoes.JPG",
-  "resources/images/thumbnails/food/hand_noodles.jpg",
-  "resources/images/thumbnails/food/musubi.jpg",
-  "resources/images/thumbnails/food/shrimp_pesto.jpg",
-  "resources/images/thumbnails/outside/fall_campus.JPG",
-  "resources/images/thumbnails/outside/kenilworth.jpg",
-  "resources/images/thumbnails/outside/kenilworth_bud.jpg",
-  "resources/images/thumbnails/outside/kenilworth_keychain.jpg",
-  "resources/images/thumbnails/outside/patapsco.jpg",
-  "resources/images/thumbnails/outside/patapsco_again.JPG",
-  "resources/images/thumbnails/outside/patapsco_green.JPG",
-  "resources/images/thumbnails/outside/patapsco_snow.JPG",
-  "resources/images/thumbnails/outside/quad_biking.jpg",
-  "resources/images/thumbnails/outside/solar_eclispe.JPG",
-  "resources/images/thumbnails/outside/yellowstone_artist.JPG",
-  "resources/images/thumbnails/outside/yellowstone_falls.JPG",
-  "resources/images/thumbnails/outside/yellowstone_steam.JPG",
-  "resources/images/thumbnails/rov/capstone_fair.jpg",
-  "resources/images/thumbnails/rov/rov_carrier_bare.jpg",
-  "resources/images/thumbnails/rov/rov_corpse.jpg",
-  "resources/images/thumbnails/rov/rov_disemboweled.jpg"
+  {
+    "url": "resources/images/thumbnails/fish/earlyfish.jpg",
+    "width": 1740,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/fish/naval_academy_cart.JPG",
+    "width": 979,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/fish/naval_academy_fish.JPG",
+    "width": 979,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/food/died_tomatoes.JPG",
+    "width": 979,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/food/hand_noodles.jpg",
+    "width": 979,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/food/musubi.jpg",
+    "width": 359,
+    "height": 269
+  },
+  {
+    "url": "resources/images/thumbnails/food/shrimp_pesto.jpg",
+    "width": 979,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/outside/fall_campus.JPG",
+    "width": 223,
+    "height": 167
+  },
+  {
+    "url": "resources/images/thumbnails/outside/kenilworth.jpg",
+    "width": 1740,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/outside/kenilworth_bud.jpg",
+    "width": 979,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/outside/kenilworth_keychain.jpg",
+    "width": 979,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/outside/patapsco.jpg",
+    "width": 1278,
+    "height": 959
+  },
+  {
+    "url": "resources/images/thumbnails/outside/patapsco_again.JPG",
+    "width": 1740,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/outside/patapsco_green.JPG",
+    "width": 293,
+    "height": 220
+  },
+  {
+    "url": "resources/images/thumbnails/outside/patapsco_snow.JPG",
+    "width": 1740,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/outside/quad_biking.jpg",
+    "width": 2320,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/outside/solar_eclispe.JPG",
+    "width": 1740,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/outside/yellowstone_artist.JPG",
+    "width": 1740,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/outside/yellowstone_falls.JPG",
+    "width": 979,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/outside/yellowstone_steam.JPG",
+    "width": 1740,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/rov/capstone_fair.jpg",
+    "width": 1958,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/rov/rov_carrier_bare.jpg",
+    "width": 979,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/rov/rov_corpse.jpg",
+    "width": 979,
+    "height": 1305
+  },
+  {
+    "url": "resources/images/thumbnails/rov/rov_disemboweled.jpg",
+    "width": 979,
+    "height": 1305
+  }
 ]
