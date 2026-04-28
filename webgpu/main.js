@@ -422,6 +422,9 @@ async function main() {
                 let site = sites[i];
                 site.calcSites(sites, i, hoveredSiteId, activeSiteId);
                 site.calcBounds(bounds);
+                if (i == activeSiteId){
+                    site.calcGoto(canvas.width/2, canvas.height/2)
+                }
             }
             for (const site of sites) {
                 site.update();

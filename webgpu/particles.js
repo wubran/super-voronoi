@@ -17,7 +17,9 @@ class Site3D {
         const repulsionStrength = 40.0;
         const activeGrowFactor = 4;
         if(i == activeId){
-            this.massShown = easeRate*this.mass*activeGrowFactor + (1-easeRate)*this.massShown;
+            const activeMass = this.mass*growFactor+6.0;
+            this.massShown = easeRate*activeMass + (1-easeRate)*this.massShown;
+
         } else if(i == hoveredId){
         this.massShown = easeRate*this.mass*growFactor + (1-easeRate)*this.massShown;
             // repulsionRadius*=Math.sqrt(growFactor)
@@ -29,7 +31,7 @@ class Site3D {
 
         // for (let j=i+1; j<sites.length; j++) {
         for (let j=0; j<sites.length; j++) {
-            let other = sites[j]
+            let other = sites[j];
             if (other === this) continue;
 
             const dpos = this.pos.subbed(other.pos);
@@ -39,11 +41,17 @@ class Site3D {
             const dist = Math.sqrt(distSq);
             if (dist > repulsionRadius) continue;
 
-            // dpos.scale(0.5*this.massShown * other.massShown * repulsionStrength / (dist*dist*dist));
+            // dpos.s`ca`le(0.5*this.massShown * other.massShown * repulsionStrength / (dist*dist*dist));
             dpos.scale(0.5*this.mass * other.mass * repulsionStrength / (dist*dist*dist));
-            this.force.add(dpos)
-            other.force.sub(dpos)
+            this.force.add(dpos);
+            other.force.sub(dpos);
         }
+    }
+    calcGoto(x, y, z=this.z) {
+        let kp = 0.0015;
+        let kd = 0.075;
+        this.force.x += (x-this.pos.x)*kp - this.vel.x*kd;
+        this.force.y += (y-this.pos.y)*kp - this.vel.y*kd;
     }
     calcBounds(bounds){
         const boundaryStrength = 0.0002;
