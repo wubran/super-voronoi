@@ -459,11 +459,10 @@ async function main() {
         if (Math.abs(planeZVelocity) < 0.001) planeZVelocity = 0;
 
         updateUniforms(uniformBuffer, device, r, planeZ, numSites);
-        let inFocus = false;
+        let inFocus = hoveredSiteId == activeSiteId; // javascript yuh
         if (pointerState.x > 0 && pointerState.y > 0 && hoveredSiteId > 0 && hoveredSiteId < DEFAULT_MAX_SITES){
             let dz = (planeZ - sites[hoveredSiteId].pos.z)/sites[hoveredSiteId].massShown;
-            inFocus = sites[hoveredSiteId].inFocus(dz, 5.0, 20.0, 20.0);
-
+            inFocus |= sites[hoveredSiteId].inFocus(dz, 5.0, 20.0, 20.0);
             canvas.style.cursor = inFocus ? 'pointer' : 'default';
             canvas.style.transform = 'translateZ(0)';
             canvas.offsetHeight;
@@ -535,7 +534,9 @@ async function main() {
                     window.hoveredSiteId = hoveredSiteId;
                     // probably should be updated here anyway...
                     if(clickPending){
-                        if(inFocus){
+                        if(activeSiteId == hoveredSiteId){
+                            activeSiteId = -1;
+                        } else if(inFocus){
                             activeSiteId = hoveredSiteId;
                             console.log("active site id: ", activeSiteId)
                         }

@@ -13,12 +13,12 @@ class Site3D {
     }
     calcSites(sites, i, hoveredId, activeId) {
         const easeRate = 0.1;
+        const activeEaseRate = 0.05;
         const growFactor = 2;
         const repulsionStrength = 40.0;
-        const activeGrowFactor = 4;
         if(i == activeId){
-            const activeMass = this.mass*growFactor+6.0;
-            this.massShown = easeRate*activeMass + (1-easeRate)*this.massShown;
+            const activeMass = this.mass*growFactor+4.0;
+            this.massShown = activeEaseRate*activeMass + (1-activeEaseRate)*this.massShown;
 
         } else if(i == hoveredId){
         this.massShown = easeRate*this.mass*growFactor + (1-easeRate)*this.massShown;
@@ -48,8 +48,8 @@ class Site3D {
         }
     }
     calcGoto(x, y, z=this.z) {
-        let kp = 0.0015;
-        let kd = 0.075;
+        let kp = 0.006;
+        let kd = 0.4;
         this.force.x += (x-this.pos.x)*kp - this.vel.x*kd;
         this.force.y += (y-this.pos.y)*kp - this.vel.y*kd;
     }
@@ -77,15 +77,16 @@ class Site3D {
     }
     update(friction=0.995) {
         // console.log(this.pos, this.vel, this.acc)
-        this.vel.add(this.force.scale(1/this.mass));
+        // this.vel.add(this.force.scale(1/this.mass));
         // this.vel.add(this.force.scale(1/this.massShown));
-        // this.vel.x += this.force.x/this.massShown;
-        // this.vel.y += this.force.y/this.massShown;
+        this.vel.x += this.force.x/this.massShown;
+        this.vel.y += this.force.y/this.massShown;
         this.pos.add(this.vel);
         this.vel.scale(friction)
         this.force.zero();
     }
     inFocus(x, m, g, s){
+        let extra_threshold = 2.0; // for user experience...
         function gapLinear(x, m, g) {
             return m*(Math.max(x-0.5*g, 0) + Math.min(x+0.5*g, 0));
         }
@@ -93,6 +94,6 @@ class Site3D {
             let t = gapLinear(x, m, g);
             return t*Math.abs(t)/(Math.abs(t)+s*g); // magic s for softness
         }
-        return (softGapLinear(x, m, g, s) == 0);
+        return (Math.abs(softGapLinear(x, m, g, s)) <= extra_threshold);
     }
 }
