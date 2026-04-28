@@ -512,10 +512,12 @@ async function main() {
                     hoveredSiteId = view[0];
                     window.hoveredSiteId = hoveredSiteId;
                     // probably should be updated here anyway...
-                    if(clickPending && inFocus){
-                        activeSiteId = hoveredSiteId;
+                    if(clickPending){
+                        if(inFocus){
+                            activeSiteId = hoveredSiteId;
+                            console.log("active site id: ", activeSiteId)
+                        }
                         clickPending = false;
-                        console.log("active site id: ", activeSiteId)
                     }
                 }
                 idReadbackBuffer.unmap();
