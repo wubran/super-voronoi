@@ -2,11 +2,6 @@ import voronoi from "./shaders/shader.js"
 
 // see https://webgpufundamentals.org/webgpu/lessons/webgpu-utils.html#wgpu-matrix
 import { mat4 } from '../vendor/wgpu-matrix.module.js';
-// see https://webgpufundamentals.org/webgpu/lessons/webgpu-utils.html#webgpu-utils
-import {
-  loadImageBitmap,
-  createTextureFromSource,
-} from '../vendor/webgpu-utils-1.x.module.js';
 
 const DEFAULT_MAX_SITES = 64;
 const FLOATS_PER_VERTEX = 8;
@@ -246,7 +241,7 @@ function describeRenderPassAndResize(device, context) {
             usage:
                 GPUTextureUsage.RENDER_ATTACHMENT |
                 GPUTextureUsage.TEXTURE_BINDING |
-                GPUTextureUsage.COPY_SRC,   // ← add this
+                GPUTextureUsage.COPY_SRC,
 
         });
     }
@@ -349,8 +344,6 @@ async function main() {
         }
     });
 
-    const imgBitmap = await loadImageBitmap('resources/images/image.png'); /* webgpufundamentals: url */
-    const texture = createTextureFromSource(device, imgBitmap);
     const linearSampler = device.createSampler({
       magFilter: 'linear',
       minFilter: 'linear',
@@ -359,16 +352,30 @@ async function main() {
       addressModeV: 'clamp-to-edge',
     });
 
-    const thumbnailTexturesPromise = loadThumbnailTextures(device);
-    window.thumbnailTexturesPromise = thumbnailTexturesPromise;
-    thumbnailTexturesPromise
-      .then((thumbnailTextures) => {
-        window.thumbnailTextures = thumbnailTextures;
-        console.log('Loaded thumbnail textures:', thumbnailTextures.length);
+    const thumbnailPaths = await retrieveThumbnailPaths();
+    const layerCount = Math.max(1, Math.min(thumbnailPaths.length, 64));
+    const thumbnailTextureArray = createPlaceholderThumbnailArrayTexture(device, 256, 256, layerCount);
+    const thumbnailUrls = thumbnailPaths.slice(0, layerCount);
+
+    window.thumbnailTextureArray = {
+      texture: thumbnailTextureArray,
+      sampler: linearSampler,
+      layerCount,
+      width: 256,
+      height: 256,
+      urls: thumbnailUrls,
+    };
+
+    const thumbnailTextureArrayPromise = fillThumbnailTextureArray(device, thumbnailTextureArray, thumbnailUrls, 256, 256);
+    window.thumbnailTextureArrayPromise = thumbnailTextureArrayPromise;
+    thumbnailTextureArrayPromise
+      .then(() => {
+        console.log('Filled thumbnail texture array:', layerCount);
       })
       .catch((error) => {
         console.warn('Thumbnail loading failed:', error);
       });
+
     idTexture = device.createTexture({
       size: [canvas.width, canvas.height],
       format: "r32uint",
@@ -421,11 +428,11 @@ async function main() {
         layout: voronoiPipeline.getBindGroupLayout(0),
         entries: [
             { binding: 0, resource: { buffer: uniformBuffer } },
-            { binding: 1, resource: texture.createView() },
+            { binding: 1, resource: thumbnailTextureArray.createView() },
             { binding: 2, resource: { buffer: voronoiSitesBuffer } },
         ],
     });
-    let edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, texture, voronoiSitesBuffer, idTexture, linearSampler);
+    let edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, thumbnailTextureArray, voronoiSitesBuffer, idTexture, linearSampler);
 
     function renderLoop(r) {
         if (!pause) {
@@ -474,7 +481,7 @@ async function main() {
                 zMax: PLANE_Z_MAX,
                 margin: 80
             };
-            edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, texture, voronoiSitesBuffer, idTexture, linearSampler);
+            edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, thumbnailTextureArray, voronoiSitesBuffer, idTexture, linearSampler);
         }
 
         const encoder = device.createCommandEncoder({ label: 'render voronoi' });

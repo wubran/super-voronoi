@@ -29,7 +29,7 @@ struct Site {
 };
 
 @group(0) @binding(0) var<uniform> uni: Uniforms;
-@group(0) @binding(1) var ourTexture: texture_2d<f32>;
+@group(0) @binding(1) var ourTexture: texture_2d_array<f32>;
 @group(0) @binding(2) var<storage, read> voronoiSites: array<Site>;
 @group(0) @binding(3) var idTex: texture_2d<u32>;
 @group(0) @binding(4) var ourSampler: sampler;
@@ -215,7 +215,9 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let noisyImageCoord = -nearestSite + loc2.xy + imageCenter;
   let baseUv = (imageCoord + vec2<f32>(0.5, 0.5)) / textureSize;
   let noisyBaseUv = (noisyImageCoord + vec2<f32>(0.5, 0.5)) / textureSize;
-  let centerColor = textureSample(ourTexture, ourSampler, noisyBaseUv);
+  let layerCount = i32(textureNumLayers(ourTexture));
+  let textureLayer = select(i32(center) % layerCount, 0, layerCount == 0);
+  let centerColor = textureSample(ourTexture, ourSampler, noisyBaseUv, u32(textureLayer));
   var blurColor = centerColor;
   // silly blur
   // let blurSteps = select(max(16, 0), 0, isHovered);
@@ -227,7 +229,7 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
 
     let neighborCoord = vec2<f32>(nx, ny) + vec2<f32>(0.5, 0.5);
     let neighborUv = neighborCoord / textureSize;
-    let neighbor = textureSample(ourTexture, ourSampler, neighborUv);
+    let neighbor = textureSample(ourTexture, ourSampler, neighborUv, u32(textureLayer));
     blurColor += neighbor;
   }
   let transparent = vec4<f32>(0.0,0.0,0.0,0.0);

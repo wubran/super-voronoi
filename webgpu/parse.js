@@ -69,6 +69,9 @@ async function retrieveThumbnailPaths(manifestUrl = THUMBNAIL_MANIFEST_URL) {
   return paths.filter((path) => typeof path === 'string' && path.length > 0);
 }
 
+const THUMBNAIL_TILE_SIZE = 256;
+const MAX_THUMBNAIL_LAYERS = 64;
+
 function createThumbnailSampler(device) {
   return device.createSampler({
     magFilter: 'linear',
@@ -79,29 +82,32 @@ function createThumbnailSampler(device) {
   });
 }
 
-function createTextureFromImageBitmap(device, imageBitmap) {
+function createPlaceholderThumbnailArrayTexture(device, width = THUMBNAIL_TILE_SIZE, height = THUMBNAIL_TILE_SIZE, layers = 1) {
   const texture = device.createTexture({
-    size: [imageBitmap.width, imageBitmap.height, 1],
+    size: [width, height, layers],
+    dimension: '2d',
     format: 'rgba8unorm',
     usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_DST,
   });
 
-  device.queue.copyExternalImageToTexture(
-    { source: imageBitmap },
-    { texture },
-    [imageBitmap.width, imageBitmap.height, 1]
-  );
+  const pixelData = new Uint8Array(width * height * 4);
+  for (let offset = 0; offset < pixelData.length; offset += 4) {
+    pixelData[offset] = 128;
+    pixelData[offset + 1] = 128;
+    pixelData[offset + 2] = 128;
+    pixelData[offset + 3] = 255;
+  }
+
+  for (let layer = 0; layer < layers; layer++) {
+    device.queue.writeTexture(
+      { texture, origin: [0, 0, layer] },
+      pixelData,
+      { bytesPerRow: width * 4, rowsPerImage: height },
+      [width, height, 1]
+    );
+  }
 
   return texture;
-}
-
-async function loadImageBitmapFromUrl(url) {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to load image: ${url}`);
-  }
-  const blob = await response.blob();
-  return await createImageBitmap(blob);
 }
 
 async function waitForIdle() {
@@ -112,31 +118,54 @@ async function waitForIdle() {
   }
 }
 
-async function loadThumbnailTextures(device, manifestUrl = THUMBNAIL_MANIFEST_URL) {
-  const paths = await retrieveThumbnailPaths(manifestUrl);
-  const sampler = createThumbnailSampler(device);
-  const textures = [];
-
-  for (const url of paths) {
-    await waitForIdle();
-    try {
-      const imageBitmap = await loadImageBitmapFromUrl(url);
-      const texture = createTextureFromImageBitmap(device, imageBitmap);
-      textures.push({
-        url,
-        texture,
-        sampler,
-        width: imageBitmap.width,
-        height: imageBitmap.height,
-      });
-    } catch (error) {
-      console.warn(`Failed to load thumbnail ${url}:`, error);
-    }
+async function loadImageBitmapFromUrl(url, width, height) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to load image: ${url}`);
   }
-
-  return textures;
+  const blob = await response.blob();
+  const options = width && height ? { resizeWidth: width, resizeHeight: height, resizeQuality: 'high' } : undefined;
+  return options ? await createImageBitmap(blob, options) : await createImageBitmap(blob);
 }
 
-window.loadThumbnailTextures = loadThumbnailTextures;
+async function fillThumbnailTextureArray(device, texture, urls, width = THUMBNAIL_TILE_SIZE, height = THUMBNAIL_TILE_SIZE) {
+  for (let layer = 0; layer < urls.length && layer < MAX_THUMBNAIL_LAYERS; layer++) {
+    await waitForIdle();
+    try {
+      const imageBitmap = await loadImageBitmapFromUrl(urls[layer], width, height);
+      device.queue.copyExternalImageToTexture(
+        { source: imageBitmap },
+        { texture, origin: [0, 0, layer] },
+        [width, height, 1]
+      );
+    } catch (error) {
+      console.warn(`Failed to fill thumbnail layer ${layer} from ${urls[layer]}:`, error);
+    }
+  }
+}
+
+async function loadThumbnailTextureArray(device, manifestUrl = THUMBNAIL_MANIFEST_URL) {
+  const paths = await retrieveThumbnailPaths(manifestUrl);
+  const urls = paths.slice(0, MAX_THUMBNAIL_LAYERS);
+  const layerCount = Math.max(1, urls.length);
+  const sampler = createThumbnailSampler(device);
+  const texture = createPlaceholderThumbnailArrayTexture(device, THUMBNAIL_TILE_SIZE, THUMBNAIL_TILE_SIZE, layerCount);
+
+  await fillThumbnailTextureArray(device, texture, urls, THUMBNAIL_TILE_SIZE, THUMBNAIL_TILE_SIZE);
+
+  return {
+    texture,
+    sampler,
+    layerCount,
+    width: THUMBNAIL_TILE_SIZE,
+    height: THUMBNAIL_TILE_SIZE,
+    urls,
+  };
+}
+
+window.loadThumbnailTextureArray = loadThumbnailTextureArray;
+window.loadThumbnailTextures = loadThumbnailTextureArray;
+window.createPlaceholderThumbnailArrayTexture = createPlaceholderThumbnailArrayTexture;
+window.fillThumbnailTextureArray = fillThumbnailTextureArray;
 window.retrieveThumbnailPaths = retrieveThumbnailPaths;
 window.THUMBNAIL_MANIFEST_URL = THUMBNAIL_MANIFEST_URL;
