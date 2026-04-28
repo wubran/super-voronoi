@@ -358,13 +358,25 @@ async function main() {
       addressModeU: 'clamp-to-edge',
       addressModeV: 'clamp-to-edge',
     });
+
+    const thumbnailTexturesPromise = loadThumbnailTextures(device);
+    window.thumbnailTexturesPromise = thumbnailTexturesPromise;
+    thumbnailTexturesPromise
+      .then((thumbnailTextures) => {
+        window.thumbnailTextures = thumbnailTextures;
+        console.log('Loaded thumbnail textures:', thumbnailTextures.length);
+      })
+      .catch((error) => {
+        console.warn('Thumbnail loading failed:', error);
+      });
     idTexture = device.createTexture({
       size: [canvas.width, canvas.height],
       format: "r32uint",
       usage:
         GPUTextureUsage.RENDER_ATTACHMENT |
         GPUTextureUsage.TEXTURE_BINDING,
-    });    idReadbackBuffer = device.createBuffer({
+    });
+    idReadbackBuffer = device.createBuffer({
       size: ID_READBACK_SIZE,
       usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
     });
