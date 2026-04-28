@@ -212,7 +212,7 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
 
   // translate site center to image center
   let imageCoord = nearestSite - coordf + imageCenter;
-  let noisyImageCoord = nearestSite - loc2.xy + imageCenter;
+  let noisyImageCoord = -nearestSite + loc2.xy + imageCenter;
   let baseUv = (imageCoord + vec2<f32>(0.5, 0.5)) / textureSize;
   let noisyBaseUv = (noisyImageCoord + vec2<f32>(0.5, 0.5)) / textureSize;
   let centerColor = textureSample(ourTexture, ourSampler, noisyBaseUv);
@@ -231,6 +231,7 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
     blurColor += neighbor;
   }
   let transparent = vec4<f32>(0.0,0.0,0.0,0.0);
+  let isTransparent = false;
   blurColor /= f32(blurSteps+1);
   let foregroundTint = vec4<f32>(1.0,1.0,1.0,1.0);
   let backgroundTint = vec4<f32>(0.0,0.0,0.0,1.0);
@@ -240,7 +241,7 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let tintRate = 0.0050;
   let tintColor = blend4(foregroundTint, backgroundTint, faceColor, tintSlider, tintGap, tintRate);
   let finalColor = select(tintColor, edgeColor, isEdge);
-  return select(finalColor, transparent, isHovered && tintSlider == 0.0);
+  return select(finalColor, transparent, isTransparent);
 }
 `
 export default voronoi;

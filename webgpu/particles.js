@@ -11,13 +11,15 @@ class Site3D {
         this.mass = mass; // true mass. constant.
         this.massShown = mass; // effective mass
     }
-    calcSites(sites, i, hoveredId) {
+    calcSites(sites, i, hoveredId, activeId) {
         const easeRate = 0.1;
         const growFactor = 2;
         const repulsionStrength = 40.0;
-
-        if(i == hoveredId){
-            this.massShown = easeRate*this.mass*growFactor + (1-easeRate)*this.massShown;
+        const activeGrowFactor = 4;
+        if(i == activeId){
+            this.massShown = easeRate*this.mass*activeGrowFactor + (1-easeRate)*this.massShown;
+        } else if(i == hoveredId){
+        this.massShown = easeRate*this.mass*growFactor + (1-easeRate)*this.massShown;
             // repulsionRadius*=Math.sqrt(growFactor)
         }else{
             this.massShown = easeRate*this.mass + (1-easeRate)*this.massShown;

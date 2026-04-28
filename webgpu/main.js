@@ -37,7 +37,14 @@ function setupPointerInteraction(canvas) {
   };
 
   canvas.addEventListener('pointermove', (event) => { updatePointer(event); needsIdRead = true; });
-  canvas.addEventListener('pointerdown', (event) => { updatePointer(event); pointerState.pressed = true; needsIdRead = true; });
+  canvas.addEventListener('pointerdown', (event) => {
+    updatePointer(event);
+    pointerState.pressed = true;
+    needsIdRead = true;
+    if (event.button === 0) {
+      clickPending = true;
+    }
+  });
   canvas.addEventListener('pointerup', () => { pointerState.pressed = false; needsIdRead = true; });
   canvas.addEventListener('pointerleave', () => {
     pointerState.pressed = false;
@@ -70,6 +77,8 @@ let pause = false;
 let needsIdRead = false;
 let isReadingId = false;
 let hoveredSiteId = DEFAULT_MAX_SITES;
+let activeSiteId = -1;
+let clickPending = false;
 let idReadbackBuffer = null;
 
 document.addEventListener('keydown', (event) => {
@@ -411,7 +420,7 @@ async function main() {
             // for (let i=0; i<sites.length-1; i++) {
             for (let i=0; i<sites.length; i++) {
                 let site = sites[i];
-                site.calcSites(sites, i, hoveredSiteId);
+                site.calcSites(sites, i, hoveredSiteId, activeSiteId);
                 site.calcBounds(bounds);
             }
             for (const site of sites) {
@@ -502,6 +511,12 @@ async function main() {
                 if(hoveredSiteId < DEFAULT_MAX_SITES){
                     hoveredSiteId = view[0];
                     window.hoveredSiteId = hoveredSiteId;
+                    // probably should be updated here anyway...
+                    if(clickPending && inFocus){
+                        activeSiteId = hoveredSiteId;
+                        clickPending = false;
+                        console.log("active site id: ", activeSiteId)
+                    }
                 }
                 idReadbackBuffer.unmap();
 
