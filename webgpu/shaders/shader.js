@@ -223,11 +223,11 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let layerCount = i32(textureNumLayers(ourTexture));
   let textureLayer = select(i32(center) % layerCount, 0, layerCount == 0);
   let originalSize = thumbnailInfo[textureLayer].originalSize;
-  let aspect = select(originalSize.x / originalSize.y, 1.0, originalSize.y == 0.0);
+  let aspect = select(originalSize.x / originalSize.y, 1.0, originalSize.y > 0.0); // probably not necessary with preprocessing
 
-  let layerScale = select(vec2<f32>(1.0, 1.0 / aspect), vec2<f32>(aspect, 1.0), aspect < 1.0);
+  let layerScale = 0.25*select(vec2<f32>(1.0, 1.0 / aspect), vec2<f32>(aspect, 1.0), aspect < 1.0);
   let layerOffset = (vec2<f32>(1.0) - layerScale) * 0.5;
-  let clampedUv = clamp(noisyBaseUv, vec2<f32>(0.0), vec2<f32>(1.0));
+  let clampedUv = noisyBaseUv;//clamp(noisyBaseUv, vec2<f32>(0.0), vec2<f32>(1.0));
   let patternUv = layerOffset + clampedUv * layerScale;
   let centerColor = textureSample(ourTexture, ourSampler, patternUv, textureLayer);
   var blurColor = centerColor;
@@ -241,7 +241,7 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
 
     let neighborCoord = vec2<f32>(nx, ny) + vec2<f32>(0.5, 0.5);
     let neighborUv = neighborCoord / textureSize;
-    let neighborPatternUv = layerOffset + clamp(neighborUv, vec2<f32>(0.0), vec2<f32>(1.0)) * layerScale;
+    let neighborPatternUv = layerOffset + neighborUv*layerScale;//clamp(neighborUv, vec2<f32>(0.0), vec2<f32>(1.0)) * layerScale;
     let neighbor = textureSample(ourTexture, ourSampler, neighborPatternUv, textureLayer);
     blurColor += neighbor;
   }
