@@ -66,6 +66,110 @@ function setupPlaneZScroll(canvas, onDeltaZ) {
   }, { passive: false });
 }
 
+let overlayImage = null;
+let overlayState = {
+  x: 0,
+  y: 0,
+  scale: 1,
+  anchor: 'center',
+};
+
+function updateImageOverlay() {
+  if (!overlayImage) return;
+
+  const width = overlayImage.naturalWidth || overlayImage.width || 0;
+  const height = overlayImage.naturalHeight || overlayImage.height || 0;
+  let x = overlayState.x;
+  let y = overlayState.y;
+
+  if (overlayState.anchor === 'center' && width > 0 && height > 0) {
+    x -= (width * overlayState.scale) * 0.5;
+    y -= (height * overlayState.scale) * 0.5;
+  }
+
+  overlayImage.style.transform = `translate(${x}px, ${y}px) scale(${overlayState.scale})`;
+}
+
+function createImageOverlay(initialImageUrl = '') {
+  if (overlayImage) return;
+  overlayImage = document.createElement('img');
+  overlayImage.id = 'gpu-image-overlay';
+  overlayImage.src = initialImageUrl;
+  overlayImage.alt = 'Selected thumbnail overlay';
+  overlayImage.style.position = 'absolute';
+  overlayImage.style.top = '0';
+  overlayImage.style.left = '0';
+  overlayImage.style.transformOrigin = 'top left';
+  overlayImage.style.pointerEvents = 'none';
+  overlayImage.style.zIndex = '0';
+  overlayImage.style.opacity = '0.75';
+  overlayImage.style.maxWidth = 'none';
+  overlayImage.style.maxHeight = 'none';
+  overlayImage.addEventListener('load', () => {
+    if (overlayState.anchor === 'center') {
+      updateImageOverlay();
+    }
+  });
+  document.body.appendChild(overlayImage);
+  updateImageOverlay();
+}
+
+function setGpuOverlay({ url, x = 0, y = 0, scale = 1 } = {}) {
+  if (url) {
+    if (!overlayImage) {
+      createImageOverlay(url);
+    } else {
+      overlayImage.src = url;
+    }
+  }
+  overlayState.anchor = 'center';
+  overlayState.x = x;
+  overlayState.y = y;
+  overlayState.scale = scale;
+  updateImageOverlay();
+}
+
+function setGpuOverlayImage(url) {
+  setGpuOverlay({ url, x: overlayState.x, y: overlayState.y, scale: overlayState.scale });
+}
+
+function setGpuOverlayTransform(x, y, scale = 1) {
+  if (!overlayImage) {
+    createImageOverlay();
+  }
+  overlayState.anchor = 'top-left';
+  overlayState.x = x;
+  overlayState.y = y;
+  overlayState.scale = scale;
+  updateImageOverlay();
+}
+
+function setGpuOverlayCenter(x, y, scale = 1, url) {
+  if (url) {
+    if (!overlayImage) {
+      createImageOverlay(url);
+    } else {
+      overlayImage.src = url;
+    }
+  } else if (!overlayImage) {
+    createImageOverlay();
+  }
+  overlayState.anchor = 'center';
+  overlayState.x = x;
+  overlayState.y = y;
+  overlayState.scale = scale;
+  updateImageOverlay();
+}
+
+window.setGpuOverlay = setGpuOverlay;
+window.setGpuOverlayImage = setGpuOverlayImage;
+window.setGpuOverlayTransform = setGpuOverlayTransform;
+window.setGpuOverlayCenter = setGpuOverlayCenter;
+
+window.setGpuOverlay = setGpuOverlay;
+window.setGpuOverlayImage = setGpuOverlayImage;
+window.setGpuOverlayTransform = setGpuOverlayTransform;
+
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
@@ -115,7 +219,8 @@ function prepareCanvas(device, presentationFormat){
     document.body.appendChild(canvas);
     canvas.style.display = 'block';
 
-    const dpr = window.devicePixelRatio || 1;
+    // const dpr = window.devicePixelRatio || 1;
+    const dpr = 1;
     const displayWidth = Math.max(1, document.documentElement.clientWidth);
     const displayHeight = Math.max(1, document.documentElement.clientHeight);
     canvas.width = Math.max(1, Math.floor(displayWidth * dpr * ID_TEXTURE_SCALE));
@@ -255,7 +360,8 @@ let lastHeight = 0;
 
 function describeRenderPassAndResize(device, context) {
     const canvas = context.canvas;
-    const dpr = window.devicePixelRatio || 1;
+    // const dpr = window.devicePixelRatio || 1;
+    const dpr = 1;
     const displayWidth = Math.max(1, document.documentElement.clientWidth);
     const displayHeight = Math.max(1, document.documentElement.clientHeight);
     const width = Math.max(1, Math.floor(displayWidth * dpr * ID_TEXTURE_SCALE));
@@ -402,11 +508,12 @@ async function main() {
     });
 
     const thumbnailMetadata = await retrieveThumbnailMetadata();
+    const thumbnailUrls = thumbnailMetadata.map((entry) => entry.url);
+    createImageOverlay(thumbnailUrls[0]);
     const entries = thumbnailMetadata.slice(0, 64);
     const layerCount = Math.max(1, entries.length);
     const thumbnailTextureArray = createPlaceholderThumbnailArrayTexture(device, 256, 256, layerCount);
     const thumbnailInfoBuffer = createThumbnailInfoBuffer(device, layerCount);
-    const thumbnailUrls = entries.map((entry) => entry.url);
 
     window.thumbnailTextureArray = {
       texture: thumbnailTextureArray,
@@ -537,6 +644,15 @@ async function main() {
                 margin: 80
             };
             edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, thumbnailTextureArray, voronoiSitesBuffer, idTexture, linearSampler, thumbnailInfoBuffer);
+        }
+
+        if (activeSiteId >= 0 && activeSiteId < MAX_SITES_DISPLAYED){
+            // let url = thumbnailUrls[sitesShown[activeSiteId]];
+            let url = thumbnailUrls[activeSiteId];
+            let site = sites[sitesShown[activeSiteId]];
+            let scale = 0.4/ID_TEXTURE_SCALE;
+            setGpuOverlay({ url, x:site.pos.x/ID_TEXTURE_SCALE, y:site.pos.y/ID_TEXTURE_SCALE, scale:1});
+
         }
 
         const encoder = device.createCommandEncoder({ label: 'render voronoi' });

@@ -46,14 +46,23 @@
         background-color: transparent;
         z-index: 1;
       }
+
+      #gpu-image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+        transform-origin: top left;
+        pointer-events: none;
+        opacity: 0.75;
+        max-width: none;
+        max-height: none;
+      }
     </style>
   </head>
   <body>
     <div class="background">
       <h1>Under-canvas DOM test</h1>
-      <p>This text is rendered underneath the GPU canvas. If the canvas supports alpha, you should see this content through the transparent canvas background.</p>
-      <p>Use this area to place arbitrary DOM visuals, layout, or debugging overlays beneath the WebGPU canvas.</p>
-      <iframe src="https://2048.wubrian.com" width="600" height="400"></iframe>
     </div>
   </body>
   <!-- <script type="text/javascript" src="stl_loader.js"></script> -->
