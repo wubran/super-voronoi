@@ -85,6 +85,9 @@ class Site3D {
         this.vel.scale(friction)
         this.force.zero();
     }
+    // focus(z){
+
+    // }
     inFocus(x, m, g, s){
         let extra_threshold = 2.0; // for user experience...
         function gapLinear(x, m, g) {

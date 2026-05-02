@@ -4,6 +4,7 @@ import voronoi from "./shaders/shader.js"
 import { mat4 } from '../vendor/wgpu-matrix.module.js';
 
 const DEFAULT_MAX_SITES = 64;
+const MAX_SITES_DISPLAYED = 16;
 const FLOATS_PER_VERTEX = 8;
 const VERTEX_BUFFER_STRIDE = FLOATS_PER_VERTEX * 4;
 const PLANE_Z_SENSITIVITY = 0.008;
@@ -179,7 +180,7 @@ function makeUniforms(device, numSites){
 
 function createSitesBuffer(device, maxSites) {
     return device.createBuffer({
-        size: maxSites * 4 * 4, // vec3<f32> with implicit padding to 16 bytes per element
+        size: maxSites * 8 * 4, // 7*<f32> with implicit padding
         usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
     });
 }
@@ -203,13 +204,46 @@ function updateSitesBuffer(device, buffer, sites) {
     device.queue.writeBuffer(buffer, 0, sites);
 }
 
-function updateSitesArray(sites, sitesArray) {
+function updateSitesArray(sites, sitesArray, planeZ) {
+    // get the closest 10 sites
+    let closestIndices = [];
+    let closestZdist = [];
     for (let i = 0; i < sites.length; i++) {
-        sitesArray[4*i] = sites[i].pos.x;
-        sitesArray[4*i+1] = sites[i].pos.y;
-        sitesArray[4*i+2] = sites[i].pos.z;
-        sitesArray[4*i+3] = sites[i].massShown;
+        let zDist = Math.abs(sites[i].pos.z - planeZ)
+        let insertHere = MAX_SITES_DISPLAYED;
+        for (let i = MAX_SITES_DISPLAYED-1; i >= 0; i--) {
+            // lazy
+            if (closestZdist[i] < zDist){
+                insertHere = i;
+            } else{
+                break;
+            }
+        }
+        if (insertHere < MAX_SITES_DISPLAYED || closestIndices.length < MAX_SITES_DISPLAYED){
+            closestIndices.splice(insertHere, 0, i);
+            closestZdist.splice(insertHere, 0, zDist);
+        }
+        if (insertHere > MAX_SITES_DISPLAYED){
+            closestIndices.splice(MAX_SITES_DISPLAYED-1, 1);
+            closestZdist.splice(MAX_SITES_DISPLAYED-1, 1);
+        }
     }
+    for (let i = 0; i < MAX_SITES_DISPLAYED; i++) {
+        let site = sites[closestIndices[i]];
+        sitesArray[8*i] = site.pos.x;
+        sitesArray[8*i+1] = site.pos.y;
+        sitesArray[8*i+2] = site.pos.z;
+        sitesArray[8*i+3] = site.massShown;
+        sitesArray[8*i+4] = closestIndices[i];
+        sitesArray[8*i+5] = 0;
+        sitesArray[8*i+6] = 0;
+    }
+    // for (let i = 0; i < sites.length; i++) {
+    //     sitesArray[8*i] = sites[i].pos.x;
+    //     sitesArray[8*i+1] = sites[i].pos.y;
+    //     sitesArray[8*i+2] = sites[i].pos.z;
+    //     sitesArray[8*i+3] = sites[i].massShown;
+    // }
 }
 
 let idTexture = null;
@@ -438,9 +472,10 @@ async function main() {
         sites.push(site);
     }
 
+    // const numSites = sites.length;
     const numSites = sites.length;
-    const voronoiSites = new Float32Array(maxSites * 4);
-    updateSitesArray(sites, voronoiSites);
+    const voronoiSites = new Float32Array(MAX_SITES_DISPLAYED * 4);
+    updateSitesArray(sites, voronoiSites, planeZ);
     const voronoiSitesBuffer = createSitesBuffer(device, maxSites);
 
     const uniformBuffer = makeUniforms(device, numSites);
@@ -480,7 +515,7 @@ async function main() {
 
         updateUniforms(uniformBuffer, device, r, planeZ, numSites);
         let inFocus = hoveredSiteId == activeSiteId; // javascript yuh
-        if (pointerState.x > 0 && pointerState.y > 0 && hoveredSiteId > 0 && hoveredSiteId < DEFAULT_MAX_SITES){
+        if (pointerState.x > 0 && pointerState.y > 0 && hoveredSiteId > 0 && hoveredSiteId < MAX_SITES_DISPLAYED){
             let dz = (planeZ - sites[hoveredSiteId].pos.z)/sites[hoveredSiteId].massShown;
             inFocus |= sites[hoveredSiteId].inFocus(dz, 5.0, 20.0, 20.0);
             canvas.style.cursor = inFocus ? 'pointer' : 'default';

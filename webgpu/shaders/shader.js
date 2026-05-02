@@ -26,6 +26,8 @@ struct Uniforms {
 struct Site {
     pos: vec3<f32>,
     mass: f32,
+    index: f32,
+    thumbnail: ThumbnailInfo,
 };
 
 struct ThumbnailInfo {
@@ -173,14 +175,15 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
       clamp(i32(coordff.x), 0, dims.x - 1),
       clamp(i32(coordff.y), 0, dims.y - 1)
   );
-  let center = textureLoad(idTex, coord, 0).r;
+  let centerShown = textureLoad(idTex, coord, 0).r;
   // let xEdge = dpdx(f32(center)) != 0;
   // let yEdge = dpdy(f32(center)) != 0;
   // let isEdge = xEdge || yEdge;
   // let isEdge = false;
 
   let edgeColor = vec4<f32>(0.0, 0.0, 0.0, 1.0);
-  let nearest = voronoiSites[i32(center)];
+  let nearest = voronoiSites[i32(centerShown)];
+  let center = u32(nearest.index);
   let nearestSite = vec2<f32>(nearest.pos.xy);
   let nearestZ = f32(nearest.pos.z);
   let nearestMass = nearest.mass;
