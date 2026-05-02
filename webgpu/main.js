@@ -515,7 +515,7 @@ async function main() {
 
         updateUniforms(uniformBuffer, device, r, planeZ, numSites);
         let inFocus = hoveredSiteId == activeSiteId; // javascript yuh
-        if (pointerState.x > 0 && pointerState.y > 0 && hoveredSiteId > 0 && hoveredSiteId < MAX_SITES_DISPLAYED){
+        if (pointerState.x > 0 && pointerState.y > 0 && hoveredSiteId >= 0 && hoveredSiteId < MAX_SITES_DISPLAYED){
             let dz = (planeZ - sites[hoveredSiteId].pos.z)/sites[hoveredSiteId].massShown;
             inFocus |= sites[hoveredSiteId].inFocus(dz, 5.0, 20.0, 20.0);
             canvas.style.cursor = inFocus ? 'pointer' : 'default';
