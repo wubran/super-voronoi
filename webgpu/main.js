@@ -13,6 +13,7 @@ const PLANE_Z_MAX = 500;
 const PLANE_Z_MAX_VELOCITY = 10;
 const ID_READBACK_BYTES_PER_ROW = 256;
 const ID_READBACK_SIZE = ID_READBACK_BYTES_PER_ROW * 1;
+const ID_TEXTURE_SCALE = 0.5; // 0.5 = half resolution, 0.25 = quarter resolution
 
 const pointerState = {
   x: -1,
@@ -109,17 +110,22 @@ function vbuffer_from_mesh(device, m){
 function prepareCanvas(device, presentationFormat){
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('webgpu');
+
+    document.body.appendChild(canvas);
+    canvas.style.display = 'block';
+
+    const dpr = window.devicePixelRatio || 1;
+    const displayWidth = Math.max(1, document.documentElement.clientWidth);
+    const displayHeight = Math.max(1, document.documentElement.clientHeight);
+    canvas.width = Math.max(1, Math.floor(displayWidth * dpr * ID_TEXTURE_SCALE));
+    canvas.height = Math.max(1, Math.floor(displayHeight * dpr * ID_TEXTURE_SCALE));
+
     context.configure({
         device,
         format: presentationFormat,
         alphaMode: 'premultiplied',
     });
-    // canvas.height = canvas.width;
 
-    document.body.appendChild(canvas);
-    
-    canvas.width = canvas.offsetWidth
-    canvas.height = canvas.offsetHeight
     return [canvas, context]
 }
 
@@ -207,14 +213,18 @@ function updateSitesArray(sites, sitesArray) {
 }
 
 let idTexture = null;
+let idTextureWidth = 0;
+let idTextureHeight = 0;
 let lastWidth = 0;
 let lastHeight = 0;
 
 function describeRenderPassAndResize(device, context) {
     const canvas = context.canvas;
     const dpr = window.devicePixelRatio || 1;
-    const width = Math.floor(canvas.clientWidth * dpr);
-    const height = Math.floor(canvas.clientHeight * dpr);
+    const displayWidth = Math.max(1, document.documentElement.clientWidth);
+    const displayHeight = Math.max(1, document.documentElement.clientHeight);
+    const width = Math.max(1, Math.floor(displayWidth * dpr * ID_TEXTURE_SCALE));
+    const height = Math.max(1, Math.floor(displayHeight * dpr * ID_TEXTURE_SCALE));
     let resized = false;
     
     if (width !== lastWidth || height !== lastHeight) {
@@ -236,8 +246,11 @@ function describeRenderPassAndResize(device, context) {
             idTexture.destroy();
         }
 
+        idTextureWidth = width;
+        idTextureHeight = height;
+
         idTexture = device.createTexture({
-            size: [width, height],
+            size: [idTextureWidth, idTextureHeight],
             format: "r32uint",
             usage:
                 GPUTextureUsage.RENDER_ATTACHMENT |
@@ -381,8 +394,10 @@ async function main() {
         console.warn('Thumbnail loading failed:', error);
       });
 
+    idTextureWidth = canvas.width;
+    idTextureHeight = canvas.height;
     idTexture = device.createTexture({
-      size: [canvas.width, canvas.height],
+      size: [idTextureWidth, idTextureHeight],
       format: "r32uint",
       usage:
         GPUTextureUsage.RENDER_ATTACHMENT |
@@ -517,7 +532,7 @@ async function main() {
 
             if (mouseX >= 0 && mouseX < canvas.width && mouseY >= 0 && mouseY < canvas.height) {
                 encoder.copyTextureToBuffer(
-                    { texture: idTexture, origin: { x: mouseX, y: mouseY, z: 0 } },
+                    { texture: idTexture, origin: { x: clamp(mouseX, 0, idTextureWidth - 1), y: clamp(mouseY, 0, idTextureHeight - 1), z: 0 } },
                     { buffer: idReadbackBuffer, bytesPerRow: ID_READBACK_BYTES_PER_ROW, rowsPerImage: 1 },
                     { width: 1, height: 1, depthOrArrayLayers: 1 }
                 );

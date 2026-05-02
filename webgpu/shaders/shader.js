@@ -39,6 +39,8 @@ struct ThumbnailInfo {
 @group(0) @binding(4) var ourSampler: sampler;
 @group(0) @binding(5) var<storage, read> thumbnailInfo: array<ThumbnailInfo>;
 
+const ID_TEXTURE_SCALE: f32 = 1.0; // low-res canvas already matches id texture resolution
+
 @vertex fn vs(vert: Vertex) -> OurVertexShaderOutput {
   var vsOutput: OurVertexShaderOutput;
   vsOutput.position = uni.cameraM * uni.objectM * vec4f(vert.position, 1.0);
@@ -166,7 +168,11 @@ fn softGapLinear(x: f32, m:f32, g: f32, s: f32) ->  f32 {
 fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   var color = vec4f(1.0, 1.0, 1.0, 1.0); // default white
   let dims = vec2<i32>(textureDimensions(idTex, 0));
-  let coord = vec2<i32>(fsInput.position.xy);
+  let coordff = fsInput.position.xy;
+  let coord = vec2<i32>(
+      clamp(i32(coordff.x), 0, dims.x - 1),
+      clamp(i32(coordff.y), 0, dims.y - 1)
+  );
   let center = textureLoad(idTex, coord, 0).r;
   var isEdge = false;
   let sampleRing5 = array<vec2<i32>, 12>(
