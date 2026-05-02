@@ -144,8 +144,8 @@ function simpleRectangleMesh(){
     return array;
 }
 
-function updateUniforms(buffer, device, r, planeZ, numSites){
-    const uniformValuesAsF32 = new Float32Array(36);
+function updateUniforms(buffer, device, r, planeZ, numSites, activeSiteId){
+    const uniformValuesAsF32 = new Float32Array(40);
     const cameraMatrix = uniformValuesAsF32.subarray(0, 16);
     const objectMatrix = uniformValuesAsF32.subarray(16, 32);
 
@@ -163,6 +163,7 @@ function updateUniforms(buffer, device, r, planeZ, numSites){
     uniformValuesAsF32[33] = planeZ;
     uniformValuesAsF32[34] = numSites;
     uniformValuesAsF32[35] = hoveredSiteId;
+    uniformValuesAsF32[36] = activeSiteId;
 
     device.queue.writeBuffer(buffer, 0, uniformValuesAsF32);
 }
@@ -171,10 +172,10 @@ function makeUniforms(device, numSites){
     // const uniformValuesAsU32 = new Uint32Array(uniformValuesAsF32.buffer);
     const uniformBuffer = device.createBuffer({
         label: 'voronoi uniform buffer',
-        size: 36 * 4, // 36 floats
+        size: 40 * 4, // 40 floats to include active site and padding
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
-    updateUniforms(uniformBuffer, device, 0, 0, numSites)
+    updateUniforms(uniformBuffer, device, 0, 0, numSites, -1)
     return uniformBuffer
 }
 
@@ -199,7 +200,6 @@ function createEdgeBindGroup(device, pipeline, uniformBuffer, texture, voronoiSi
     });
 }
 
-// length of sites must be <= maxSites * 4 because each site stores a vec3 and padding
 function updateSitesBuffer(device, buffer, sites) {
     device.queue.writeBuffer(buffer, 0, sites);
 }
@@ -244,6 +244,7 @@ function updateSitesArray(sites, sitesArray, planeZ) {
     //     sitesArray[8*i+2] = sites[i].pos.z;
     //     sitesArray[8*i+3] = sites[i].massShown;
     // }
+    return closestIndices;
 }
 
 let idTexture = null;
@@ -475,7 +476,7 @@ async function main() {
     // const numSites = sites.length;
     const numSites = sites.length;
     const voronoiSites = new Float32Array(MAX_SITES_DISPLAYED * 4);
-    updateSitesArray(sites, voronoiSites, planeZ);
+    let sitesShown = updateSitesArray(sites, voronoiSites, planeZ);
     const voronoiSitesBuffer = createSitesBuffer(device, maxSites);
 
     const uniformBuffer = makeUniforms(device, numSites);
@@ -513,7 +514,7 @@ async function main() {
         planeZVelocity *= PLANE_Z_DAMPING;
         if (Math.abs(planeZVelocity) < 0.001) planeZVelocity = 0;
 
-        updateUniforms(uniformBuffer, device, r, planeZ, numSites);
+        updateUniforms(uniformBuffer, device, r, planeZ, numSites, activeSiteId);
         let inFocus = hoveredSiteId == activeSiteId; // javascript yuh
         if (pointerState.x > 0 && pointerState.y > 0 && hoveredSiteId >= 0 && hoveredSiteId < MAX_SITES_DISPLAYED){
             let dz = (planeZ - sites[hoveredSiteId].pos.z)/sites[hoveredSiteId].massShown;

@@ -20,7 +20,8 @@ struct Uniforms {
   planeZ: f32,
   numSites: f32,
   mouseID: f32,
-  // some padding bytes
+  activeID: f32,
+  padding: f32,
 };
 
 struct Site {
@@ -213,14 +214,14 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let originalSize = thumbnailInfo[textureLayer].originalSize;
   let aspect = select(originalSize.x / originalSize.y, 1.0, originalSize.y > 0.0); // probably not necessary with preprocessing
 
-  let layerScale = 0.25*select(vec2<f32>(1.0, 1.0 / aspect), vec2<f32>(aspect, 1.0), aspect < 1.0);
+  let layerScale = 0.40*select(vec2<f32>(1.0, 1.0 / aspect), vec2<f32>(aspect, 1.0), aspect < 1.0);
   let layerOffset = (vec2<f32>(1.0) - layerScale) * 0.5;
   // let clampedUv = clamp(noisyBaseUv, vec2<f32>(0.0), vec2<f32>(1.0));
   let patternUv = layerOffset + noisyBaseUv * layerScale;
   let centerColor = textureSample(ourTexture, ourSampler, patternUv, textureLayer);
 
   let transparent = vec4<f32>(0.0,0.0,0.0,0.0);
-  let isTransparent = false;
+  let isTransparent = i32(uni.activeID) == i32(center);
 
   // let edgeMix = select(vec4<f32>(1.0,1.0,1.0,1.0), vec4<f32>(0.8,0.8,0.8,1.0), isEdge);
   // let finalColor = centerColor * edgeMix;
