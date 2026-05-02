@@ -123,8 +123,8 @@ fn voronoi_fs(fsInput: OurVertexShaderOutput) -> @location(0) u32 {
   let timeFreq = 0.01;
 
   let coord = fsInput.position.xy;
-  let loc2 = coord + noiseScale*(vectorNoise(spaceFreq*coord, timeFreq*uni.time)*2.0 - 1.0);
-  let loc3 = vec3<f32>(loc2, uni.planeZ);
+  // let loc2 = coord + noiseScale*(vectorNoise(spaceFreq*coord, timeFreq*uni.time)*2.0 - 1.0);
+  let loc3 = vec3<f32>(coord, uni.planeZ);
 
   var minDist = distance3(voronoiSites[0].pos.xyz, loc3, voronoiSites[0].mass); // NEEDS PROOF
   var closestSite = 0u;
@@ -174,31 +174,10 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
       clamp(i32(coordff.y), 0, dims.y - 1)
   );
   let center = textureLoad(idTex, coord, 0).r;
-  var isEdge = false;
-  let sampleRing5 = array<vec2<i32>, 12>(
-    vec2<i32>(-2, -1), vec2<i32>(-2, 0), vec2<i32>(-2, 1),
-    vec2<i32>(-1, -2), vec2<i32>(-1, 2),
-    vec2<i32>(0, -2), vec2<i32>(0, 2),
-    vec2<i32>(1, -2), vec2<i32>(1, 2),
-    vec2<i32>(2, -1), vec2<i32>(2, 0), vec2<i32>(2, 1),
-  );
-  // 3x3 kernel (radius = 1)
-  for (var i = 0; i < 12; i++) {
-    let offset = sampleRing5[i];
-    let nx = coord.x + offset.x;
-    let ny = coord.y + offset.y;
-
-    // bounds check (important!)
-    if (nx < 0 || ny < 0 || nx >= dims.x || ny >= dims.y) {
-        continue;
-    }
-
-    let neighbor = textureLoad(idTex, vec2<i32>(nx, ny), 0).r;
-
-    if (neighbor != center) {
-        isEdge = true;
-    }
-  }
+  // let xEdge = dpdx(f32(center)) != 0;
+  // let yEdge = dpdy(f32(center)) != 0;
+  // let isEdge = xEdge || yEdge;
+  // let isEdge = false;
 
   let edgeColor = vec4<f32>(0.0, 0.0, 0.0, 1.0);
   let nearest = voronoiSites[i32(center)];
@@ -233,36 +212,17 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
 
   let layerScale = 0.25*select(vec2<f32>(1.0, 1.0 / aspect), vec2<f32>(aspect, 1.0), aspect < 1.0);
   let layerOffset = (vec2<f32>(1.0) - layerScale) * 0.5;
-  let clampedUv = noisyBaseUv;//clamp(noisyBaseUv, vec2<f32>(0.0), vec2<f32>(1.0));
-  let patternUv = layerOffset + clampedUv * layerScale;
+  // let clampedUv = clamp(noisyBaseUv, vec2<f32>(0.0), vec2<f32>(1.0));
+  let patternUv = layerOffset + noisyBaseUv * layerScale;
   let centerColor = textureSample(ourTexture, ourSampler, patternUv, textureLayer);
-  var blurColor = centerColor;
-  // silly blur
-  // let blurSteps = select(max(16, 0), 0, isHovered);
-  let blurSteps = 12;
-  for (var i = 0; i < blurSteps; i++) {
-    let offset = vec2<f32>(sampleRing5[i]);
-    let nx = noisyImageCoord.x + offset.x;
-    let ny = noisyImageCoord.y + offset.y;
 
-    let neighborCoord = vec2<f32>(nx, ny) + vec2<f32>(0.5, 0.5);
-    let neighborUv = neighborCoord / textureSize;
-    let neighborPatternUv = layerOffset + neighborUv*layerScale;//clamp(neighborUv, vec2<f32>(0.0), vec2<f32>(1.0)) * layerScale;
-    let neighbor = textureSample(ourTexture, ourSampler, neighborPatternUv, textureLayer);
-    blurColor += neighbor;
-  }
   let transparent = vec4<f32>(0.0,0.0,0.0,0.0);
   let isTransparent = false;
-  blurColor /= f32(blurSteps+1);
-  let foregroundTint = vec4<f32>(1.0,1.0,1.0,1.0);
-  let backgroundTint = vec4<f32>(0.0,0.0,0.0,1.0);
-  let faceColor = select(blurColor, centerColor, isHovered);
-  let tintGap = 100000.0;
-  // let tintGap = 50.0;
-  let tintRate = 0.0050;
-  let tintColor = blend4(foregroundTint, backgroundTint, faceColor, tintSlider, tintGap, tintRate);
-  let finalColor = select(tintColor, edgeColor, isEdge);
-  return select(finalColor, transparent, isTransparent);
+
+  // let edgeMix = select(vec4<f32>(1.0,1.0,1.0,1.0), vec4<f32>(0.8,0.8,0.8,1.0), isEdge);
+  // let finalColor = centerColor * edgeMix;
+  // return select(finalColor, transparent, isTransparent);
+  return select(centerColor, transparent, isTransparent);
 }
 `
 export default voronoi;
