@@ -74,6 +74,7 @@ let overlayState = {
   y: 0,
   scale: 1,
   anchor: 'center',
+  hidden: true,
 };
 
 function updateImageOverlay() {
@@ -90,6 +91,12 @@ function updateImageOverlay() {
   }
 
   overlayImage.style.transform = `translate(${x}px, ${y}px) scale(${overlayState.scale})`;
+  overlayImage.style.display = overlayState.hidden ? 'none' : '';
+}
+
+function hideImageOverlay() {
+  overlayState.hidden = true;
+  updateImageOverlay();
 }
 
 function createImageOverlay(initialImageUrl = '') {
@@ -108,6 +115,7 @@ function createImageOverlay(initialImageUrl = '') {
   overlayImage.style.opacity = '1.0';
   overlayImage.style.maxWidth = 'none';
   overlayImage.style.maxHeight = 'none';
+  overlayImage.style.display = 'none';
   overlayImage.addEventListener('click', (event) => {
     event.stopPropagation();
     if (typeof overlayClickHandler === 'function') {
@@ -135,6 +143,7 @@ function setGpuOverlay({ url, x = 0, y = 0, scale = 1 } = {}) {
   overlayState.x = x;
   overlayState.y = y;
   overlayState.scale = scale;
+  overlayState.hidden = false;
   updateImageOverlay();
 }
 
@@ -180,8 +189,7 @@ window.setGpuOverlayClickHandler = (handler) => {
 window.setGpuOverlayClickHandler(() => {
     activeSiteId = -1;
     // time saving trick gotta speedrun
-    overlayImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-    updateImageOverlay();
+    hideImageOverlay();
 });
 
 function clamp(value, min, max) {
@@ -585,7 +593,7 @@ async function main() {
         const site = new Site3D([
             bounds.margin + col * cellWidth + jitterX,
             bounds.margin + row * cellHeight + jitterY,
-            bounds.margin + (Math.random() - 0.5) * (PLANE_Z_MAX - PLANE_Z_MIN - 2*bounds.margin),
+            bounds.margin + PLANE_Z_MIN + Math.random() * (PLANE_Z_MAX - PLANE_Z_MIN - 2*bounds.margin),
         ], [0,0,0], [0,0,0], Math.random()+1);
         sites.push(site);
     }
@@ -635,7 +643,7 @@ async function main() {
         let inFocus = false;//hoveredSiteId == activeSiteId; // javascript yuh
         // PROBLEM: When the overlay is clicked, the mouse enters canvas but doesnt trigger enter event
         if (pointerState.x > 0 && pointerState.y > 0 &&
-            hoveredSiteId >= 0 && hoveredSiteId < MAX_SITES_DISPLAYED
+            hoveredSiteId >= 0 && hoveredSiteId < DEFAULT_MAX_SITES
         ){
             let dz = (planeZ - sites[hoveredSiteId].pos.z)/sites[hoveredSiteId].massShown;
             inFocus |= sites[hoveredSiteId].inFocus(dz, 5.0, 20.0, 20.0);
@@ -721,10 +729,8 @@ async function main() {
             .then(() => {
                 const view = new Uint32Array(idReadbackBuffer.getMappedRange(0, 4));
                 if(hoveredSiteId < DEFAULT_MAX_SITES){
-                    // console.log(hoveredSiteId)
                     // hoveredSiteId = sitesShown[view[0]];
                     hoveredSiteId = sitesShown[view[0]];
-                    console.log(hoveredSiteId)
                     window.hoveredSiteId = hoveredSiteId;
                     // probably should be updated here anyway...
                     if(clickPending){

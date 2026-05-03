@@ -13,7 +13,7 @@ class Site3D {
     }
     calcSites(sites, i, hoveredId, activeId) {
         const easeRate = 0.1;
-        const activeEaseRate = 0.01;
+        const activeEaseRate = 0.04;
         const growFactor = 1.5;
         const repulsionStrength = 40.0;
         if(i == activeId){
@@ -76,7 +76,6 @@ class Site3D {
         }
     }
     update(friction=0.995) {
-        // console.log(this.pos, this.vel, this.acc)
         // this.vel.add(this.force.scale(1/this.mass));
         // this.vel.add(this.force.scale(1/this.massShown));
         this.vel.x += this.force.x/this.massShown;
