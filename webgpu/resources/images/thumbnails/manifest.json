@@ -2,111 +2,133 @@
   {
     "url": "resources/images/thumbnails/fish/earlyfish.jpg",
     "width": 1740,
-    "height": 1305
+    "height": 1305,
+    "color": "#5A5550.FC"
   },
   {
     "url": "resources/images/thumbnails/fish/naval_academy_cart.JPG",
     "width": 979,
-    "height": 1305
+    "height": 1305,
+    "color": "#726D70.F4"
   },
   {
     "url": "resources/images/thumbnails/fish/naval_academy_fish.JPG",
     "width": 979,
-    "height": 1305
+    "height": 1305,
+    "color": "#5B676E.E8"
   },
   {
     "url": "resources/images/thumbnails/food/died_tomatoes.JPG",
     "width": 979,
-    "height": 1305
+    "height": 1305,
+    "color": "#94765D.14"
   },
   {
     "url": "resources/images/thumbnails/food/hand_noodles.jpg",
     "width": 979,
-    "height": 1305
+    "height": 1305,
+    "color": "#99866D.38"
   },
   {
     "url": "resources/images/thumbnails/food/shrimp_pesto.jpg",
     "width": 979,
-    "height": 1305
+    "height": 1305,
+    "color": "#908679.34"
   },
   {
     "url": "resources/images/thumbnails/outside/kenilworth.jpg",
     "width": 1740,
-    "height": 1305
+    "height": 1305,
+    "color": "#697665.08"
   },
   {
     "url": "resources/images/thumbnails/outside/kenilworth_bud.jpg",
     "width": 979,
-    "height": 1305
+    "height": 1305,
+    "color": "#61765B.68"
   },
   {
     "url": "resources/images/thumbnails/outside/kenilworth_keychain.jpg",
     "width": 979,
-    "height": 1305
+    "height": 1305,
+    "color": "#888C8D.AC"
   },
   {
     "url": "resources/images/thumbnails/outside/patapsco.jpg",
     "width": 1278,
-    "height": 959
+    "height": 959,
+    "color": "#42443B.DC"
   },
   {
     "url": "resources/images/thumbnails/outside/patapsco_again.JPG",
     "width": 1740,
-    "height": 1305
+    "height": 1305,
+    "color": "#7A7875.14"
   },
   {
     "url": "resources/images/thumbnails/outside/patapsco_green.JPG",
     "width": 293,
-    "height": 220
+    "height": 220,
+    "color": "#68774D.D"
   },
   {
     "url": "resources/images/thumbnails/outside/patapsco_snow.JPG",
     "width": 1740,
-    "height": 1305
+    "height": 1305,
+    "color": "#69798B.08"
   },
   {
     "url": "resources/images/thumbnails/outside/quad_biking.jpg",
     "width": 2320,
-    "height": 1305
+    "height": 1305,
+    "color": "#554532.C4"
   },
   {
     "url": "resources/images/thumbnails/outside/solar_eclispe.JPG",
     "width": 1740,
-    "height": 1305
+    "height": 1305,
+    "color": "#848383.78"
   },
   {
     "url": "resources/images/thumbnails/outside/yellowstone_artist.JPG",
     "width": 1740,
-    "height": 1305
+    "height": 1305,
+    "color": "#80817D.8C"
   },
   {
     "url": "resources/images/thumbnails/outside/yellowstone_falls.JPG",
     "width": 979,
-    "height": 1305
+    "height": 1305,
+    "color": "#7E837B.F"
   },
   {
     "url": "resources/images/thumbnails/outside/yellowstone_steam.JPG",
     "width": 1740,
-    "height": 1305
+    "height": 1305,
+    "color": "#79828D.C4"
   },
   {
     "url": "resources/images/thumbnails/rov/capstone_fair.jpg",
     "width": 1958,
-    "height": 1305
+    "height": 1305,
+    "color": "#594921.58"
   },
   {
     "url": "resources/images/thumbnails/rov/rov_carrier_bare.jpg",
     "width": 979,
-    "height": 1305
+    "height": 1305,
+    "color": "#7C6C5D.D4"
   },
   {
     "url": "resources/images/thumbnails/rov/rov_corpse.jpg",
     "width": 979,
-    "height": 1305
+    "height": 1305,
+    "color": "#8C8170.3"
   },
   {
     "url": "resources/images/thumbnails/rov/rov_disemboweled.jpg",
     "width": 979,
-    "height": 1305
+    "height": 1305,
+    "color": "#9B856E.B"
   }
 ]

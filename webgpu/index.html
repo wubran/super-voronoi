@@ -15,7 +15,7 @@
       }
       body {
         min-height: 100vh;
-        background: linear-gradient(135deg, #101020 0%, #1c2330 100%);
+        background: linear-gradient(135deg, #101020 0%, #202f4b 100%);
         color: #eef;
         font-family: system-ui, sans-serif;
       }
@@ -51,18 +51,23 @@
         position: absolute;
         top: 0;
         left: 0;
-        z-index: 0;
+        z-index: 2;
         transform-origin: top left;
-        pointer-events: none;
-        opacity: 0.75;
+        pointer-events: auto;
+        opacity: 1.0;
         max-width: none;
         max-height: none;
+        border-radius: 22px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.04);
       }
     </style>
   </head>
   <body>
     <div class="background">
-      <h1>Under-canvas DOM test</h1>
+      <!-- <h1>Under-canvas DOM test</h1> -->
     </div>
   </body>
   <!-- <script type="text/javascript" src="stl_loader.js"></script> -->

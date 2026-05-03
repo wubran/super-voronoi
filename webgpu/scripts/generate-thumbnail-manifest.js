@@ -1,6 +1,16 @@
 const fs = require('fs');
 const path = require('path');
 
+// let Jimp;
+// try {
+//   Jimp = require('jimp');
+// } catch (error) {
+//   throw new Error('Missing dependency: install Jimp with `npm install jimp` before running this script.');
+// }
+const jimp = require("jimp");
+const { Jimp, intToRGBA } = jimp;
+// console.log(Jimp);
+
 const WEBGPU_ROOT = path.resolve(__dirname, '..');
 const THUMBNAIL_DIR = path.join(WEBGPU_ROOT, 'resources', 'images', 'thumbnails');
 const MANIFEST_PATH = path.join(THUMBNAIL_DIR, 'manifest.json');
@@ -108,30 +118,58 @@ function normalizeUrl(filePath) {
   return relative;
 }
 
-function generateManifest() {
+function rgbToHex(r, g, b) {
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b)
+    .toString(16)
+    .slice(1)
+    .toUpperCase()}`;
+}
+
+async function getRepresentativeColor(filePath) {
+  const image = await Jimp.read(filePath);
+  const thumbnail = image.clone().resize({
+    w: 8,
+    h: 8,
+    mode: "nearestNeighbor"
+  });
+  let r = 0, g = 0, b = 0;
+  for (let x = 0; x < 8; x++) {
+    for (let y = 0; y < 8; y++) {
+      const { r: pr, g: pg, b: pb } = intToRGBA(
+        thumbnail.getPixelColor(x, y)
+      );
+      r += pr; g += pg; b += pb;
+    }
+  }
+
+  const total = 64;
+  return rgbToHex(r / total, g / total, b / total);
+}
+
+async function generateManifest() {
   if (!fs.existsSync(THUMBNAIL_DIR)) {
     throw new Error(`Thumbnail directory not found: ${THUMBNAIL_DIR}`);
   }
 
   const imageFiles = walkDirectory(THUMBNAIL_DIR).sort();
-  const manifestItems = imageFiles.map((filePath) => {
+  const manifestItems = await Promise.all(imageFiles.map(async (filePath) => {
     const { width, height } = getImageSize(filePath);
+    const color = await getRepresentativeColor(filePath);
     return {
       url: normalizeUrl(filePath),
       width,
       height,
+      color,
     };
-  });
+  }));
 
   fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifestItems, null, 2) + '\n');
   console.log(`Generated ${manifestItems.length} thumbnail entries in ${MANIFEST_PATH}`);
 }
 
 if (require.main === module) {
-  try {
-    generateManifest();
-  } catch (error) {
+  generateManifest().catch((error) => {
     console.error('Failed to generate thumbnail manifest:', error);
     process.exit(1);
-  }
+  });
 }

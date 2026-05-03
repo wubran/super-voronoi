@@ -213,9 +213,11 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   // translate site center to image center
   let imageCenter = desiredSize*0.5;
   let noisyImageCoord = (loc2.xy - (nearestSite - imageCenter));
-  let noisyBaseUv = noisyImageCoord/desiredSize;
+  let noisyBaseUv = max(noisyImageCoord/desiredSize, vec2<f32>(1.0,1.0));
   let centerColor = textureSample(ourTexture, ourSampler, noisyBaseUv, textureLayer);
-
+  if (noisyBaseUv.x < 0.0 || noisyBaseUv.x > 1.0 || noisyBaseUv.y < 0.0 || noisyBaseUv.y > 1.0) {
+      return vec4<f32>(0.0); // transparent
+  }
   let transparent = vec4<f32>(0.0,0.0,0.0,0.0);
   let isTransparent = i32(uni.activeID) == i32(center);
 

@@ -42,6 +42,7 @@ function setupPointerInteraction(canvas) {
       clickPending = true;
     }
   });
+  
   canvas.addEventListener('pointerup', () => { pointerState.pressed = false; needsIdRead = true; });
   canvas.addEventListener('pointerleave', () => {
     pointerState.pressed = false;
@@ -67,6 +68,7 @@ function setupPlaneZScroll(canvas, onDeltaZ) {
 }
 
 let overlayImage = null;
+let overlayClickHandler = null;
 let overlayState = {
   x: 0,
   y: 0,
@@ -100,11 +102,18 @@ function createImageOverlay(initialImageUrl = '') {
   overlayImage.style.top = '0';
   overlayImage.style.left = '0';
   overlayImage.style.transformOrigin = 'top left';
-  overlayImage.style.pointerEvents = 'none';
-  overlayImage.style.zIndex = '0';
-  overlayImage.style.opacity = '0.75';
+  overlayImage.style.pointerEvents = 'auto';
+  overlayImage.style.cursor = 'pointer';
+  overlayImage.style.zIndex = '2';
+  overlayImage.style.opacity = '1.0';
   overlayImage.style.maxWidth = 'none';
   overlayImage.style.maxHeight = 'none';
+  overlayImage.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (typeof overlayClickHandler === 'function') {
+      overlayClickHandler(event);
+    }
+  });
   overlayImage.addEventListener('load', () => {
     if (overlayState.anchor === 'center') {
       updateImageOverlay();
@@ -165,10 +174,15 @@ window.setGpuOverlay = setGpuOverlay;
 window.setGpuOverlayImage = setGpuOverlayImage;
 window.setGpuOverlayTransform = setGpuOverlayTransform;
 window.setGpuOverlayCenter = setGpuOverlayCenter;
-
-window.setGpuOverlay = setGpuOverlay;
-window.setGpuOverlayImage = setGpuOverlayImage;
-window.setGpuOverlayTransform = setGpuOverlayTransform;
+window.setGpuOverlayClickHandler = (handler) => {
+  overlayClickHandler = typeof handler === 'function' ? handler : null;
+};
+window.setGpuOverlayClickHandler(() => {
+    activeSiteId = -1;
+    // time saving trick gotta speedrun
+    overlayImage.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+    updateImageOverlay();
+});
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -509,7 +523,7 @@ async function main() {
 
     const thumbnailMetadata = await retrieveThumbnailMetadata();
     const thumbnailUrls = thumbnailMetadata.map((entry) => entry.url);
-    createImageOverlay(thumbnailUrls[0]);
+    // createImageOverlay(thumbnailUrls[0]);
     const entries = thumbnailMetadata.slice(0, 64);
     const layerCount = Math.max(1, entries.length);
     const thumbnailTextureArray = createPlaceholderThumbnailArrayTexture(device, 256, 256, layerCount);
@@ -622,10 +636,13 @@ async function main() {
         if (Math.abs(planeZVelocity) < 0.001) planeZVelocity = 0;
 
         updateUniforms(uniformBuffer, device, r, planeZ, numSites, activeSiteId);
-        let inFocus = hoveredSiteId == activeSiteId; // javascript yuh
-        if (pointerState.x > 0 && pointerState.y > 0 && hoveredSiteId >= 0 && hoveredSiteId < MAX_SITES_DISPLAYED){
+        let inFocus = false;//hoveredSiteId == activeSiteId; // javascript yuh
+        if (pointerState.x > 0 && pointerState.y > 0 &&
+            hoveredSiteId >= 0 && hoveredSiteId < MAX_SITES_DISPLAYED
+        ){
             let dz = (planeZ - sites[hoveredSiteId].pos.z)/sites[hoveredSiteId].massShown;
             inFocus |= sites[hoveredSiteId].inFocus(dz, 5.0, 20.0, 20.0);
+            inFocus &= sitesShown[activeSiteId] != hoveredSiteId;
             canvas.style.cursor = inFocus ? 'pointer' : 'default';
             canvas.style.transform = 'translateZ(0)';
             canvas.offsetHeight;
@@ -711,9 +728,7 @@ async function main() {
                     window.hoveredSiteId = hoveredSiteId;
                     // probably should be updated here anyway...
                     if(clickPending){
-                        if(activeSiteId == hoveredSiteId){
-                            activeSiteId = -1;
-                        } else if(inFocus){
+                        if(inFocus && activeSiteId != hoveredSiteId){
                             activeSiteId = hoveredSiteId;
                             console.log("active site id: ", activeSiteId)
                         }

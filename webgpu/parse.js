@@ -108,10 +108,10 @@ function createPlaceholderThumbnailArrayTexture(device, width = THUMBNAIL_TILE_S
 
   const pixelData = new Uint8Array(width * height * 4);
   for (let offset = 0; offset < pixelData.length; offset += 4) {
-    pixelData[offset] = 128;
-    pixelData[offset + 1] = 128;
-    pixelData[offset + 2] = 128;
-    pixelData[offset + 3] = 255;
+    pixelData[offset] = 0;
+    pixelData[offset + 1] = 0;
+    pixelData[offset + 2] = 0;
+    pixelData[offset + 3] = 0;
   }
 
   for (let layer = 0; layer < layers; layer++) {
