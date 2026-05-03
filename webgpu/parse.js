@@ -153,7 +153,8 @@ function fitThumbnailToTile(origWidth, origHeight, maxWidth, maxHeight) {
     width = Math.floor(maxHeight * aspect);
   }
 
-  return [Math.max(1, width), Math.max(1, height)];
+  // return [Math.max(1, width), Math.max(1, height)];
+  return [255, 255];
 }
 
 async function waitForIdle() {

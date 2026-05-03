@@ -612,7 +612,7 @@ async function main() {
                 site.update();
             }
 
-            updateSitesArray(sites, voronoiSites);
+            sitesShown = updateSitesArray(sites, voronoiSites);
             updateSitesBuffer(device, voronoiSitesBuffer, voronoiSites);
         }
 
@@ -648,10 +648,15 @@ async function main() {
 
         if (activeSiteId >= 0 && activeSiteId < MAX_SITES_DISPLAYED){
             // let url = thumbnailUrls[sitesShown[activeSiteId]];
-            let url = thumbnailUrls[activeSiteId];
-            let site = sites[sitesShown[activeSiteId]];
-            let scale = 0.4/ID_TEXTURE_SCALE;
-            setGpuOverlay({ url, x:site.pos.x/ID_TEXTURE_SCALE, y:site.pos.y/ID_TEXTURE_SCALE, scale:1});
+            let id = sitesShown[activeSiteId];
+            let url = thumbnailUrls[id];
+            let pic = thumbnailMetadata[id];
+            let site = sites[id];
+            // scale such that everythign is 500 pixels
+            let screenX = site.pos.x/ID_TEXTURE_SCALE;
+            let screenY = site.pos.y/ID_TEXTURE_SCALE;
+            setGpuOverlay({ url, x:screenX, y:screenY, scale:500/pic.height});
+            // setGpuOverlay({ url, x:screenX/2, y:screenY/2, scale:1.25});
 
         }
 

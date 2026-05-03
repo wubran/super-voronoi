@@ -191,7 +191,6 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let sliderGap = 30; // bigger allows for easier locating
   let tintSlider = softGapLinear((uni.planeZ - nearestZ)/nearestMass, 5, 20, 20); // interpreting mass as "radius"
   let textureSize = vec2<f32>(textureDimensions(ourTexture, 0));
-  let imageCenter = textureSize * 0.5;
 
   // noise needs TO BE UNIFIED WITH ABOVE
   // let noiseScale = 5.0;
@@ -204,21 +203,18 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let loc2 = coordf + noiseScale*(vectorNoise(spaceFreq*coordf, timeFreq*uni.time)*2.0 - 1.0);
   let loc3 = vec3<f32>(loc2, uni.planeZ);
 
-  // translate site center to image center
-  let imageCoord = nearestSite - coordf + imageCenter;
-  let noisyImageCoord = -nearestSite + loc2.xy + imageCenter;
-  let baseUv = (imageCoord + vec2<f32>(0.5, 0.5)) / textureSize;
-  let noisyBaseUv = (noisyImageCoord + vec2<f32>(0.5, 0.5)) / textureSize;
+  // get original image size
   let layerCount = i32(textureNumLayers(ourTexture));
   let textureLayer = select(i32(center) % layerCount, 0, layerCount == 0);
-  let originalSize = thumbnailInfo[textureLayer].originalSize;
-  let aspect = select(originalSize.x / originalSize.y, 1.0, originalSize.y > 0.0); // probably not necessary with preprocessing
-
-  let layerScale = 0.40*select(vec2<f32>(1.0, 1.0 / aspect), vec2<f32>(aspect, 1.0), aspect < 1.0);
-  let layerOffset = (vec2<f32>(1.0) - layerScale) * 0.5;
-  // let clampedUv = clamp(noisyBaseUv, vec2<f32>(0.0), vec2<f32>(1.0));
-  let patternUv = layerOffset + noisyBaseUv * layerScale;
-  let centerColor = textureSample(ourTexture, ourSampler, patternUv, textureLayer);
+  let originalSize = thumbnailInfo[textureLayer].originalSize * 0.5; // should be canvas pix scale
+  let desiredHeight = 500.0 * 0.5; // temp
+  let desiredWidth = desiredHeight * originalSize.x / originalSize.y;
+  let desiredSize = vec2<f32>(desiredWidth, desiredHeight);
+  // translate site center to image center
+  let imageCenter = desiredSize*0.5;
+  let noisyImageCoord = (loc2.xy - (nearestSite - imageCenter));
+  let noisyBaseUv = noisyImageCoord/desiredSize;
+  let centerColor = textureSample(ourTexture, ourSampler, noisyBaseUv, textureLayer);
 
   let transparent = vec4<f32>(0.0,0.0,0.0,0.0);
   let isTransparent = i32(uni.activeID) == i32(center);
