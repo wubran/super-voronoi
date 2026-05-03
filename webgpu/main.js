@@ -9,8 +9,8 @@ const FLOATS_PER_VERTEX = 8;
 const VERTEX_BUFFER_STRIDE = FLOATS_PER_VERTEX * 4;
 const PLANE_Z_SENSITIVITY = 0.008;
 const PLANE_Z_DAMPING = 0.86;
-const PLANE_Z_MIN = -500;
-const PLANE_Z_MAX = 500;
+const PLANE_Z_MIN = -2000; // should depend on the screen size
+const PLANE_Z_MAX = 0;
 const PLANE_Z_MAX_VELOCITY = 10;
 const ID_READBACK_BYTES_PER_ROW = 256;
 const ID_READBACK_SIZE = ID_READBACK_BYTES_PER_ROW * 1;
@@ -330,19 +330,20 @@ function updateSitesArray(sites, sitesArray, planeZ) {
     for (let i = 0; i < sites.length; i++) {
         let zDist = Math.abs(sites[i].pos.z - planeZ)
         let insertHere = MAX_SITES_DISPLAYED;
-        for (let i = MAX_SITES_DISPLAYED-1; i >= 0; i--) {
+        for (let j = closestIndices.length-1; j >= 0; j--) {
             // lazy
-            if (closestZdist[i] < zDist){
-                insertHere = i;
+            if (closestZdist[j] > zDist){
+                insertHere = j;
             } else{
                 break;
             }
         }
-        if (insertHere < MAX_SITES_DISPLAYED || closestIndices.length < MAX_SITES_DISPLAYED){
+        if (insertHere < MAX_SITES_DISPLAYED ||closestIndices.length < MAX_SITES_DISPLAYED){
             closestIndices.splice(insertHere, 0, i);
             closestZdist.splice(insertHere, 0, zDist);
+
         }
-        if (insertHere > MAX_SITES_DISPLAYED){
+        if (closestIndices.length > MAX_SITES_DISPLAYED){
             closestIndices.splice(MAX_SITES_DISPLAYED-1, 1);
             closestZdist.splice(MAX_SITES_DISPLAYED-1, 1);
         }
@@ -354,15 +355,10 @@ function updateSitesArray(sites, sitesArray, planeZ) {
         sitesArray[8*i+2] = site.pos.z;
         sitesArray[8*i+3] = site.massShown;
         sitesArray[8*i+4] = closestIndices[i];
-        sitesArray[8*i+5] = 0;
-        sitesArray[8*i+6] = 0;
+        sitesArray[8*i+5] = closestIndices[i];
+        sitesArray[8*i+6] = closestIndices[i];
     }
-    // for (let i = 0; i < sites.length; i++) {
-    //     sitesArray[8*i] = sites[i].pos.x;
-    //     sitesArray[8*i+1] = sites[i].pos.y;
-    //     sitesArray[8*i+2] = sites[i].pos.z;
-    //     sitesArray[8*i+3] = sites[i].massShown;
-    // }
+    // console.log(closestZdist)
     return closestIndices;
 }
 
@@ -626,7 +622,7 @@ async function main() {
                 site.update();
             }
 
-            sitesShown = updateSitesArray(sites, voronoiSites);
+            sitesShown = updateSitesArray(sites, voronoiSites, planeZ);
             updateSitesBuffer(device, voronoiSitesBuffer, voronoiSites);
         }
 
@@ -637,12 +633,13 @@ async function main() {
 
         updateUniforms(uniformBuffer, device, r, planeZ, numSites, activeSiteId);
         let inFocus = false;//hoveredSiteId == activeSiteId; // javascript yuh
+        // PROBLEM: When the overlay is clicked, the mouse enters canvas but doesnt trigger enter event
         if (pointerState.x > 0 && pointerState.y > 0 &&
             hoveredSiteId >= 0 && hoveredSiteId < MAX_SITES_DISPLAYED
         ){
             let dz = (planeZ - sites[hoveredSiteId].pos.z)/sites[hoveredSiteId].massShown;
             inFocus |= sites[hoveredSiteId].inFocus(dz, 5.0, 20.0, 20.0);
-            inFocus &= sitesShown[activeSiteId] != hoveredSiteId;
+            inFocus &= activeSiteId != hoveredSiteId;
             canvas.style.cursor = inFocus ? 'pointer' : 'default';
             canvas.style.transform = 'translateZ(0)';
             canvas.offsetHeight;
@@ -665,7 +662,7 @@ async function main() {
 
         if (activeSiteId >= 0 && activeSiteId < MAX_SITES_DISPLAYED){
             // let url = thumbnailUrls[sitesShown[activeSiteId]];
-            let id = sitesShown[activeSiteId];
+            let id = activeSiteId;
             let url = thumbnailUrls[id];
             let pic = thumbnailMetadata[id];
             let site = sites[id];
@@ -724,7 +721,10 @@ async function main() {
             .then(() => {
                 const view = new Uint32Array(idReadbackBuffer.getMappedRange(0, 4));
                 if(hoveredSiteId < DEFAULT_MAX_SITES){
-                    hoveredSiteId = view[0];
+                    // console.log(hoveredSiteId)
+                    // hoveredSiteId = sitesShown[view[0]];
+                    hoveredSiteId = sitesShown[view[0]];
+                    console.log(hoveredSiteId)
                     window.hoveredSiteId = hoveredSiteId;
                     // probably should be updated here anyway...
                     if(clickPending){

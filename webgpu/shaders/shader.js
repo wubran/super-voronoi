@@ -28,11 +28,13 @@ struct Site {
     pos: vec3<f32>,
     mass: f32,
     index: f32,
-    thumbnail: ThumbnailInfo,
+    // thumbnail: ThumbnailInfo,
 };
 
 struct ThumbnailInfo {
     originalSize: vec2<f32>,
+    padding: vec2<f32>,
+    avgColor: vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> uni: Uniforms;
@@ -148,6 +150,7 @@ fn voronoi_fs(fsInput: OurVertexShaderOutput) -> @location(0) u32 {
   //   return u32(uni.numSites);
   // }
 
+  // return u32(voronoiSites[closestSite].index);
   return closestSite;
 }
 
@@ -169,7 +172,7 @@ fn softGapLinear(x: f32, m:f32, g: f32, s: f32) ->  f32 {
 
 @fragment
 fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
-  var color = vec4f(1.0, 1.0, 1.0, 1.0); // default white
+  let white = vec4f(1.0, 1.0, 1.0, 1.0); // default white
   let dims = vec2<i32>(textureDimensions(idTex, 0));
   let coordff = fsInput.position.xy;
   let coord = vec2<i32>(
@@ -184,7 +187,7 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
 
   let edgeColor = vec4<f32>(0.0, 0.0, 0.0, 1.0);
   let nearest = voronoiSites[i32(centerShown)];
-  let center = u32(nearest.index);
+  let center = u32(voronoiSites[centerShown].index);
   let nearestSite = vec2<f32>(nearest.pos.xy);
   let nearestZ = f32(nearest.pos.z);
   let nearestMass = nearest.mass;
@@ -213,11 +216,8 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   // translate site center to image center
   let imageCenter = desiredSize*0.5;
   let noisyImageCoord = (loc2.xy - (nearestSite - imageCenter));
-  let noisyBaseUv = max(noisyImageCoord/desiredSize, vec2<f32>(1.0,1.0));
+  let noisyBaseUv = noisyImageCoord/desiredSize;
   let centerColor = textureSample(ourTexture, ourSampler, noisyBaseUv, textureLayer);
-  if (noisyBaseUv.x < 0.0 || noisyBaseUv.x > 1.0 || noisyBaseUv.y < 0.0 || noisyBaseUv.y > 1.0) {
-      return vec4<f32>(0.0); // transparent
-  }
   let transparent = vec4<f32>(0.0,0.0,0.0,0.0);
   let isTransparent = i32(uni.activeID) == i32(center);
 

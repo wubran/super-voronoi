@@ -37,6 +37,7 @@ function flattenThumbnailManifest(manifest, basePath = '') {
           url: basePath ? `${basePath}/${entry}` : entry,
           width: 1,
           height: 1,
+          color: "#000000.FF",
         });
       } else if (entry && typeof entry === 'object') {
         if (typeof entry.url === 'string') {
@@ -44,6 +45,7 @@ function flattenThumbnailManifest(manifest, basePath = '') {
             url: basePath ? `${basePath}/${entry.url}` : entry.url,
             width: typeof entry.width === 'number' ? entry.width : 1,
             height: typeof entry.height === 'number' ? entry.height : 1,
+            color: typeof entry.color === 'string' ? entry.color : "#000000.FF",
           });
         } else {
           results.push(...flattenThumbnailManifest(entry, basePath));
@@ -77,7 +79,7 @@ async function fetchThumbnailManifest(url = THUMBNAIL_MANIFEST_URL) {
 }
 
 async function retrieveThumbnailMetadata(manifestUrl = THUMBNAIL_MANIFEST_URL) {
-  return await fetchThumbnailManifest(manifestUrl);
+  return await fetchThumbnailManifest(manifestUrl)
 }
 
 async function retrieveThumbnailPaths(manifestUrl = THUMBNAIL_MANIFEST_URL) {
@@ -127,10 +129,18 @@ function createPlaceholderThumbnailArrayTexture(device, width = THUMBNAIL_TILE_S
 }
 
 function createThumbnailInfoBuffer(device, layerCount) {
-  const info = new Float32Array(layerCount * 2);
-  for (let i = 0; i < info.length; i += 2) {
+  const info = new Float32Array(layerCount * 8);
+  for (let i = 0; i < info.length; i += 8) {
     info[i] = 1.0;
     info[i + 1] = 1.0;
+
+    info[i + 2] = 0.0;
+    info[i + 3] = 0.0;
+
+    info[i + 4] = 0.0;
+    info[i + 5] = 0.0;
+    info[i + 6] = 0.0;
+    info[i + 7] = 0.0;
   }
 
   const buffer = device.createBuffer({
@@ -174,8 +184,19 @@ async function loadImageBitmapFromUrl(url, options) {
   return options ? await createImageBitmap(blob, options) : await createImageBitmap(blob);
 }
 
+function hexToRGBA(hex) {
+  hex = hex.slice(1,10);
+
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+  // const a = hex.length === 8 ? parseInt(hex.slice(7, 9), 16) : 255;
+  const a = 255;
+  return [r, g, b, a];
+}
+
 async function fillThumbnailTextureArray(device, texture, infoBuffer, items, width = THUMBNAIL_TILE_SIZE, height = THUMBNAIL_TILE_SIZE) {
-  const infoArray = new Float32Array(items.length * 2);
+  const infoArray = new Float32Array(items.length * 8);
 
   for (let layer = 0; layer < items.length && layer < MAX_THUMBNAIL_LAYERS; layer++) {
     const item = items[layer];
@@ -197,9 +218,18 @@ async function fillThumbnailTextureArray(device, texture, infoBuffer, items, wid
         widthToUse = originalImage.width;
         heightToUse = originalImage.height;
       }
+      let color = typeof item.color === 'string' ? item.color : "#000000.FF"
+      let r,g,b,a = hexToRGBA(color);
+      infoArray[layer * 8] = widthToUse;
+      infoArray[layer * 8 + 1] = heightToUse;
 
-      infoArray[layer * 2] = widthToUse;
-      infoArray[layer * 2 + 1] = heightToUse;
+      infoArray[layer * 8 + 2] = 0.0;
+      infoArray[layer * 8 + 3] = 0.0;
+
+      infoArray[layer * 8 + 4] = r;
+      infoArray[layer * 8 + 5] = g;
+      infoArray[layer * 8 + 6] = b;
+      infoArray[layer * 8 + 7] = a;
 
       const [destWidth, destHeight] = fitThumbnailToTile(widthToUse, heightToUse, width, height);
       const resizedImage = (!originalImage || destWidth !== widthToUse || destHeight !== heightToUse)
@@ -215,8 +245,16 @@ async function fillThumbnailTextureArray(device, texture, infoBuffer, items, wid
       );
     } catch (error) {
       console.warn(`Failed to fill thumbnail layer ${layer} from ${item.url}:`, error);
-      infoArray[layer * 2] = 1.0;
-      infoArray[layer * 2 + 1] = 1.0;
+      infoArray[layer * 8] = 1.0;
+      infoArray[layer * 8 + 1] = 1.0;
+
+      infoArray[layer * 8 + 2] = 0.0;
+      infoArray[layer * 8 + 3] = 0.0;
+
+      infoArray[layer * 8 + 4] = 0.0;
+      infoArray[layer * 8 + 5] = 0.0;
+      infoArray[layer * 8 + 6] = 0.0;
+      infoArray[layer * 8 + 7] = 0.0;
     }
   }
 
