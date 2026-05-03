@@ -3,7 +3,7 @@ import voronoi from "./shaders/shader.js"
 // see https://webgpufundamentals.org/webgpu/lessons/webgpu-utils.html#wgpu-matrix
 import { mat4 } from '../vendor/wgpu-matrix.module.js';
 
-const DEFAULT_MAX_SITES = 64;
+const DEFAULT_MAX_SITES = 22;  // TODO: THIS IS THE NUMBER OF SITE THUMBNAILS
 const MAX_SITES_DISPLAYED = 16;
 const FLOATS_PER_VERTEX = 8;
 const VERTEX_BUFFER_STRIDE = FLOATS_PER_VERTEX * 4;
@@ -132,7 +132,7 @@ function createImageOverlay(initialImageUrl = '') {
 }
 
 function setGpuOverlay({ url, x = 0, y = 0, scale = 1 } = {}) {
-  if (url) {
+    if (url) {
     if (!overlayImage) {
       createImageOverlay(url);
     } else {
@@ -668,7 +668,7 @@ async function main() {
             edgeBindGroup = createEdgeBindGroup(device, edgePipeline, uniformBuffer, thumbnailTextureArray, voronoiSitesBuffer, idTexture, linearSampler, thumbnailInfoBuffer);
         }
 
-        if (activeSiteId >= 0 && activeSiteId < MAX_SITES_DISPLAYED){
+        if (activeSiteId >= 0 && activeSiteId < DEFAULT_MAX_SITES){
             // let url = thumbnailUrls[sitesShown[activeSiteId]];
             let id = activeSiteId;
             let url = thumbnailUrls[id];
