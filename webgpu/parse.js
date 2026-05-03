@@ -38,6 +38,7 @@ function flattenThumbnailManifest(manifest, basePath = '') {
           width: 1,
           height: 1,
           color: "#000000.FF",
+          blurb: '',
         });
       } else if (entry && typeof entry === 'object') {
         if (typeof entry.url === 'string') {
@@ -46,6 +47,7 @@ function flattenThumbnailManifest(manifest, basePath = '') {
             width: typeof entry.width === 'number' ? entry.width : 1,
             height: typeof entry.height === 'number' ? entry.height : 1,
             color: typeof entry.color === 'string' ? entry.color : "#000000.FF",
+            blurb: typeof entry.blurb === 'string' ? entry.blurb : '',
           });
         } else {
           results.push(...flattenThumbnailManifest(entry, basePath));

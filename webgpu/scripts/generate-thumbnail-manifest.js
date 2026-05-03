@@ -1,15 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-// let Jimp;
-// try {
-//   Jimp = require('jimp');
-// } catch (error) {
-//   throw new Error('Missing dependency: install Jimp with `npm install jimp` before running this script.');
-// }
-const jimp = require("jimp");
+const jimp = require('jimp');
 const { Jimp, intToRGBA } = jimp;
-// console.log(Jimp);
 
 const WEBGPU_ROOT = path.resolve(__dirname, '..');
 const THUMBNAIL_DIR = path.join(WEBGPU_ROOT, 'resources', 'images', 'thumbnails');
@@ -155,11 +148,17 @@ async function generateManifest() {
   const manifestItems = await Promise.all(imageFiles.map(async (filePath) => {
     const { width, height } = getImageSize(filePath);
     const color = await getRepresentativeColor(filePath);
+    const blurbPath = path.join(path.dirname(filePath), `${path.basename(filePath, path.extname(filePath))}.txt`);
+    let blurb = '';
+    if (fs.existsSync(blurbPath) && fs.statSync(blurbPath).isFile()) {
+      blurb = fs.readFileSync(blurbPath, 'utf8').trim();
+    }
     return {
       url: normalizeUrl(filePath),
       width,
       height,
       color,
+      blurb,
     };
   }));
 

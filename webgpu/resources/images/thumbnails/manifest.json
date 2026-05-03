@@ -3,132 +3,154 @@
     "url": "resources/images/thumbnails/fish/earlyfish.jpg",
     "width": 1740,
     "height": 1305,
-    "color": "#5A5550.FC"
+    "color": "#5A5550.FC",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/fish/naval_academy_cart.JPG",
     "width": 979,
     "height": 1305,
-    "color": "#726D70.F4"
+    "color": "#726D70.F4",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/fish/naval_academy_fish.JPG",
     "width": 979,
     "height": 1305,
-    "color": "#5B676E.E8"
+    "color": "#5B676E.E8",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/food/died_tomatoes.JPG",
     "width": 979,
     "height": 1305,
-    "color": "#94765D.14"
+    "color": "#94765D.14",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/food/hand_noodles.jpg",
     "width": 979,
     "height": 1305,
-    "color": "#99866D.38"
+    "color": "#99866D.38",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/food/shrimp_pesto.jpg",
     "width": 979,
     "height": 1305,
-    "color": "#908679.34"
+    "color": "#908679.34",
+    "blurb": "Oct 26, 2025 - Lunch\r\nHomemade pesto, Hand-grated Parmesan, Costco Shrimp."
   },
   {
     "url": "resources/images/thumbnails/outside/kenilworth.jpg",
     "width": 1740,
     "height": 1305,
-    "color": "#697665.08"
+    "color": "#697665.08",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/outside/kenilworth_bud.jpg",
     "width": 979,
     "height": 1305,
-    "color": "#61765B.68"
+    "color": "#61765B.68",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/outside/kenilworth_keychain.jpg",
     "width": 979,
     "height": 1305,
-    "color": "#888C8D.AC"
+    "color": "#888C8D.AC",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/outside/patapsco.jpg",
     "width": 1278,
     "height": 959,
-    "color": "#42443B.DC"
+    "color": "#42443B.DC",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/outside/patapsco_again.JPG",
     "width": 1740,
     "height": 1305,
-    "color": "#7A7875.14"
+    "color": "#7A7875.14",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/outside/patapsco_green.JPG",
     "width": 293,
     "height": 220,
-    "color": "#68774D.D"
+    "color": "#68774D.D",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/outside/patapsco_snow.JPG",
     "width": 1740,
     "height": 1305,
-    "color": "#69798B.08"
+    "color": "#69798B.08",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/outside/quad_biking.jpg",
     "width": 2320,
     "height": 1305,
-    "color": "#554532.C4"
+    "color": "#554532.C4",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/outside/solar_eclispe.JPG",
     "width": 1740,
     "height": 1305,
-    "color": "#848383.78"
+    "color": "#848383.78",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/outside/yellowstone_artist.JPG",
     "width": 1740,
     "height": 1305,
-    "color": "#80817D.8C"
+    "color": "#80817D.8C",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/outside/yellowstone_falls.JPG",
     "width": 979,
     "height": 1305,
-    "color": "#7E837B.F"
+    "color": "#7E837B.F",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/outside/yellowstone_steam.JPG",
     "width": 1740,
     "height": 1305,
-    "color": "#79828D.C4"
+    "color": "#79828D.C4",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/rov/capstone_fair.jpg",
     "width": 1958,
     "height": 1305,
-    "color": "#594921.58"
+    "color": "#594921.58",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/rov/rov_carrier_bare.jpg",
     "width": 979,
     "height": 1305,
-    "color": "#7C6C5D.D4"
+    "color": "#7C6C5D.D4",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/rov/rov_corpse.jpg",
     "width": 979,
     "height": 1305,
-    "color": "#8C8170.3"
+    "color": "#8C8170.3",
+    "blurb": ""
   },
   {
     "url": "resources/images/thumbnails/rov/rov_disemboweled.jpg",
     "width": 979,
     "height": 1305,
-    "color": "#9B856E.B"
+    "color": "#9B856E.B",
+    "blurb": ""
   }
 ]

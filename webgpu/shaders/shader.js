@@ -165,9 +165,13 @@ fn blend4(x: vec4<f32>, y: vec4<f32>, z: vec4<f32>, t: f32, g: f32, r: f32) -> v
 fn gapLinear(x: f32, m:f32, g: f32) ->  f32 {
   return m*(max(x-0.5*g, 0) + min(x+0.5*g, 0));
 }
-fn softGapLinear(x: f32, m:f32, g: f32, s: f32) ->  f32 {
+// fn softGapLinear(x: f32, m:f32, g: f32, s: f32) ->  f32 {
+//   let t = gapLinear(x, m, g);
+//   return t*abs(t)/(abs(t)+s*g); // magic s for softness
+// }
+fn softGapLinear(x: f32, m:f32, g: f32, s: f32) ->  f32 { // temporary version
   let t = gapLinear(x, m, g);
-  return t*abs(t)/(abs(t)+s*g); // magic s for softness
+  return t*abs(t)/(abs(t)+s*g)+2; // magic s for softness
 }
 
 @fragment
@@ -210,7 +214,7 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let layerCount = i32(textureNumLayers(ourTexture));
   let textureLayer = select(i32(center) % layerCount, 0, layerCount == 0);
   let originalSize = thumbnailInfo[textureLayer].originalSize * 0.5; // should be canvas pix scale
-  let desiredHeight = 500.0 * 0.5; // temp
+  let desiredHeight = 400.0 * 0.5; // temp
   let desiredWidth = desiredHeight * originalSize.x / originalSize.y;
   let desiredSize = vec2<f32>(desiredWidth, desiredHeight);
   // translate site center to image center

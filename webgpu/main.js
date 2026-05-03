@@ -68,6 +68,8 @@ function setupPlaneZScroll(canvas, onDeltaZ) {
 }
 
 let overlayImage = null;
+let overlayBlurb = null;
+let overlayHeader = null;
 let overlayClickHandler = null;
 let overlayState = {
   x: 0,
@@ -75,6 +77,9 @@ let overlayState = {
   scale: 1,
   anchor: 'center',
   hidden: true,
+  blurb: '',
+  headerText: '',
+  bodyText: '',
 };
 
 function updateImageOverlay() {
@@ -92,6 +97,27 @@ function updateImageOverlay() {
 
   overlayImage.style.transform = `translate(${x}px, ${y}px) scale(${overlayState.scale})`;
   overlayImage.style.display = overlayState.hidden ? 'none' : '';
+
+  const hasHeader = !overlayState.hidden && typeof overlayState.headerText === 'string' && overlayState.headerText.trim() !== '';
+  if (overlayHeader) {
+    overlayHeader.style.display = hasHeader ? '' : 'none';
+    if (hasHeader) {
+      overlayHeader.style.transform = `translate(${x}px, ${Math.max(0, y - 36)}px)`;
+      overlayHeader.textContent = overlayState.headerText;
+    }
+  }
+
+  if (overlayBlurb) {
+    const hasBody = !overlayState.hidden && typeof overlayState.bodyText === 'string' && overlayState.bodyText.trim() !== '';
+    overlayBlurb.style.display = hasBody ? '' : 'none';
+    if (hasBody) {
+      const height = overlayImage.naturalHeight || overlayImage.height || 0;
+      const offsetX = 20;
+      const offsetY = (height > 0 ? height * overlayState.scale + 20 : 20);
+      overlayBlurb.style.transform = `translate(${x + offsetX}px, ${y + offsetY}px)`;
+      overlayBlurb.textContent = overlayState.bodyText;
+    }
+  }
 }
 
 function hideImageOverlay() {
@@ -128,27 +154,80 @@ function createImageOverlay(initialImageUrl = '') {
     }
   });
   document.body.appendChild(overlayImage);
+
+  overlayHeader = document.createElement('div');
+  overlayHeader.id = 'gpu-image-overlay-header';
+  overlayHeader.style.position = 'absolute';
+  overlayHeader.style.top = '0';
+  overlayHeader.style.left = '0';
+  overlayHeader.style.pointerEvents = 'none';
+  overlayHeader.style.display = 'none';
+  overlayHeader.style.background = 'rgba(16, 24, 52, 0.90)';
+  overlayHeader.style.color = '#e8eefc';
+  overlayHeader.style.padding = '8px 12px';
+  overlayHeader.style.borderRadius = '16px';
+  overlayHeader.style.boxShadow = '0 14px 32px rgba(0, 0, 0, 0.30)';
+  overlayHeader.style.whiteSpace = 'nowrap';
+  overlayHeader.style.overflow = 'hidden';
+  overlayHeader.style.textOverflow = 'ellipsis';
+  overlayHeader.style.fontWeight = '600';
+  overlayHeader.style.fontSize = '0.92rem';
+  overlayHeader.style.fontFamily = 'system-ui, sans-serif';
+  overlayHeader.style.zIndex = '3';
+  document.body.appendChild(overlayHeader);
+
+  overlayBlurb = document.createElement('div');
+  overlayBlurb.id = 'gpu-image-overlay-blurb';
+  overlayBlurb.style.position = 'absolute';
+  overlayBlurb.style.top = '0';
+  overlayBlurb.style.left = '0';
+  overlayBlurb.style.pointerEvents = 'none';
+  overlayBlurb.style.display = 'none';
+  overlayBlurb.style.maxWidth = '360px';
+  overlayBlurb.style.background = 'rgba(12, 18, 34, 0.92)';
+  overlayBlurb.style.color = '#f8f8ff';
+  overlayBlurb.style.padding = '14px 16px';
+  overlayBlurb.style.borderRadius = '18px';
+  overlayBlurb.style.boxShadow = '0 18px 40px rgba(0, 0, 0, 0.35)';
+  overlayBlurb.style.whiteSpace = 'pre-wrap';
+  overlayBlurb.style.lineHeight = '1.4';
+  overlayBlurb.style.fontSize = '0.95rem';
+  overlayBlurb.style.fontFamily = 'system-ui, sans-serif';
+  overlayBlurb.style.zIndex = '2';
+  document.body.appendChild(overlayBlurb);
+
   updateImageOverlay();
 }
 
-function setGpuOverlay({ url, x = 0, y = 0, scale = 1 } = {}) {
-    if (url) {
+function setGpuOverlay({ url, x = 0, y = 0, scale = 1, blurb = '' } = {}) {
+  if (url) {
     if (!overlayImage) {
       createImageOverlay(url);
     } else {
       overlayImage.src = url;
     }
   }
+
+  const filename = url ? url.replace(/^.*[\/]/, '').replace(/\.[^/.]+$/, '') : '';
+  const rawBlurb = typeof blurb === 'string' ? blurb : '';
+  const lines = rawBlurb.split(/\r?\n/);
+  const dateLine = lines.length > 0 && lines[0].trim() !== '' ? lines[0].trim() : filename;
+  const bodyText = lines.slice(1).join('\n').trim();
+  const headerText = filename ? `${dateLine} · ${filename}` : dateLine;
+
   overlayState.anchor = 'center';
   overlayState.x = x;
   overlayState.y = y;
   overlayState.scale = scale;
+  overlayState.blurb = rawBlurb;
+  overlayState.headerText = headerText;
+  overlayState.bodyText = bodyText;
   overlayState.hidden = false;
   updateImageOverlay();
 }
 
 function setGpuOverlayImage(url) {
-  setGpuOverlay({ url, x: overlayState.x, y: overlayState.y, scale: overlayState.scale });
+  setGpuOverlay({ url, x: overlayState.x, y: overlayState.y, scale: overlayState.scale, blurb: overlayState.blurb });
 }
 
 function setGpuOverlayTransform(x, y, scale = 1) {
@@ -185,6 +264,10 @@ window.setGpuOverlayTransform = setGpuOverlayTransform;
 window.setGpuOverlayCenter = setGpuOverlayCenter;
 window.setGpuOverlayClickHandler = (handler) => {
   overlayClickHandler = typeof handler === 'function' ? handler : null;
+};
+window.setGpuOverlayBlurb = (blurb) => {
+  overlayState.blurb = typeof blurb === 'string' ? blurb : '';
+  updateImageOverlay();
 };
 window.setGpuOverlayClickHandler(() => {
     activeSiteId = -1;
@@ -623,7 +706,7 @@ async function main() {
                 site.calcSites(sites, i, hoveredSiteId, activeSiteId);
                 site.calcBounds(bounds);
                 if (i == activeSiteId){
-                    site.calcGoto(canvas.width/2, canvas.height/2)
+                    site.calcGoto(canvas.width/2, canvas.height/2 - 40) // TODO: PROPER SPACING
                 }
             }
             for (const site of sites) {
@@ -646,7 +729,7 @@ async function main() {
             hoveredSiteId >= 0 && hoveredSiteId < DEFAULT_MAX_SITES
         ){
             let dz = (planeZ - sites[hoveredSiteId].pos.z)/sites[hoveredSiteId].massShown;
-            inFocus |= sites[hoveredSiteId].inFocus(dz, 5.0, 20.0, 20.0);
+            inFocus |= sites[hoveredSiteId].inFocus(dz, 5.0, 40.0, 20.0);
             inFocus &= activeSiteId != hoveredSiteId;
             canvas.style.cursor = inFocus ? 'pointer' : 'default';
             canvas.style.transform = 'translateZ(0)';
@@ -677,7 +760,7 @@ async function main() {
             // scale such that everythign is 500 pixels
             let screenX = site.pos.x/ID_TEXTURE_SCALE;
             let screenY = site.pos.y/ID_TEXTURE_SCALE;
-            setGpuOverlay({ url, x:screenX, y:screenY, scale:500/pic.height});
+            setGpuOverlay({ url, x: screenX, y: screenY, scale: 400 / pic.height, blurb: pic.blurb });
             // setGpuOverlay({ url, x:screenX/2, y:screenY/2, scale:1.25});
 
         }
