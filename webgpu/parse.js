@@ -48,15 +48,17 @@ function getArtifactsManifest(manifest) {
 }
 
 function getTagsManifest(manifest){
-  const results = [];
-  let tags = manifest["tags"];
-  for (const tag of tags){
-    results.push({
-      url: tag.url,
-      blurb: tag.blurb,
-    });
-  }
-  return results;
+  // const results = {};
+  // let tags = manifest["tags"];
+  // for (const tag of tags){
+  //   // results.push({
+  //   //   name: tag.name,
+  //   //   blurb: tag.blurb,
+  //   // });
+  //   results[tag.name] = tag.blurb;
+  // }
+  // return results;
+  return manifest["tags"];
 }
 
 async function fetchThumbnailManifest(url = THUMBNAIL_MANIFEST_URL) {
@@ -66,7 +68,19 @@ async function fetchThumbnailManifest(url = THUMBNAIL_MANIFEST_URL) {
   //     throw new Error(`Failed to fetch thumbnail manifest: ${response.status} ${response.statusText}`);
   //   }
     const manifest = await response.json();
-    return [getArtifactsManifest(manifest), getTagsManifest(manifest)];
+    const tags = getTagsManifest(manifest);
+    const artifacts = getArtifactsManifest(manifest);
+    for(let artifact of artifacts){
+      for(let i = 0; i<artifact.tags.length; i++){
+        let tag = artifact.tags[i];
+        if (!tags[tag]){
+          console.log(`tag \'${tag}\' not recognized!`);
+          artifact.tags.splice(i,1);
+          i--;
+        }
+      }
+    }
+    return [artifacts, tags];
   // } catch (error) {
   //   console.warn('Could not load thumbnail manifest, using fallback list.', error);
   //   return flattenThumbnailManifest(FALLBACK_THUMBNAIL_PATHS);

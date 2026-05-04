@@ -77,6 +77,8 @@ function setupPlaneZScroll(canvas, onDeltaZ) {
 let overlayImage = null;
 let overlayBlurb = null;
 let overlayHeader = null;
+let overlayTagBox = null
+let overlayTags = [];
 let overlayClickHandler = null;
 let overlayState = {
   x: 0,
@@ -139,6 +141,21 @@ function updateImageOverlay() {
     overlayState.blurbX = x + offsetX;
     // overlayBlurb.style.transform = `translate(${x + offsetX}px, ${hasBody ? visibleY : hiddenY}px)`;
   }
+  if (overlayTagBox) {
+    const hasBody = !overlayState.hidden;
+    // overlayAnimations["blurb-opacity"].setGoal(hasBody ? 1 : 0)
+    overlayTagBox.style.opacity = overlayBlurb.style.opacity;
+    // overlayTagBox.textContent = overlayState.bodyText;
+    const width = overlayImage.naturalWidth || overlayImage.width || 0;
+    const x = overlayState.blurbX + width;
+    const y = overlayState.blurbY;
+    // const height = overlayImage.naturalHeight || overlayImage.height || 0;
+    // const visibleY = y + (height > 0 ? height * overlayState.scale + 20 : 20);
+    // const hiddenY = y + height * overlayState.scale - 80;
+    // overlayAnimations["blurb-y"].setGoal(hasBody ? visibleY : hiddenY)
+    // overlayState.tagBoxX = x;
+    overlayTagBox.style.transform = `translate(${x}px, ${y}px)`;
+  }
 }
 
 
@@ -155,125 +172,205 @@ function hideImageOverlay() {
   overlayState.hidden = true;
   updateImageOverlay();
   perturbPointer();
+  for(let tagElement of overlayTags){
+    tagElement.remove();
+  }
+  overlayTags = [];
 }
 
+
+function createTagElement(tag){
+    let tagElement = document.createElement('div');
+    // tagElement.id = 'gpu-image-overlay-header';
+    tagElement.textContent = tag.url;
+    // tagElement.style.position = 'absolute';
+    // tagElement.style.top = '0';
+    // tagElement.style.left = '0';
+    tagElement.style.pointerEvents = 'none';
+    tagElement.style.display = '';
+    // tagElement.style.opacity = '0';
+    tagElement.style.background = 'rgba(16, 24, 52, 0.90)';
+    tagElement.style.color = '#e8eefc';
+    tagElement.style.padding = '8px 12px';
+    tagElement.style.borderRadius = '16px';
+    tagElement.style.boxShadow = '0 14px 32px rgba(0, 0, 0, 0.30)';
+    tagElement.style.whiteSpace = 'nowrap';
+    tagElement.style.overflow = 'hidden';
+    tagElement.style.textOverflow = 'ellipsis';
+    tagElement.style.fontWeight = '600';
+    tagElement.style.fontSize = '0.92rem';
+    tagElement.style.fontFamily = 'system-ui, sans-serif';
+    tagElement.style.zIndex = '5';
+    overlayTags.push(tagElement)
+    overlayTagBox.appendChild(tagElement);
+}
+
+
+function setTagElement(tagElement, tagName, tagBlurb){
+    // tagElement.textContent = tag.url;
+    // tagElement.style.position = 'absolute';
+    // tagElement.style.top = '0';
+    // tagElement.style.left = '0';
+    tagElement.textContent = tagName;
+    tagElement.style.pointerEvents = 'none';
+    // tagElement.style.display = '';
+    // tagElement.style.opacity = '0';
+    tagElement.style.background = 'rgba(46, 48, 53, 0.9)';
+    tagElement.style.color = '#e8eefc';
+    // tagElement.style.padding = '8px 12px';
+    // tagElement.style.borderRadius = '16px';
+    // tagElement.style.boxShadow = '0 14px 32px rgba(0, 0, 0, 0.30)';
+    // tagElement.style.whiteSpace = 'nowrap';
+    // tagElement.style.overflow = 'hidden';
+    // tagElement.style.textOverflow = 'ellipsis';
+    // tagElement.style.fontWeight = '600';
+    // tagElement.style.fontSize = '0.92rem';
+    // tagElement.style.fontFamily = 'system-ui, sans-serif';
+    // tagElement.style.zIndex = '6';
+}
+
+
 function createImageOverlay(initialImageUrl = '') {
-  if (overlayImage) return;
-  overlayImage = document.createElement('img');
-  overlayImage.id = 'gpu-image-overlay';
-  overlayImage.src = initialImageUrl;
-  overlayImage.alt = 'Selected thumbnail overlay';
-  overlayImage.style.position = 'absolute';
-  overlayImage.style.top = '0';
-  overlayImage.style.left = '0';
-  overlayImage.style.transformOrigin = 'top left';
-  overlayImage.style.pointerEvents = 'auto';
-  overlayImage.style.cursor = 'pointer';
-  overlayImage.style.zIndex = '4';
-  overlayImage.pointerEvents = '';
-  overlayImage.style.opacity = '0';
-//   overlayImage.style.transition = 'opacity 280ms ease';
-  overlayImage.style.maxWidth = 'none';
-  overlayImage.style.maxHeight = 'none';
-  overlayImage.style.display = '';
-//   overlayImage.style.willChange = 'opacity';
-  overlayImage.addEventListener('click', (event) => {
-    event.stopPropagation();
-    if (typeof overlayClickHandler === 'function') {
-      overlayClickHandler(event);
+    if (overlayImage) return;
+    overlayImage = document.createElement('img');
+    overlayImage.id = 'gpu-image-overlay';
+    overlayImage.src = initialImageUrl;
+    overlayImage.alt = 'Selected thumbnail overlay';
+    overlayImage.style.position = 'absolute';
+    overlayImage.style.top = '0';
+    overlayImage.style.left = '0';
+    overlayImage.style.transformOrigin = 'top left';
+    overlayImage.style.pointerEvents = 'auto';
+    overlayImage.style.cursor = 'pointer';
+    overlayImage.style.zIndex = '4';
+    overlayImage.pointerEvents = '';
+    overlayImage.style.opacity = '0';
+    //   overlayImage.style.transition = 'opacity 280ms ease';
+    overlayImage.style.maxWidth = 'none';
+    overlayImage.style.maxHeight = 'none';
+    overlayImage.style.display = '';
+    //   overlayImage.style.willChange = 'opacity';
+    overlayImage.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (typeof overlayClickHandler === 'function') {
+            overlayClickHandler(event);
+        }
+    });
+    overlayImage.addEventListener('load', () => {
+        if (overlayState.anchor === 'center') {
+            updateImageOverlay();
+        }
+    });
+    document.body.appendChild(overlayImage);
+
+    overlayHeader = document.createElement('div');
+    overlayHeader.id = 'gpu-image-overlay-header';
+    overlayHeader.style.position = 'absolute';
+    overlayHeader.style.top = '0';
+    overlayHeader.style.left = '0';
+    overlayHeader.style.pointerEvents = 'none';
+    overlayHeader.style.display = '';
+    overlayHeader.style.opacity = '0';
+    //   overlayHeader.style.transition = 'transform 280ms ease, opacity 280ms ease';
+    overlayHeader.style.background = 'rgba(16, 24, 52, 0.90)';
+    overlayHeader.style.color = '#e8eefc';
+    overlayHeader.style.padding = '8px 12px';
+    overlayHeader.style.borderRadius = '16px';
+    overlayHeader.style.boxShadow = '0 14px 32px rgba(0, 0, 0, 0.30)';
+    overlayHeader.style.whiteSpace = 'nowrap';
+    overlayHeader.style.overflow = 'hidden';
+    overlayHeader.style.textOverflow = 'ellipsis';
+    overlayHeader.style.fontWeight = '600';
+    overlayHeader.style.fontSize = '0.92rem';
+    overlayHeader.style.fontFamily = 'system-ui, sans-serif';
+    overlayHeader.style.zIndex = '3';
+    //   overlayHeader.style.willChange = 'transform, opacity';
+    document.body.appendChild(overlayHeader);
+
+    overlayBlurb = document.createElement('div');
+    overlayBlurb.id = 'gpu-image-overlay-blurb';
+    overlayBlurb.style.position = 'absolute';
+    overlayBlurb.style.top = '0';
+    overlayBlurb.style.left = '0';
+    overlayBlurb.style.pointerEvents = 'none';
+    overlayBlurb.style.display = '';
+    overlayBlurb.style.opacity = '0';
+    //   overlayBlurb.style.transition = 'transform 280ms ease, opacity 280ms ease';
+    overlayBlurb.style.maxWidth = '360px';
+    overlayBlurb.style.background = 'rgba(12, 18, 34, 0.92)';
+    overlayBlurb.style.color = '#f8f8ff';
+    overlayBlurb.style.padding = '14px 16px';
+    overlayBlurb.style.borderRadius = '18px';
+    overlayBlurb.style.boxShadow = '0 18px 40px rgba(0, 0, 0, 0.35)';
+    overlayBlurb.style.whiteSpace = 'pre-wrap';
+    overlayBlurb.style.lineHeight = '1.4';
+    overlayBlurb.style.fontSize = '0.95rem';
+    overlayBlurb.style.fontFamily = 'system-ui, sans-serif';
+    overlayBlurb.style.zIndex = '2';
+    //   overlayBlurb.style.willChange = 'transform, opacity';
+    document.body.appendChild(overlayBlurb);
+
+    overlayTagBox = document.createElement('div');
+    overlayTagBox.textContent = "Tags:";
+    overlayTagBox.id = 'gpu-image-overlay-tag-box';
+    overlayTagBox.style.position = 'absolute';
+    overlayTagBox.style.top = '0';
+    overlayTagBox.style.left = '0';
+    overlayTagBox.style.pointerEvents = 'none';
+    overlayTagBox.style.display = '';
+    overlayTagBox.style.opacity = '0';
+    //   overlayBlurb.style.transition = 'transform 280ms ease, opacity 280ms ease';
+    overlayTagBox.style.maxWidth = '360px';
+    overlayTagBox.style.background = 'rgba(12, 18, 34, 0.2)';
+    overlayTagBox.style.color = 'rgba(12, 18, 34, 1.0)';
+    overlayTagBox.style.padding = '14px 16px';
+    overlayTagBox.style.borderRadius = '18px';
+    overlayTagBox.style.boxShadow = '0 18px 40px rgba(0, 0, 0, 0.35)';
+    overlayTagBox.style.whiteSpace = 'pre-wrap';
+    overlayTagBox.style.lineHeight = '1.4';
+    overlayTagBox.style.fontSize = '0.95rem';
+    overlayTagBox.style.fontFamily = 'system-ui, sans-serif';
+    overlayTagBox.style.zIndex = '2';
+    //   overlayBlurb.style.willChange = 'transform, opacity';
+    document.body.appendChild(overlayTagBox);
+
+    const opacityRate = 5.0;
+    overlayAnimations = {
+        "image-opacity" : new Animation(
+            () => {return parseFloat(getComputedStyle(overlayImage).getPropertyValue('opacity'))},
+            (x) => {overlayImage.style.opacity = x},
+            opacityRate
+        ),
+
+        "header-opacity" : new Animation(
+            () => {return parseFloat(getComputedStyle(overlayHeader).getPropertyValue('opacity'))},
+            (x) => {overlayHeader.style.opacity = x},
+            opacityRate
+        ),
+        
+        "blurb-opacity" : new Animation(
+            () => {return parseFloat(getComputedStyle(overlayBlurb).getPropertyValue('opacity'))},
+            (x) => {overlayBlurb.style.opacity = x; overlayTagBox.style.opacity = x},
+            opacityRate
+        ),
+
+        "header-y" : new Animation(
+            () => {return overlayState.headerY},
+            (x) => {overlayState.headerY = x},
+            opacityRate
+        ),
+
+        "blurb-y" : new Animation(
+            () => {return overlayState.blurbY},
+            (x) => {overlayState.blurbY = x},
+            opacityRate
+        ),
     }
-  });
-  overlayImage.addEventListener('load', () => {
-    if (overlayState.anchor === 'center') {
-      updateImageOverlay();
-    }
-  });
-  document.body.appendChild(overlayImage);
-
-  overlayHeader = document.createElement('div');
-  overlayHeader.id = 'gpu-image-overlay-header';
-  overlayHeader.style.position = 'absolute';
-  overlayHeader.style.top = '0';
-  overlayHeader.style.left = '0';
-  overlayHeader.style.pointerEvents = 'none';
-  overlayHeader.style.display = '';
-  overlayHeader.style.opacity = '0';
-//   overlayHeader.style.transition = 'transform 280ms ease, opacity 280ms ease';
-  overlayHeader.style.background = 'rgba(16, 24, 52, 0.90)';
-  overlayHeader.style.color = '#e8eefc';
-  overlayHeader.style.padding = '8px 12px';
-  overlayHeader.style.borderRadius = '16px';
-  overlayHeader.style.boxShadow = '0 14px 32px rgba(0, 0, 0, 0.30)';
-  overlayHeader.style.whiteSpace = 'nowrap';
-  overlayHeader.style.overflow = 'hidden';
-  overlayHeader.style.textOverflow = 'ellipsis';
-  overlayHeader.style.fontWeight = '600';
-  overlayHeader.style.fontSize = '0.92rem';
-  overlayHeader.style.fontFamily = 'system-ui, sans-serif';
-  overlayHeader.style.zIndex = '3';
-//   overlayHeader.style.willChange = 'transform, opacity';
-  document.body.appendChild(overlayHeader);
-
-  overlayBlurb = document.createElement('div');
-  overlayBlurb.id = 'gpu-image-overlay-blurb';
-  overlayBlurb.style.position = 'absolute';
-  overlayBlurb.style.top = '0';
-  overlayBlurb.style.left = '0';
-  overlayBlurb.style.pointerEvents = 'none';
-  overlayBlurb.style.display = '';
-  overlayBlurb.style.opacity = '0';
-//   overlayBlurb.style.transition = 'transform 280ms ease, opacity 280ms ease';
-  overlayBlurb.style.maxWidth = '360px';
-  overlayBlurb.style.background = 'rgba(12, 18, 34, 0.92)';
-  overlayBlurb.style.color = '#f8f8ff';
-  overlayBlurb.style.padding = '14px 16px';
-  overlayBlurb.style.borderRadius = '18px';
-  overlayBlurb.style.boxShadow = '0 18px 40px rgba(0, 0, 0, 0.35)';
-  overlayBlurb.style.whiteSpace = 'pre-wrap';
-  overlayBlurb.style.lineHeight = '1.4';
-  overlayBlurb.style.fontSize = '0.95rem';
-  overlayBlurb.style.fontFamily = 'system-ui, sans-serif';
-  overlayBlurb.style.zIndex = '2';
-//   overlayBlurb.style.willChange = 'transform, opacity';
-  document.body.appendChild(overlayBlurb);
-
-  const opacityRate = 5.0;
-  overlayAnimations = {
-    "image-opacity" : new Animation(
-        () => {return parseFloat(getComputedStyle(overlayImage).getPropertyValue('opacity'))},
-        (x) => {overlayImage.style.opacity = x},
-        opacityRate
-    ),
-
-    "header-opacity" : new Animation(
-        () => {return parseFloat(getComputedStyle(overlayHeader).getPropertyValue('opacity'))},
-        (x) => {overlayHeader.style.opacity = x},
-        opacityRate
-    ),
-    
-    "blurb-opacity" : new Animation(
-        () => {return parseFloat(getComputedStyle(overlayBlurb).getPropertyValue('opacity'))},
-        (x) => {overlayBlurb.style.opacity = x},
-        opacityRate
-    ),
-
-    "header-y" : new Animation(
-        () => {return overlayState.headerY},
-        (x) => {overlayState.headerY = x},
-        opacityRate
-    ),
-
-    "blurb-y" : new Animation(
-        () => {return overlayState.blurbY},
-        (x) => {overlayState.blurbY = x},
-        opacityRate
-    ),
-  }
 
   updateImageOverlay();
 }
 
-function setGpuOverlay({ meta, x = 0, y = 0, scale = 1 } = {}) {
+function setGpuOverlay({ meta, x = 0, y = 0, scale = 1 } = {}, tagsDict) {
     // console.log(meta)
     const url = meta.url;
     if (url) {
@@ -282,6 +379,18 @@ function setGpuOverlay({ meta, x = 0, y = 0, scale = 1 } = {}) {
         } else {
         overlayImage.src = url;
         }
+    }
+
+    while (meta.tags.length > overlayTags.length){
+        createTagElement(meta.tags[0])
+    }
+    while (meta.tags.length < overlayTags.length){
+        overlayTags.splice(0, 1)[0].remove()
+    }
+    for(let i = 0; i < meta.tags.length; i++){
+        let tagName = meta.tags[i];
+        let tagBlurb = tagsDict[tagName];
+        setTagElement(overlayTags[i], tagName, tagBlurb);
     }
 
     overlayState.anchor = 'center';
@@ -674,7 +783,7 @@ async function main() {
       addressModeV: 'clamp-to-edge',
     });
 
-    const [thumbnailMetadata, tags] = await retrieveThumbnailMetadata();
+    const [thumbnailMetadata, tagsDict] = await retrieveThumbnailMetadata();
     const thumbnailUrls = thumbnailMetadata.map((entry) => entry.url);
     // createImageOverlay(thumbnailUrls[0]);
     const entries = thumbnailMetadata.slice(0, 64);
@@ -788,7 +897,8 @@ async function main() {
         }
         if (overlayHeader){
             overlayHeader.style.transform = `translate(${overlayState.headerX}px, ${overlayState.headerY}px)`;
-            overlayBlurb.style.transform = `translate(${overlayState.blurbX}px, ${overlayState.blurbY}px)`;        }
+            overlayBlurb.style.transform = `translate(${overlayState.blurbX}px, ${overlayState.blurbY}px)`;
+        }
 
         planeZ += planeZVelocity;
         planeZ = clamp(planeZ, PLANE_Z_MIN, PLANE_Z_MAX);
@@ -831,7 +941,7 @@ async function main() {
             // scale such that everythign is 500 pixels
             let screenX = site.pos.x/ID_TEXTURE_SCALE;
             let screenY = site.pos.y/ID_TEXTURE_SCALE;
-            setGpuOverlay({ meta:pic, x: screenX, y: screenY, scale: 400 / pic.height });
+            setGpuOverlay({ meta:pic, x: screenX, y: screenY, scale: 400 / pic.height }, tagsDict);
 
         }
 

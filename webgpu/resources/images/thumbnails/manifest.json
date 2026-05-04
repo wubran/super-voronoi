@@ -263,34 +263,13 @@
       "bodyText": "\"Sun-dried\" tomatoes.\nBaked with olive oil over thyme and rosemary from the garden."
     }
   ],
-  "tags": [
-    {
-      "url": "resources/images/thumbnails/tags/DIY.txt",
-      "blurb": "I do DIY because..."
-    },
-    {
-      "url": "resources/images/thumbnails/tags/FISHING.txt",
-      "blurb": "I go fishing with my family."
-    },
-    {
-      "url": "resources/images/thumbnails/tags/NATURE.txt",
-      "blurb": "I enjoy existing in nature."
-    },
-    {
-      "url": "resources/images/thumbnails/tags/PERSONAL STATEMENT.txt",
-      "blurb": "Personal Statement Here"
-    },
-    {
-      "url": "resources/images/thumbnails/tags/RESUME.txt",
-      "blurb": "This project is/was on my resume!"
-    },
-    {
-      "url": "resources/images/thumbnails/tags/ROBOTICS.txt",
-      "blurb": "I do Robotics for fun."
-    },
-    {
-      "url": "resources/images/thumbnails/tags/TUTORIAL.txt",
-      "blurb": "1. Scroll wheel to travel through time.\r\n2. Left click to select an artifact that is 'in focus.'\r\n4. Left click again to minimize an artifact's card."
-    }
-  ]
+  "tags": {
+    "DIY": "I do DIY because...",
+    "FISHING": "I go fishing with my family.",
+    "NATURE": "I enjoy existing in nature.",
+    "PERSONAL STATEMENT": "Personal Statement Here",
+    "RESUME": "This project is/was on my resume!",
+    "ROBOTICS": "I do Robotics for fun.",
+    "TUTORIAL": "1. Scroll wheel to travel through time.\r\n2. Left click to select an artifact that is 'in focus.'\r\n4. Left click again to minimize an artifact's card."
+  }
 }

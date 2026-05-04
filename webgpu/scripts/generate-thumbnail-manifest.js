@@ -199,13 +199,17 @@ async function generateManifest() {
     };
     return parse(b.blurb) - parse(a.blurb);
   });
+  const tagDict = {};
   const tagItems = await Promise.all(tagFiles.map(async (filePath) => {
     let blurb = '';
     if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
       blurb = fs.readFileSync(filePath, 'utf8').trim();
     }
+    const tagName = filePath ? filePath.replace(/^.*[\\/]/, '').replace(/\.[^/.]+$/, '') : '';
+    tagDict[tagName] = blurb;
     return {
-      url: normalizeUrl(filePath),
+      
+      name: tagName,
       blurb,
     }
   }));
@@ -218,7 +222,7 @@ async function generateManifest() {
   //   };
   //   console.log(parse(item.blurb), item.url)
   // }
-  let output = {"artifacts": manifestItems, "tags":tagItems}
+  let output = {"artifacts": manifestItems, "tags":tagDict}
   fs.writeFileSync(MANIFEST_PATH, JSON.stringify(output, null, 2) + '\n');
   console.log(`Generated ${manifestItems.length} thumbnail entries in ${MANIFEST_PATH}`);
 }
