@@ -3,7 +3,7 @@ import voronoi from "./shaders/shader.js"
 // see https://webgpufundamentals.org/webgpu/lessons/webgpu-utils.html#wgpu-matrix
 import { mat4 } from '../vendor/wgpu-matrix.module.js';
 
-const DEFAULT_MAX_SITES = 22;  // TODO: THIS IS THE NUMBER OF SITE THUMBNAILS
+const DEFAULT_MAX_SITES = 24;  // TODO: THIS IS THE NUMBER OF SITE THUMBNAILS
 const MAX_SITES_DISPLAYED = 16;
 const FLOATS_PER_VERTEX = 8;
 const VERTEX_BUFFER_STRIDE = FLOATS_PER_VERTEX * 4;
@@ -737,23 +737,23 @@ async function main() {
     };
     const maxSites = DEFAULT_MAX_SITES;
     const sites = [];
-    const cols = Math.ceil(Math.sqrt(maxSites));
-    const rows = Math.ceil(maxSites / cols);
-    const cellWidth = (canvas.width-2*bounds.margin) / cols;
-    const cellHeight = (canvas.height-2*bounds.margin) / rows;
+    // const cols = Math.ceil(Math.sqrt(maxSites));
+    // const rows = Math.ceil(maxSites / cols);
+    // const cellWidth = (canvas.width-2*bounds.margin) / cols;
+    // const cellHeight = (canvas.height-2*bounds.margin) / rows;
     const jitterFac = 0.6;
 
     for (let i = 0; i < maxSites; i++) {
-        const col = i % cols;
-        const row = Math.floor(i / cols);
-        const jitterX = (0.2 + Math.random() * jitterFac) * cellWidth;
-        const jitterY = (0.2 + Math.random() * jitterFac) * cellHeight;
+        // const col = i % cols;
+        // const row = Math.floor(i / cols);
+        // const jitterX = (0.2 + Math.random() * jitterFac) * cellWidth;
+        // const jitterY = (0.2 + Math.random() * jitterFac) * cellHeight;
         const site = new Site3D([
-            bounds.margin + col * cellWidth + jitterX,
-            bounds.margin + row * cellHeight + jitterY,
+            bounds.margin +  Math.random() * (canvas.width-2*bounds.margin),
+            bounds.margin +  Math.random() * (canvas.height-2*bounds.margin),
             // bounds.margin + PLANE_Z_MIN + Math.random() * (PLANE_Z_MAX - PLANE_Z_MIN - 2*bounds.margin),
-            bounds.margin + PLANE_Z_MAX - (i/maxSites) * (PLANE_Z_MAX - PLANE_Z_MIN - 2*bounds.margin),
-        ], [0,0,0], [0,0,0], Math.random()+1);
+            PLANE_Z_MAX - (i/maxSites) * (PLANE_Z_MAX - PLANE_Z_MIN),
+        ], [0,0,0], [0,0,0], 1.5);//Math.random()+1);
         sites.push(site);
     }
 

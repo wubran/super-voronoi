@@ -1,17 +1,17 @@
 [
   {
+    "url": "resources/images/thumbnails/special/tutorial.png",
+    "width": 401,
+    "height": 252,
+    "color": "#F7F7F7.08",
+    "blurb": "05/04/9999\r\nThis is the tutorial."
+  },
+  {
     "url": "resources/images/thumbnails/outside/patapsco.jpg",
     "width": 1278,
     "height": 959,
     "color": "#42443B.DC",
     "blurb": "09/13/2026\r\nThe Patapsco River in the fall.\r\nBy my favorite trail."
-  },
-  {
-    "url": "resources/images/thumbnails/rov/rov_corpse.jpg",
-    "width": 979,
-    "height": 1305,
-    "color": "#8C8170.3",
-    "blurb": "05/11/2026\r\nBoth Halves of the ROV Electronics, almost completed.\r\nOn the left: a Luckfox Pico Plus with ethernet leading outside. Two wires from the ethernet are fed into a 5V regulator.\r\nOn the right: the almost-complete power train of the ROV. 5 ESC's, 5 BLDC motors, two control-mosfets, and a PWM light controller.\r\nBoth sides feature an intensely powerful epoxy-encased LED.\r\nThe two halves interface with a sketchy homebrew plug."
   },
   {
     "url": "resources/images/thumbnails/food/shrimp_pesto.jpg",
@@ -40,6 +40,13 @@
     "height": 1305,
     "color": "#594921.58",
     "blurb": "5/16/2025\r\nPresentation of my ROV at the Design, Cultures, and Creativity (DCC) Capstone Fair.\r\nThe Boat sits aloft my contraband storage box.\r\nThe ROV sits below atop a piece of contraband (3D-Printing Filament).\r\nThe ROV's camera feed is displayed on the monitor to my side."
+  },
+  {
+    "url": "resources/images/thumbnails/rov/rov_corpse.jpg",
+    "width": 979,
+    "height": 1305,
+    "color": "#8C8170.3",
+    "blurb": "05/11/2025\r\nBoth Halves of the ROV Electronics, almost completed.\r\nOn the left: a Luckfox Pico Plus with ethernet leading outside. Two wires from the ethernet are fed into a 5V regulator.\r\nOn the right: the almost-complete power train of the ROV. 5 ESC's, 5 BLDC motors, two control-mosfets, and a PWM light controller.\r\nBoth sides feature an intensely powerful epoxy-encased LED.\r\nThe two halves interface with a sketchy homebrew plug."
   },
   {
     "url": "resources/images/thumbnails/rov/rov_carrier_bare.jpg",
