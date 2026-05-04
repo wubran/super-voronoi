@@ -1,0 +1,3 @@
+Each "cell" on this page is called an "Artifact."
+Each artifact contains an image, a date, a short blurb, and some tags.
+Tags reveal additional information that may be shared across multiple artifacts.

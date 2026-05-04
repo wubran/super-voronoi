@@ -93,6 +93,7 @@ let overlayState = {
   headerY: 0,
   blurbX: 0,
   blurbY: 0,
+  selectedTag: -1,
 };
 let overlayAnimations = {};
 
@@ -147,8 +148,9 @@ function updateImageOverlay() {
     overlayTagBox.style.opacity = overlayBlurb.style.opacity;
     // overlayTagBox.textContent = overlayState.bodyText;
     const width = overlayImage.naturalWidth || overlayImage.width || 0;
-    const x = overlayState.blurbX + width;
-    const y = overlayState.blurbY;
+    const height = overlayImage.naturalHeight || overlayImage.height || 0;
+    const x = overlayState.blurbX + width*overlayState.scale;
+    const y = overlayState.blurbY - height*overlayState.scale/2;
     // const height = overlayImage.naturalHeight || overlayImage.height || 0;
     // const visibleY = y + (height > 0 ? height * overlayState.scale + 20 : 20);
     // const hiddenY = y + height * overlayState.scale - 80;
@@ -175,6 +177,7 @@ function hideImageOverlay() {
   for(let tagElement of overlayTags){
     tagElement.remove();
   }
+  overlayState.selectedTag = -1;
   overlayTags = [];
 }
 
@@ -186,21 +189,24 @@ function createTagElement(tag){
     // tagElement.style.position = 'absolute';
     // tagElement.style.top = '0';
     // tagElement.style.left = '0';
-    tagElement.style.pointerEvents = 'none';
+    tagElement.style.pointerEvents = 'auto';
     tagElement.style.display = '';
+    tagElement.classList.add("tag")
     // tagElement.style.opacity = '0';
     tagElement.style.background = 'rgba(16, 24, 52, 0.90)';
     tagElement.style.color = '#e8eefc';
     tagElement.style.padding = '8px 12px';
     tagElement.style.borderRadius = '16px';
     tagElement.style.boxShadow = '0 14px 32px rgba(0, 0, 0, 0.30)';
-    tagElement.style.whiteSpace = 'nowrap';
+    // tagElement.style.whiteSpace = 'nowrap';
     tagElement.style.overflow = 'hidden';
-    tagElement.style.textOverflow = 'ellipsis';
-    tagElement.style.fontWeight = '600';
+    // tagElement.style.textOverflow = 'ellipsis';
+    tagElement.style.fontWeight = '200';
     tagElement.style.fontSize = '0.92rem';
     tagElement.style.fontFamily = 'system-ui, sans-serif';
     tagElement.style.zIndex = '5';
+    tagElement.style.width = 'fit-content';
+    tagElement.style.maxWidth = '200px'; // ideally, just use side or bottom depending on aspect of image
     overlayTags.push(tagElement)
     overlayTagBox.appendChild(tagElement);
 }
@@ -211,13 +217,24 @@ function setTagElement(tagElement, tagName, tagBlurb){
     // tagElement.style.position = 'absolute';
     // tagElement.style.top = '0';
     // tagElement.style.left = '0';
-    tagElement.textContent = tagName;
-    tagElement.style.pointerEvents = 'none';
+    if (tagName == overlayState.selectedTag){
+        tagElement.textContent = `${tagName}:\n${tagBlurb}`;
+    } else{
+        tagElement.textContent = tagName;
+    }
+    tagElement.style.pointerEvents = 'auto';
     // tagElement.style.display = '';
     // tagElement.style.opacity = '0';
     tagElement.style.background = 'rgba(46, 48, 53, 0.9)';
     tagElement.style.color = '#e8eefc';
-    // tagElement.style.padding = '8px 12px';
+    tagElement.onclick = () => {
+        if (tagName == overlayState.selectedTag){
+            overlayState.selectedTag = -1
+        } else{
+            overlayState.selectedTag = tagName;
+        }
+    }; 
+  // tagElement.style.padding = '8px 12px';
     // tagElement.style.borderRadius = '16px';
     // tagElement.style.boxShadow = '0 14px 32px rgba(0, 0, 0, 0.30)';
     // tagElement.style.whiteSpace = 'nowrap';
@@ -305,6 +322,7 @@ function createImageOverlay(initialImageUrl = '') {
     overlayBlurb.style.whiteSpace = 'pre-wrap';
     overlayBlurb.style.lineHeight = '1.4';
     overlayBlurb.style.fontSize = '0.95rem';
+    overlayBlurb.style.fontWeight = '200';
     overlayBlurb.style.fontFamily = 'system-ui, sans-serif';
     overlayBlurb.style.zIndex = '2';
     //   overlayBlurb.style.willChange = 'transform, opacity';
@@ -316,18 +334,19 @@ function createImageOverlay(initialImageUrl = '') {
     overlayTagBox.style.position = 'absolute';
     overlayTagBox.style.top = '0';
     overlayTagBox.style.left = '0';
-    overlayTagBox.style.pointerEvents = 'none';
+    overlayTagBox.style.pointerEvents = '';
     overlayTagBox.style.display = '';
     overlayTagBox.style.opacity = '0';
     //   overlayBlurb.style.transition = 'transform 280ms ease, opacity 280ms ease';
     overlayTagBox.style.maxWidth = '360px';
-    overlayTagBox.style.background = 'rgba(12, 18, 34, 0.2)';
+    overlayTagBox.style.background = '#f8f8ff';
     overlayTagBox.style.color = 'rgba(12, 18, 34, 1.0)';
     overlayTagBox.style.padding = '14px 16px';
     overlayTagBox.style.borderRadius = '18px';
     overlayTagBox.style.boxShadow = '0 18px 40px rgba(0, 0, 0, 0.35)';
     overlayTagBox.style.whiteSpace = 'pre-wrap';
     overlayTagBox.style.lineHeight = '1.4';
+    overlayTagBox.style.fontWeight = '600';
     overlayTagBox.style.fontSize = '0.95rem';
     overlayTagBox.style.fontFamily = 'system-ui, sans-serif';
     overlayTagBox.style.zIndex = '2';

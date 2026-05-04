@@ -1,0 +1,5 @@
+Read this if your PC is struggling to render this site.
+If your fan is screaming, or the screen movement feels stuttery or exhaustingly slow, then here are a few tips:
+1. Plug in your PC to avoid running low-power mode.
+2. If your device has a GPU, then it is capable of running this site smoothly. If it is not runnning smoothly, then your browser is not using the correct GPU (requires hardware acceleration on... can be finicky).
+3. Otherwise, good luck! (I am implementing a fall-back site for this case.)

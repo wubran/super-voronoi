@@ -1,4 +1,5 @@
 05/08/2025 - Bathroom Soldering
+TAGS#EASYROV#ROBOTICS#3D PRINTING#DIY#PERSONAL STATEMENT
 My ROV's powertrain, halfway through the soldering process.
 5 Brushless drone ESC's are wrapped around a single 18650 battery cell.
 The 3 output channels of each ESC are routed through an epoxy endcap to breach the ROV's air-water seal.

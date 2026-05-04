@@ -1,8 +1,6 @@
 05/04/9999
-TAGS#TUTORIAL#INTRO#ARTIFACT
-WARNING: I am working on optimizing this site's performance. I apologize if it makes your PC hot.
+TAGS#ENGL393#TUTORIAL#INTRO#ARTIFACT#PERFORMANCE
 
-1. Hover your mouse over ANYTHING but this tutorial, then scroll "up" to travel back in time.
-2. Once an artifact comes "into focus," it will be clickable.
-3. Click a artifact to see an info card.
-4. Minimize the card by clicking it or another "in focus" artifact.
+Try clicking one of the tags to the right!
+
+WARNING: I am working on optimizing this site's performance. I apologize if it makes your PC hot.

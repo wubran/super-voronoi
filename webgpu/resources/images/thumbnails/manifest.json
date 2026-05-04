@@ -5,36 +5,44 @@
       "width": 401,
       "height": 252,
       "color": "#F7F7F7.08",
-      "blurb": "05/04/9999\r\nTAGS#TUTORIAL#INTRO#ARTIFACT\r\nWARNING: I am working on optimizing this site's performance. I apologize if it makes your PC hot.\r\n\r\n1. Hover your mouse over ANYTHING but this tutorial, then scroll \"up\" to travel back in time.\r\n2. Once an artifact comes \"into focus,\" it will be clickable.\r\n3. Click a artifact to see an info card.\r\n4. Minimize the card by clicking it or another \"in focus\" artifact.",
+      "blurb": "05/04/9999\r\nTAGS#ENGL393#TUTORIAL#INTRO#ARTIFACT#PERFORMANCE\r\n\r\nTry clicking one of the tags to the right!\r\n\r\nWARNING: I am working on optimizing this site's performance. I apologize if it makes your PC hot.",
       "headerText": "05/04/9999 · tutorial",
       "tags": [
+        "ENGL393",
         "TUTORIAL",
         "INTRO",
-        "ARTIFACT"
+        "ARTIFACT",
+        "PERFORMANCE"
       ],
-      "bodyText": "WARNING: I am working on optimizing this site's performance. I apologize if it makes your PC hot.\n\n1. Hover your mouse over ANYTHING but this tutorial, then scroll \"up\" to travel back in time.\n2. Once an artifact comes \"into focus,\" it will be clickable.\n3. Click a artifact to see an info card.\n4. Minimize the card by clicking it or another \"in focus\" artifact."
+      "bodyText": "Try clicking one of the tags to the right!\n\nWARNING: I am working on optimizing this site's performance. I apologize if it makes your PC hot."
     },
     {
       "url": "resources/images/thumbnails/special/info.png",
       "width": 401,
       "height": 252,
       "color": "#313793.68",
-      "blurb": "05/04/9998\r\nTAGS#TUTORIAL#INTRO\r\nThis is my ePortfolio where I will store my Human Things.\r\nHere, you will find pictures of projects, food, and other things that I enjoy.\r\n\r\nThis site uses your GPU to render a power diagram.\r\nSpecifically, this site renders the intersection of a 3D weighted Voronoi Diagram with a flat plane.\r\nBy scrolling back and forth, you control the height of this plane.",
+      "blurb": "05/04/9998\r\nTAGS#ENGL393#TUTORIAL#INTRO#ARTIFACT#PERFORMANCE\r\nThis is my ePortfolio where I will store my Human Things.\r\nHere, you will find pictures of projects, food, and other things that I enjoy.\r\n\r\nThis site uses your GPU to render a power diagram.\r\nSpecifically, this site renders the intersection of a 3D weighted Voronoi Diagram with a flat plane.\r\nBy scrolling back and forth, you control the height of this plane.",
       "headerText": "05/04/9998 · info",
       "tags": [
+        "ENGL393",
         "TUTORIAL",
-        "INTRO"
+        "INTRO",
+        "ARTIFACT",
+        "PERFORMANCE"
       ],
       "bodyText": "This is my ePortfolio where I will store my Human Things.\nHere, you will find pictures of projects, food, and other things that I enjoy.\n\nThis site uses your GPU to render a power diagram.\nSpecifically, this site renders the intersection of a 3D weighted Voronoi Diagram with a flat plane.\nBy scrolling back and forth, you control the height of this plane."
     },
     {
-      "url": "resources/images/thumbnails/outside/patapsco.jpg",
+      "url": "resources/images/thumbnails/outside/patapsco_fall.jpg",
       "width": 1278,
       "height": 959,
       "color": "#42443B.DC",
-      "blurb": "09/13/2026\r\nThe Patapsco River in the fall.\r\nBy my favorite trail.",
-      "headerText": "09/13/2026 · patapsco",
-      "tags": [],
+      "blurb": "09/13/2026\r\nTAGS#PATAPSCO#NATURE\r\nThe Patapsco River in the fall.\r\nBy my favorite trail.",
+      "headerText": "09/13/2026 · patapsco_fall",
+      "tags": [
+        "PATAPSCO",
+        "NATURE"
+      ],
       "bodyText": "The Patapsco River in the fall.\nBy my favorite trail."
     },
     {
@@ -72,13 +80,14 @@
       "width": 1958,
       "height": 1305,
       "color": "#594921.58",
-      "blurb": "5/16/2025\r\nTAGS#ROBOTICS#DIY#PERSONAL STATEMENT#RESUME\r\nPresentation of my ROV at the Design, Cultures, and Creativity (DCC) Capstone Fair.\r\nThe Boat sits aloft my contraband storage box.\r\nThe ROV sits below atop a piece of contraband (3D-Printing Filament).\r\nThe ROV's camera feed is displayed on the monitor to my side.",
+      "blurb": "5/16/2025\r\nTAGS#EASYROV#ROBOTICS#DIY#3D PRINTING#PERSONAL STATEMENT\r\nPresentation of my ROV at the Design, Cultures, and Creativity (DCC) Capstone Fair.\r\nThe Boat sits aloft my contraband storage box.\r\nThe ROV sits below atop a piece of contraband (3D-Printing Filament).\r\nThe ROV's camera feed is displayed on the monitor to my side.",
       "headerText": "5/16/2025 · capstone_fair",
       "tags": [
+        "EASYROV",
         "ROBOTICS",
         "DIY",
-        "PERSONAL STATEMENT",
-        "RESUME"
+        "3D PRINTING",
+        "PERSONAL STATEMENT"
       ],
       "bodyText": "Presentation of my ROV at the Design, Cultures, and Creativity (DCC) Capstone Fair.\nThe Boat sits aloft my contraband storage box.\nThe ROV sits below atop a piece of contraband (3D-Printing Filament).\nThe ROV's camera feed is displayed on the monitor to my side."
     },
@@ -87,9 +96,15 @@
       "width": 979,
       "height": 1305,
       "color": "#8C8170.3",
-      "blurb": "05/11/2025\r\nBoth Halves of the ROV Electronics, almost completed.\r\nOn the left: a Luckfox Pico Plus with ethernet leading outside. Two wires from the ethernet are fed into a 5V regulator.\r\nOn the right: the almost-complete power train of the ROV. 5 ESC's, 5 BLDC motors, two control-mosfets, and a PWM light controller.\r\nBoth sides feature an intensely powerful epoxy-encased LED.\r\nThe two halves interface with a sketchy homebrew plug.",
+      "blurb": "05/11/2025\r\nTAGS#EASYROV#ROBOTICS#3D PRINTING#DIY#PERSONAL STATEMENT\r\nBoth Halves of the ROV Electronics, almost completed.\r\nOn the left: a Luckfox Pico Plus with ethernet leading outside. Two wires from the ethernet are fed into a 5V regulator.\r\nOn the right: the almost-complete power train of the ROV. 5 ESC's, 5 BLDC motors, two control-mosfets, and a PWM light controller.\r\nBoth sides feature an intensely powerful epoxy-encased LED.\r\nThe two halves interface with a sketchy homebrew plug.",
       "headerText": "05/11/2025 · rov_corpse",
-      "tags": [],
+      "tags": [
+        "EASYROV",
+        "ROBOTICS",
+        "3D PRINTING",
+        "DIY",
+        "PERSONAL STATEMENT"
+      ],
       "bodyText": "Both Halves of the ROV Electronics, almost completed.\nOn the left: a Luckfox Pico Plus with ethernet leading outside. Two wires from the ethernet are fed into a 5V regulator.\nOn the right: the almost-complete power train of the ROV. 5 ESC's, 5 BLDC motors, two control-mosfets, and a PWM light controller.\nBoth sides feature an intensely powerful epoxy-encased LED.\nThe two halves interface with a sketchy homebrew plug."
     },
     {
@@ -97,9 +112,15 @@
       "width": 979,
       "height": 1305,
       "color": "#7C6C5D.D4",
-      "blurb": "05/08/2025\r\nAn empty Boat on my floor, set to become the carrier vessel of my ROV.\r\nDesign: Catamaran Airboat with a spool for carrying the ROV's tether.\r\nOne motor is capable of driving the spool and the propeller via last-minute gearbox design.\r\nThe gearbox uses two sliding clutches to output forward or reverse to one of two outputs.",
+      "blurb": "05/08/2025\r\nTAGS#EASYROV#ROBOTICS#DIY#3D PRINTING#PERSONAL STATEMENT\r\nAn empty Boat on my floor, set to become the carrier vessel of my ROV.\r\nDesign: Catamaran Airboat with a spool for carrying the ROV's tether.\r\nOne motor is capable of driving the spool and the propeller via last-minute gearbox design.\r\nThe gearbox uses two sliding clutches to output forward or reverse to one of two outputs.",
       "headerText": "05/08/2025 · rov_carrier_bare",
-      "tags": [],
+      "tags": [
+        "EASYROV",
+        "ROBOTICS",
+        "DIY",
+        "3D PRINTING",
+        "PERSONAL STATEMENT"
+      ],
       "bodyText": "An empty Boat on my floor, set to become the carrier vessel of my ROV.\nDesign: Catamaran Airboat with a spool for carrying the ROV's tether.\nOne motor is capable of driving the spool and the propeller via last-minute gearbox design.\nThe gearbox uses two sliding clutches to output forward or reverse to one of two outputs."
     },
     {
@@ -107,9 +128,15 @@
       "width": 979,
       "height": 1305,
       "color": "#9B856E.B",
-      "blurb": "05/08/2025 - Bathroom Soldering\r\nMy ROV's powertrain, halfway through the soldering process.\r\n5 Brushless drone ESC's are wrapped around a single 18650 battery cell.\r\nThe 3 output channels of each ESC are routed through an epoxy endcap to breach the ROV's air-water seal.\r\nEnameled copper wire was the only suitable option at this scale, with limited resources.\r\nA single scratch through the water-exposed enamel could compromise the entire unit for long-term use.\r\nI should have just put the ESC's outside the vehicle for cooling, modularity, space, and shorter wires.",
+      "blurb": "05/08/2025 - Bathroom Soldering\r\nTAGS#EASYROV#ROBOTICS#3D PRINTING#DIY#PERSONAL STATEMENT\r\nMy ROV's powertrain, halfway through the soldering process.\r\n5 Brushless drone ESC's are wrapped around a single 18650 battery cell.\r\nThe 3 output channels of each ESC are routed through an epoxy endcap to breach the ROV's air-water seal.\r\nEnameled copper wire was the only suitable option at this scale, with limited resources.\r\nA single scratch through the water-exposed enamel could compromise the entire unit for long-term use.\r\nI should have just put the ESC's outside the vehicle for cooling, modularity, space, and shorter wires.",
       "headerText": "05/08/2025 - Bathroom Soldering · rov_disemboweled",
-      "tags": [],
+      "tags": [
+        "EASYROV",
+        "ROBOTICS",
+        "3D PRINTING",
+        "DIY",
+        "PERSONAL STATEMENT"
+      ],
       "bodyText": "My ROV's powertrain, halfway through the soldering process.\n5 Brushless drone ESC's are wrapped around a single 18650 battery cell.\nThe 3 output channels of each ESC are routed through an epoxy endcap to breach the ROV's air-water seal.\nEnameled copper wire was the only suitable option at this scale, with limited resources.\nA single scratch through the water-exposed enamel could compromise the entire unit for long-term use.\nI should have just put the ESC's outside the vehicle for cooling, modularity, space, and shorter wires."
     },
     {
@@ -127,9 +154,11 @@
       "width": 1740,
       "height": 1305,
       "color": "#697665.08",
-      "blurb": "09/21/2024\r\nLotus blossoms at the Kenilworth Aquatic Gardens.\r\nThe walking path flooded up to our ankles while we were exploring inside.\r\nWe biked back to College Park with wet feet.",
+      "blurb": "09/21/2024\r\nTAGS#NATURE\r\nLotus blossoms at the Kenilworth Aquatic Gardens.\r\nThe walking path flooded up to our ankles while we were exploring inside.\r\nWe biked back to College Park with wet feet.",
       "headerText": "09/21/2024 · kenilworth",
-      "tags": [],
+      "tags": [
+        "NATURE"
+      ],
       "bodyText": "Lotus blossoms at the Kenilworth Aquatic Gardens.\nThe walking path flooded up to our ankles while we were exploring inside.\nWe biked back to College Park with wet feet."
     },
     {
@@ -137,9 +166,11 @@
       "width": 979,
       "height": 1305,
       "color": "#61765B.68",
-      "blurb": "09/21/2024\r\nA lotus bud at the Kenilworth Aquatic Gardens.",
+      "blurb": "09/21/2024\r\nTAGS#NATURE\r\nA lotus bud at the Kenilworth Aquatic Gardens.",
       "headerText": "09/21/2024 · kenilworth_bud",
-      "tags": [],
+      "tags": [
+        "NATURE"
+      ],
       "bodyText": "A lotus bud at the Kenilworth Aquatic Gardens."
     },
     {
@@ -147,9 +178,11 @@
       "width": 979,
       "height": 1305,
       "color": "#888C8D.AC",
-      "blurb": "09/21/2024\r\nMy favorite keychain.\r\nBought from the gift store at the Kenilworth Aquatic Gardens.",
+      "blurb": "09/21/2024\r\nTAGS#NATURE\r\nMy favorite keychain.\r\nBought from the gift store at the Kenilworth Aquatic Gardens.",
       "headerText": "09/21/2024 · kenilworth_keychain",
-      "tags": [],
+      "tags": [
+        "NATURE"
+      ],
       "bodyText": "My favorite keychain.\nBought from the gift store at the Kenilworth Aquatic Gardens."
     },
     {
@@ -157,9 +190,12 @@
       "width": 293,
       "height": 220,
       "color": "#68774D.D",
-      "blurb": "5/30/2024\r\nThe Patapsco River in the spring.",
+      "blurb": "5/30/2024\r\nTAGS#PATAPSCO#NATURE\r\nThe Patapsco River in the spring.",
       "headerText": "5/30/2024 · patapsco_green",
-      "tags": [],
+      "tags": [
+        "PATAPSCO",
+        "NATURE"
+      ],
       "bodyText": "The Patapsco River in the spring."
     },
     {
@@ -167,9 +203,11 @@
       "width": 1740,
       "height": 1305,
       "color": "#80817D.8C",
-      "blurb": "5/21/2024\r\nArtist Point at Yellowstone National Park",
+      "blurb": "5/21/2024\r\nTAGS#NATURE\r\nArtist Point at Yellowstone National Park",
       "headerText": "5/21/2024 · yellowstone_artist",
-      "tags": [],
+      "tags": [
+        "NATURE"
+      ],
       "bodyText": "Artist Point at Yellowstone National Park"
     },
     {
@@ -177,9 +215,11 @@
       "width": 1740,
       "height": 1305,
       "color": "#79828D.C4",
-      "blurb": "05/21/2024\r\nThe Grand Prismatic Spring at Yellowstone National Park.",
+      "blurb": "05/21/2024\r\nTAGS#NATURE\r\nThe Grand Prismatic Spring at Yellowstone National Park.",
       "headerText": "05/21/2024 · yellowstone_steam",
-      "tags": [],
+      "tags": [
+        "NATURE"
+      ],
       "bodyText": "The Grand Prismatic Spring at Yellowstone National Park."
     },
     {
@@ -187,9 +227,11 @@
       "width": 979,
       "height": 1305,
       "color": "#7E837B.F",
-      "blurb": "05/20/2024\r\nUndyne Falls at Yellowstone National Park.",
+      "blurb": "05/20/2024\r\nTAGS#NATURE\r\nUndyne Falls at Yellowstone National Park.",
       "headerText": "05/20/2024 · yellowstone_falls",
-      "tags": [],
+      "tags": [
+        "NATURE"
+      ],
       "bodyText": "Undyne Falls at Yellowstone National Park."
     },
     {
@@ -227,9 +269,12 @@
       "width": 1740,
       "height": 1305,
       "color": "#7A7875.14",
-      "blurb": "03/20/2024\r\nThe Patapsco River in the early spring.",
+      "blurb": "03/20/2024\r\nTAGS#PATAPSCO#NATURE\r\nThe Patapsco River in the early spring.",
       "headerText": "03/20/2024 · patapsco_again",
-      "tags": [],
+      "tags": [
+        "PATAPSCO",
+        "NATURE"
+      ],
       "bodyText": "The Patapsco River in the early spring."
     },
     {
@@ -237,9 +282,12 @@
       "width": 1740,
       "height": 1305,
       "color": "#69798B.08",
-      "blurb": "01/17/2024\r\nThe Patapsco River in the winter.",
+      "blurb": "01/17/2024\r\nTAGS#PATAPSCO#NATURE\r\nThe Patapsco River in the winter.",
       "headerText": "01/17/2024 · patapsco_snow",
-      "tags": [],
+      "tags": [
+        "PATAPSCO",
+        "NATURE"
+      ],
       "bodyText": "The Patapsco River in the winter."
     },
     {
@@ -264,12 +312,22 @@
     }
   ],
   "tags": {
+    "3D PRINTING": "I have been 3D-Printing since early middle school. Maybe 2016?\r\nMy first printer was originally intended to be my older brother's, but I ended up taking it up instead.\r\nIt was awful. A cheap, horrifically unreliable Monoprice cantilever. No amount of tuning could have saved it from the scrap bin.\r\nIt taught me practical skills about how 3D printers work... skills that many people entering the hobby today lack.\r\nI have nothing against Bambu though. They saved me a deadline once or twice.\r\nMy current printer is a Creality CR-10 with dampeners on the steppers.",
+    "ARTIFACT": "Each \"cell\" on this page is called an \"Artifact.\"\r\nEach artifact contains an image, a date, a short blurb, and some tags.\r\nTags reveal additional information that may be shared across multiple artifacts.",
+    "COLLEGE": "University of Maryland, College Park.\r\nFall 2023 to Spring 2026.\r\nDual Degree: Computer Science and Mathematics.\r\nMinor: Robotics and Autonomous Systems.\r\nMinor: Quantum Science and Engineering.\r\nHonors Citation: Design, Cultures, and Creativity (DCC)",
     "DIY": "I do DIY because...",
+    "EASYROV": "EasyROV is my capstone project for my Honors Program, DCC.\r\nStudents in my program were allowed to guide their own project with their own criteria to produce anything vaguely in the scope of \"Design, Cultures, and Creativity.\"\r\nI chose to produce a DIY-friendly ROV with a 100 dollar price-per-unit budget.",
+    "ENGL393": "To the person grading this website,\r\nMy artifacts can be interpreted as groups of images, with contextual statements being the tags.\r\nPlease understand that, although the quantities of items that I have provided differs from your criterion, the content overall achieves the desired effect.\r\nNot all artifacts are as detailed as others. My robotics artifact(s) is detailed.\r\nI am running out of time to get my peer reviews done!",
+    "FAMILY": "Family info here...",
     "FISHING": "I go fishing with my family.",
+    "FOOD": "Cooking stuff here...",
+    "FRIENDS": "Friends info here...",
     "NATURE": "I enjoy existing in nature.",
-    "PERSONAL STATEMENT": "Personal Statement Here",
+    "PATAPSCO": "The Patapsco River has long been a happy place for me.\r\nI take short hikes to the river frequently, no matter the season.\r\nI occasionally go fishing during the warmer months, but have never caught anything bigger than a bluegill/green sunfish.\r\nThe diverse selection of interesting flora, fauna, and fungi has left a permanent mark on my artistic style and overall attitude towards nature.",
+    "PERFORMANCE": "Read this if your PC is struggling to render this site.\r\nIf your fan is screaming, or the screen movement feels stuttery or exhaustingly slow, then here are a few tips:\r\n1. Plug in your PC to avoid running low-power mode.\r\n2. If your device has a GPU, then it is capable of running this site smoothly. If it is not runnning smoothly, then your browser is not using the correct GPU (requires hardware acceleration on... can be finicky).\r\n3. Otherwise, good luck! (I am implementing a fall-back site for this case.)",
+    "PERSONAL STATEMENT": "Brian Wu is an ambitious maker who values both breadth and depth in learning, turning curiosity into challenge-driven projects that bridge theory and application. Brian is currently exploring how math and nature can shape creative work across robotics, machine learning, computer graphics, and more.",
     "RESUME": "This project is/was on my resume!",
-    "ROBOTICS": "I do Robotics for fun.",
+    "ROBOTICS": "I have been doing robotics projects at home for years.",
     "TUTORIAL": "1. Scroll wheel to travel through time.\r\n2. Left click to select an artifact that is 'in focus.'\r\n4. Left click again to minimize an artifact's card."
   }
 }

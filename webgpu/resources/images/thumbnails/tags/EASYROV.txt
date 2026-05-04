@@ -1,0 +1,3 @@
+EasyROV is my capstone project for my Honors Program, DCC.
+Students in my program were allowed to guide their own project with their own criteria to produce anything vaguely in the scope of "Design, Cultures, and Creativity."
+I chose to produce a DIY-friendly ROV with a 100 dollar price-per-unit budget.
