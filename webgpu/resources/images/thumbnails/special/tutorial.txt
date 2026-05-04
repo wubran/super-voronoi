@@ -1,2 +1,6 @@
 05/04/9999
 This is the tutorial.
+I am working on optimizing this site's performance. I apologize if it makes your PC hot.
+Scroll "up" to travel back in time.
+Click on a cell once it is "in focus" (or close enough). A card will appear.
+Minimize the card by clicking it or another "in focus" cell.

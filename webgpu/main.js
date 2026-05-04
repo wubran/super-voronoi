@@ -735,7 +735,7 @@ async function main() {
       zMax: PLANE_Z_MAX,
       margin: 80
     };
-    const maxSites = DEFAULT_MAX_SITES;
+    const maxSites = MAX_SITES_DISPLAYED;
     const sites = [];
     // const cols = Math.ceil(Math.sqrt(maxSites));
     // const rows = Math.ceil(maxSites / cols);
@@ -759,7 +759,7 @@ async function main() {
 
     // const numSites = sites.length;
     const numSites = sites.length;
-    const voronoiSites = new Float32Array(MAX_SITES_DISPLAYED * 4);
+    const voronoiSites = new Float32Array(MAX_SITES_DISPLAYED * 8);
     let sitesShown = updateSitesArray(sites, voronoiSites, planeZ);
     const voronoiSitesBuffer = createSitesBuffer(device, maxSites);
 
