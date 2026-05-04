@@ -1,4 +1,4 @@
-05/11/2026
+05/11/2025
 Both Halves of the ROV Electronics, almost completed.
 On the left: a Luckfox Pico Plus with ethernet leading outside. Two wires from the ethernet are fed into a 5V regulator.
 On the right: the almost-complete power train of the ROV. 5 ESC's, 5 BLDC motors, two control-mosfets, and a PWM light controller.

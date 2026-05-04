@@ -676,7 +676,8 @@ async function main() {
         const site = new Site3D([
             bounds.margin + col * cellWidth + jitterX,
             bounds.margin + row * cellHeight + jitterY,
-            bounds.margin + PLANE_Z_MIN + Math.random() * (PLANE_Z_MAX - PLANE_Z_MIN - 2*bounds.margin),
+            // bounds.margin + PLANE_Z_MIN + Math.random() * (PLANE_Z_MAX - PLANE_Z_MIN - 2*bounds.margin),
+            bounds.margin + PLANE_Z_MAX - (i/maxSites) * (PLANE_Z_MAX - PLANE_Z_MIN - 2*bounds.margin),
         ], [0,0,0], [0,0,0], Math.random()+1);
         sites.push(site);
     }

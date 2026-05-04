@@ -227,8 +227,8 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let clampedUv = clamp(noisyBaseUv, vec2<f32>(0.0), vec2<f32>(0.99));
   let centerColor = textureSample(ourTexture, ourSampler, clampedUv, textureLayer);
   let transparent = vec4<f32>(0.0,0.0,0.0,0.0);
-  let isTransparent = i32(uni.activeID) == i32(center);
-
+  // let isTransparent = i32(uni.activeID) == i32(center);
+  let isTransparent = false;
   // let edgeMix = select(vec4<f32>(1.0,1.0,1.0,1.0), vec4<f32>(0.8,0.8,0.8,1.0), isEdge);
   // let finalColor = centerColor * edgeMix;
   // return select(finalColor, transparent, isTransparent);
