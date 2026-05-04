@@ -4,7 +4,14 @@
     "width": 401,
     "height": 252,
     "color": "#F7F7F7.08",
-    "blurb": "05/04/9999\r\nThis is the tutorial.\r\nI am working on optimizing this site's performance. I apologize if it makes your PC hot.\r\nScroll \"up\" to travel back in time.\r\nClick on a cell once it is \"in focus\" (or close enough). A card will appear.\r\nMinimize the card by clicking it or another \"in focus\" cell."
+    "blurb": "05/04/9999\r\nWARNING: I am working on optimizing this site's performance. I apologize if it makes your PC hot.\r\n\r\n1. Hover your mouse over ANYTHING but this tutorial, then scroll \"up\" to travel back in time.\r\n2. Once a cell comes \"into focus,\" it will be clickable.\r\n3. Click a cell to see an info card.\r\n4. Minimize the card by clicking it or another \"in focus\" cell."
+  },
+  {
+    "url": "resources/images/thumbnails/special/info.png",
+    "width": 401,
+    "height": 252,
+    "color": "#313793.68",
+    "blurb": "05/04/9998\r\nThis is my ePortfolio where I will store my Human Things.\r\nHere, you will find pictures of projects, food, and other things that I enjoy.\r\n\r\nThis site uses your GPU to render a power diagram.\r\nSpecifically, this site renders the intersection of a 3D weighted Voronoi Diagram with a flat plane.\r\nBy scrolling back and forth, you control the height of this plane."
   },
   {
     "url": "resources/images/thumbnails/outside/patapsco.jpg",

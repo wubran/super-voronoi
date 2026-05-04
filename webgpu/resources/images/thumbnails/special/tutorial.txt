@@ -1,6 +1,7 @@
 05/04/9999
-This is the tutorial.
-I am working on optimizing this site's performance. I apologize if it makes your PC hot.
-Scroll "up" to travel back in time.
-Click on a cell once it is "in focus" (or close enough). A card will appear.
-Minimize the card by clicking it or another "in focus" cell.
+WARNING: I am working on optimizing this site's performance. I apologize if it makes your PC hot.
+
+1. Hover your mouse over ANYTHING but this tutorial, then scroll "up" to travel back in time.
+2. Once a cell comes "into focus," it will be clickable.
+3. Click a cell to see an info card.
+4. Minimize the card by clicking it or another "in focus" cell.
