@@ -110,7 +110,8 @@ function updateImageOverlay() {
   overlayImage.style.transform = `translate(${x}px, ${y}px) scale(${overlayState.scale})`;
 //   overlayImage.style.display = overlayState.hidden ? 'none' : '';
   overlayImage.style.pointerEvents = overlayState.hidden ? 'none' : '';
-  overlayImage.style.opacity = overlayState.hidden ? '0' : '1';
+//   overlayImage.style.opacity = overlayState.hidden ? '0' : '1';
+  overlayAnimations["image-opacity"].setGoal(overlayState.hidden ? '0' : '1')
 
   const hasHeader = !overlayState.hidden && typeof overlayState.headerText === 'string' && overlayState.headerText.trim() !== '';
   if (overlayHeader) {
