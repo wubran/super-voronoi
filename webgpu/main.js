@@ -43,7 +43,14 @@ function setupPointerInteraction(canvas) {
     }
   });
   
-  canvas.addEventListener('pointerup', () => { pointerState.pressed = false; needsIdRead = true; });
+    canvas.addEventListener('pointerup', () => {
+        updatePointer(event);
+        pointerState.pressed = false;
+        needsIdRead = true;
+        if (event.button === 0) {
+            clickPending = true;
+        }
+    });
   canvas.addEventListener('pointerleave', () => {
     pointerState.pressed = false;
     pointerState.x = -1;
@@ -80,7 +87,12 @@ let overlayState = {
   blurb: '',
   headerText: '',
   bodyText: '',
+  headerX: 0,
+  headerY: 0,
+  blurbX: 0,
+  blurbY: 0,
 };
+let overlayAnimations = {};
 
 function updateImageOverlay() {
   if (!overlayImage) return;
@@ -96,33 +108,52 @@ function updateImageOverlay() {
   }
 
   overlayImage.style.transform = `translate(${x}px, ${y}px) scale(${overlayState.scale})`;
-  overlayImage.style.display = overlayState.hidden ? 'none' : '';
+//   overlayImage.style.display = overlayState.hidden ? 'none' : '';
+  overlayImage.style.pointerEvents = overlayState.hidden ? 'none' : '';
+  overlayImage.style.opacity = overlayState.hidden ? '0' : '1';
 
   const hasHeader = !overlayState.hidden && typeof overlayState.headerText === 'string' && overlayState.headerText.trim() !== '';
   if (overlayHeader) {
-    overlayHeader.style.display = hasHeader ? '' : 'none';
-    if (hasHeader) {
-      overlayHeader.style.transform = `translate(${x}px, ${Math.max(0, y - 36)}px)`;
-      overlayHeader.textContent = overlayState.headerText;
-    }
+    // overlayHeader.style.opacity = hasHeader ? '1' : '0';
+    overlayAnimations["header-opacity"].setGoal(hasHeader ? 1 : 0)
+    overlayHeader.textContent = overlayState.headerText;
+    const height = overlayImage.naturalHeight || overlayImage.height || 0;
+    const targetY = Math.max(0, y - 36);
+    const hiddenY = y + height * overlayState.scale + 24;
+    overlayAnimations["header-y"].setGoal(hasHeader ? targetY : hiddenY)
+    overlayState.headerX = x;
+    // overlayHeader.style.transform = `translate(${x}px, ${hasHeader ? targetY : hiddenY}px)`;
   }
 
   if (overlayBlurb) {
     const hasBody = !overlayState.hidden && typeof overlayState.bodyText === 'string' && overlayState.bodyText.trim() !== '';
-    overlayBlurb.style.display = hasBody ? '' : 'none';
-    if (hasBody) {
-      const height = overlayImage.naturalHeight || overlayImage.height || 0;
-      const offsetX = 20;
-      const offsetY = (height > 0 ? height * overlayState.scale + 20 : 20);
-      overlayBlurb.style.transform = `translate(${x + offsetX}px, ${y + offsetY}px)`;
-      overlayBlurb.textContent = overlayState.bodyText;
-    }
+    // overlayBlurb.style.opacity = hasBody ? '1' : '0';
+    overlayAnimations["blurb-opacity"].setGoal(hasBody ? 1 : 0)
+    overlayBlurb.textContent = overlayState.bodyText;
+    const height = overlayImage.naturalHeight || overlayImage.height || 0;
+    const offsetX = 20;
+    const visibleY = y + (height > 0 ? height * overlayState.scale + 20 : 20);
+    const hiddenY = y + height * overlayState.scale - 80;
+    overlayAnimations["blurb-y"].setGoal(hasBody ? visibleY : hiddenY)
+    overlayState.blurbX = x + offsetX;
+    // overlayBlurb.style.transform = `translate(${x + offsetX}px, ${hasBody ? visibleY : hiddenY}px)`;
   }
 }
+
+
+function perturbPointer(canvas) {
+    // ignore the parameter. need a quick fix
+    canvas = document.querySelector('canvas');
+    canvas.style.transform = 'translateZ(0)';
+    canvas.offsetHeight;
+    canvas.style.transform = '';
+}
+
 
 function hideImageOverlay() {
   overlayState.hidden = true;
   updateImageOverlay();
+  perturbPointer();
 }
 
 function createImageOverlay(initialImageUrl = '') {
@@ -137,11 +168,14 @@ function createImageOverlay(initialImageUrl = '') {
   overlayImage.style.transformOrigin = 'top left';
   overlayImage.style.pointerEvents = 'auto';
   overlayImage.style.cursor = 'pointer';
-  overlayImage.style.zIndex = '2';
-  overlayImage.style.opacity = '1.0';
+  overlayImage.style.zIndex = '4';
+  overlayImage.pointerEvents = '';
+  overlayImage.style.opacity = '0';
+//   overlayImage.style.transition = 'opacity 280ms ease';
   overlayImage.style.maxWidth = 'none';
   overlayImage.style.maxHeight = 'none';
-  overlayImage.style.display = 'none';
+  overlayImage.style.display = '';
+//   overlayImage.style.willChange = 'opacity';
   overlayImage.addEventListener('click', (event) => {
     event.stopPropagation();
     if (typeof overlayClickHandler === 'function') {
@@ -161,7 +195,9 @@ function createImageOverlay(initialImageUrl = '') {
   overlayHeader.style.top = '0';
   overlayHeader.style.left = '0';
   overlayHeader.style.pointerEvents = 'none';
-  overlayHeader.style.display = 'none';
+  overlayHeader.style.display = '';
+  overlayHeader.style.opacity = '0';
+//   overlayHeader.style.transition = 'transform 280ms ease, opacity 280ms ease';
   overlayHeader.style.background = 'rgba(16, 24, 52, 0.90)';
   overlayHeader.style.color = '#e8eefc';
   overlayHeader.style.padding = '8px 12px';
@@ -174,6 +210,7 @@ function createImageOverlay(initialImageUrl = '') {
   overlayHeader.style.fontSize = '0.92rem';
   overlayHeader.style.fontFamily = 'system-ui, sans-serif';
   overlayHeader.style.zIndex = '3';
+//   overlayHeader.style.willChange = 'transform, opacity';
   document.body.appendChild(overlayHeader);
 
   overlayBlurb = document.createElement('div');
@@ -182,7 +219,9 @@ function createImageOverlay(initialImageUrl = '') {
   overlayBlurb.style.top = '0';
   overlayBlurb.style.left = '0';
   overlayBlurb.style.pointerEvents = 'none';
-  overlayBlurb.style.display = 'none';
+  overlayBlurb.style.display = '';
+  overlayBlurb.style.opacity = '0';
+//   overlayBlurb.style.transition = 'transform 280ms ease, opacity 280ms ease';
   overlayBlurb.style.maxWidth = '360px';
   overlayBlurb.style.background = 'rgba(12, 18, 34, 0.92)';
   overlayBlurb.style.color = '#f8f8ff';
@@ -194,7 +233,41 @@ function createImageOverlay(initialImageUrl = '') {
   overlayBlurb.style.fontSize = '0.95rem';
   overlayBlurb.style.fontFamily = 'system-ui, sans-serif';
   overlayBlurb.style.zIndex = '2';
+//   overlayBlurb.style.willChange = 'transform, opacity';
   document.body.appendChild(overlayBlurb);
+
+  const opacityRate = 5.0;
+  overlayAnimations = {
+    "image-opacity" : new Animation(
+        () => {return parseFloat(getComputedStyle(overlayImage).getPropertyValue('opacity'))},
+        (x) => {overlayImage.style.opacity = x},
+        opacityRate
+    ),
+
+    "header-opacity" : new Animation(
+        () => {return parseFloat(getComputedStyle(overlayHeader).getPropertyValue('opacity'))},
+        (x) => {overlayHeader.style.opacity = x},
+        opacityRate
+    ),
+    
+    "blurb-opacity" : new Animation(
+        () => {return parseFloat(getComputedStyle(overlayBlurb).getPropertyValue('opacity'))},
+        (x) => {overlayBlurb.style.opacity = x},
+        opacityRate
+    ),
+
+    "header-y" : new Animation(
+        () => {return overlayState.headerY},
+        (x) => {overlayState.headerY = x},
+        opacityRate
+    ),
+
+    "blurb-y" : new Animation(
+        () => {return overlayState.blurbY},
+        (x) => {overlayState.blurbY = x},
+        opacityRate
+    ),
+  }
 
   updateImageOverlay();
 }
@@ -284,6 +357,7 @@ let needsIdRead = false;
 let isReadingId = false;
 let hoveredSiteId = DEFAULT_MAX_SITES;
 let activeSiteId = -1;
+let eagerSiteId = -1;
 let clickPending = false;
 let idReadbackBuffer = null;
 
@@ -354,7 +428,7 @@ function simpleRectangleMesh(){
     return array;
 }
 
-function updateUniforms(buffer, device, r, planeZ, numSites, activeSiteId){
+function updateUniforms(buffer, device, r, planeZ, numSites){
     const uniformValuesAsF32 = new Float32Array(40);
     const cameraMatrix = uniformValuesAsF32.subarray(0, 16);
     const objectMatrix = uniformValuesAsF32.subarray(16, 32);
@@ -374,6 +448,7 @@ function updateUniforms(buffer, device, r, planeZ, numSites, activeSiteId){
     uniformValuesAsF32[34] = numSites;
     uniformValuesAsF32[35] = hoveredSiteId;
     uniformValuesAsF32[36] = activeSiteId;
+    uniformValuesAsF32[37] = eagerSiteId;
 
     device.queue.writeBuffer(buffer, 0, uniformValuesAsF32);
 }
@@ -704,7 +779,7 @@ async function main() {
             // for (let i=0; i<sites.length-1; i++) {
             for (let i=0; i<sites.length; i++) {
                 let site = sites[i];
-                site.calcSites(sites, i, hoveredSiteId, activeSiteId);
+                site.calcSites(sites, i, hoveredSiteId, activeSiteId, eagerSiteId);
                 site.calcBounds(bounds);
                 if (i == activeSiteId){
                     site.calcGoto(canvas.width/2, canvas.height/2 - 40) // TODO: PROPER SPACING
@@ -716,7 +791,13 @@ async function main() {
 
             sitesShown = updateSitesArray(sites, voronoiSites, planeZ);
             updateSitesBuffer(device, voronoiSitesBuffer, voronoiSites);
+            for (const [_, anim] of Object.entries(overlayAnimations)) {
+                anim.step();  // do I have a choice but to do this every frame?
+            }
         }
+        if (overlayHeader){
+            overlayHeader.style.transform = `translate(${overlayState.headerX}px, ${overlayState.headerY}px)`;
+            overlayBlurb.style.transform = `translate(${overlayState.blurbX}px, ${overlayState.blurbY}px)`;        }
 
         planeZ += planeZVelocity;
         planeZ = clamp(planeZ, PLANE_Z_MIN, PLANE_Z_MAX);
@@ -733,9 +814,7 @@ async function main() {
             inFocus |= sites[hoveredSiteId].inFocus(dz, 5.0, 40.0, 20.0);
             inFocus &= activeSiteId != hoveredSiteId;
             canvas.style.cursor = inFocus ? 'pointer' : 'default';
-            canvas.style.transform = 'translateZ(0)';
-            canvas.offsetHeight;
-            canvas.style.transform = '';
+            perturbPointer(canvas);
         }
 
         const [renderPassDescriptor, resized] = describeRenderPassAndResize(device, context);
@@ -787,8 +866,7 @@ async function main() {
         pass2.draw(vertexCount, 1, 0, 0);
         pass2.end();
 
-        const shouldReadId = needsIdRead && !isReadingId && idReadbackBuffer;
-
+        const shouldReadId = (pointerState.pressed || needsIdRead) && !isReadingId && idReadbackBuffer;
         if (shouldReadId) {
             const mouseX = Math.floor(pointerState.normalizedX * canvas.width);
             const mouseY = Math.floor(pointerState.normalizedY * canvas.height);
@@ -817,9 +895,15 @@ async function main() {
                     hoveredSiteId = sitesShown[view[0]];
                     window.hoveredSiteId = hoveredSiteId;
                     // probably should be updated here anyway...
-                    if(clickPending){
+                    if(pointerState.pressed){
+                        if(inFocus && activeSiteId != hoveredSiteId){
+                            eagerSiteId = hoveredSiteId;
+                            // console.log("eager site id: ", eagerSiteId)
+                        }
+                    } else if(clickPending){
                         if(inFocus && activeSiteId != hoveredSiteId){
                             activeSiteId = hoveredSiteId;
+                            eagerSiteId = -1;
                             console.log("active site id: ", activeSiteId)
                         }
                         clickPending = false;

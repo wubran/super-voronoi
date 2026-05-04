@@ -21,7 +21,7 @@ struct Uniforms {
   numSites: f32,
   mouseID: f32,
   activeID: f32,
-  padding: f32,
+  eagerID: f32,
 };
 
 struct Site {
@@ -208,7 +208,10 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let spaceFreq = 1.0;
   let timeFreq = 0.00001;
   // let timeFreq = 0.004;
-  let isHovered = u32(uni.mouseID) == center;
+  let isHovered = i32(uni.mouseID) == i32(center);
+  let isActive = i32(uni.activeID) == i32(center);
+  let isEager = i32(uni.eagerID) == i32(center);
+
   let coordf = fsInput.position.xy;
   let loc2 = coordf + noiseScale*(vectorNoise(spaceFreq*coordf, timeFreq*uni.time)*2.0 - 1.0);
   let loc3 = vec3<f32>(loc2, uni.planeZ);
@@ -226,13 +229,17 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let noisyBaseUv = noisyImageCoord/desiredSize;
   let clampedUv = clamp(noisyBaseUv, vec2<f32>(0.0), vec2<f32>(0.99));
   let centerColor = textureSample(ourTexture, ourSampler, clampedUv, textureLayer);
-  let transparent = vec4<f32>(0.0,0.0,0.0,0.0);
-  // let isTransparent = i32(uni.activeID) == i32(center);
-  let isTransparent = false;
+  // let transparent = vec4<f32>(0.0,0.0,0.0,0.0);
+  // let glow = vec4<f32>(1.2,1.2,1.2,1.2);
+
+  // let isTransparent = false;
   // let edgeMix = select(vec4<f32>(1.0,1.0,1.0,1.0), vec4<f32>(0.8,0.8,0.8,1.0), isEdge);
   // let finalColor = centerColor * edgeMix;
   // return select(finalColor, transparent, isTransparent);
-  return select(centerColor, transparent, isTransparent);
+  // if(isHovered){
+  //   return centerColor*glow;
+  // }
+  return centerColor;
 }
 `
 export default voronoi;
