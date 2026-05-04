@@ -17,7 +17,7 @@ class Site3D {
         const growFactor = 1.5;
         const repulsionStrength = 40.0;
         if(i == activeId){
-            const activeMass = this.mass*growFactor+2.0;
+            const activeMass = this.mass*growFactor+1.0;
             this.massShown = activeEaseRate*activeMass + (1-activeEaseRate)*this.massShown;
 
         } else if(i == hoveredId){
@@ -48,8 +48,8 @@ class Site3D {
         }
     }
     calcGoto(x, y, z=this.z) {
-        let kp = 0.006;
-        let kd = 0.4;
+        let kp = 0.020;
+        let kd = 0.9;
         this.force.x += (x-this.pos.x)*kp - this.vel.x*kd;
         this.force.y += (y-this.pos.y)*kp - this.vel.y*kd;
     }

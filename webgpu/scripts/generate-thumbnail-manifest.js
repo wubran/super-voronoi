@@ -161,7 +161,22 @@ async function generateManifest() {
       blurb,
     };
   }));
-
+  manifestItems.sort((a, b) => {
+    const parse = s => {
+      const [m, d, y] = s.split(/\r?\n| /)[0].split("/").map(Number);
+      return new Date(y < 100 ? y + 2000 : y, m - 1, d);
+    };
+    return parse(b.blurb) - parse(a.blurb);
+  });
+  // for(let i = 0; i<manifestItems.length; i++){
+  //   const item = manifestItems[i];
+  //   const parse = s => {
+  //     const [m, d, y] = s.split(/\r?\n| /)[0].split("/").map(Number);
+  //     console.log(m,d,y)
+  //     return new Date(y < 100 ? y + 2000 : y, m - 1, d);
+  //   };
+  //   console.log(parse(item.blurb), item.url)
+  // }
   fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifestItems, null, 2) + '\n');
   console.log(`Generated ${manifestItems.length} thumbnail entries in ${MANIFEST_PATH}`);
 }

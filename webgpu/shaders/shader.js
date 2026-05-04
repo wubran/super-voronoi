@@ -57,7 +57,10 @@ const ID_TEXTURE_SCALE: f32 = 1.0; // low-res canvas already matches id texture 
 
 fn distance3(x: vec3<f32>, p: vec3<f32>, w: f32) -> f32 {
   let v = x - p;
-  return sqrt(dot(v, v)) - 50*w; // NEEDS SCALING
+  return sqrt(dot(v, v)) - 50*w;
+  // return sqrt(dot(v, v) - 2500*w);
+  // return max(max(abs(v.x), abs(v.y)), abs(v.z)) - 50*w; // L-infinity distance (square cells)
+  // return abs(v.x) + abs(v.y) + abs(v.z) - 50*w; // L-infinity distance (square cells)
 }
 // fn distance3(x: vec3<f32>, p: vec3<f32>, w: f32) -> f32 {
 //   let v = x - p;
@@ -184,10 +187,10 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
       clamp(i32(coordff.y), 0, dims.y - 1)
   );
   let centerShown = textureLoad(idTex, coord, 0).r;
-  // let xEdge = dpdx(f32(center)) != 0;
-  // let yEdge = dpdy(f32(center)) != 0;
+  // let xEdge = dpdx(f32(centerShown)) != 0;
+  // let yEdge = dpdy(f32(centerShown)) != 0;
   // let isEdge = xEdge || yEdge;
-  // let isEdge = false;
+  // // let isEdge = false;
 
   let edgeColor = vec4<f32>(0.0, 0.0, 0.0, 1.0);
   let nearest = voronoiSites[i32(centerShown)];
@@ -196,7 +199,7 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let nearestZ = f32(nearest.pos.z);
   let nearestMass = nearest.mass;
   let sliderGap = 30; // bigger allows for easier locating
-  let tintSlider = softGapLinear((uni.planeZ - nearestZ)/nearestMass, 5, 20, 20); // interpreting mass as "radius"
+  let tintSlider = softGapLinear((uni.planeZ - nearestZ)/nearestMass, 2, 20, 20); // interpreting mass as "radius"
   let textureSize = vec2<f32>(textureDimensions(ourTexture, 0));
 
   // noise needs TO BE UNIFIED WITH ABOVE
@@ -221,7 +224,8 @@ fn edge_fs(fsInput: OurVertexShaderOutput) -> @location(0) vec4f {
   let imageCenter = desiredSize*0.5;
   let noisyImageCoord = (loc2.xy - (nearestSite - imageCenter));
   let noisyBaseUv = noisyImageCoord/desiredSize;
-  let centerColor = textureSample(ourTexture, ourSampler, noisyBaseUv, textureLayer);
+  let clampedUv = clamp(noisyBaseUv, vec2<f32>(0.0), vec2<f32>(0.99));
+  let centerColor = textureSample(ourTexture, ourSampler, clampedUv, textureLayer);
   let transparent = vec4<f32>(0.0,0.0,0.0,0.0);
   let isTransparent = i32(uni.activeID) == i32(center);
 

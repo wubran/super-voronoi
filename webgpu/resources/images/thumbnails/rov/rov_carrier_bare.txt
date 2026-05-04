@@ -1,0 +1,5 @@
+05/08/2025
+An empty Boat on my floor, set to become the carrier vessel of my ROV.
+Design: Catamaran Airboat with a spool for carrying the ROV's tether.
+One motor is capable of driving the spool and the propeller via last-minute gearbox design.
+The gearbox uses two sliding clutches to output forward or reverse to one of two outputs. 

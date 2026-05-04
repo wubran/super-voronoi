@@ -1,156 +1,163 @@
 [
   {
-    "url": "resources/images/thumbnails/fish/earlyfish.jpg",
-    "width": 1740,
-    "height": 1305,
-    "color": "#5A5550.FC",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/fish/naval_academy_cart.JPG",
-    "width": 979,
-    "height": 1305,
-    "color": "#726D70.F4",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/fish/naval_academy_fish.JPG",
-    "width": 979,
-    "height": 1305,
-    "color": "#5B676E.E8",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/food/died_tomatoes.JPG",
-    "width": 979,
-    "height": 1305,
-    "color": "#94765D.14",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/food/hand_noodles.jpg",
-    "width": 979,
-    "height": 1305,
-    "color": "#99866D.38",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/food/shrimp_pesto.jpg",
-    "width": 979,
-    "height": 1305,
-    "color": "#908679.34",
-    "blurb": "Oct 26, 2025 - Lunch\r\nHomemade pesto, Hand-grated Parmesan, Costco Shrimp."
-  },
-  {
-    "url": "resources/images/thumbnails/outside/kenilworth.jpg",
-    "width": 1740,
-    "height": 1305,
-    "color": "#697665.08",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/outside/kenilworth_bud.jpg",
-    "width": 979,
-    "height": 1305,
-    "color": "#61765B.68",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/outside/kenilworth_keychain.jpg",
-    "width": 979,
-    "height": 1305,
-    "color": "#888C8D.AC",
-    "blurb": ""
-  },
-  {
     "url": "resources/images/thumbnails/outside/patapsco.jpg",
     "width": 1278,
     "height": 959,
     "color": "#42443B.DC",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/outside/patapsco_again.JPG",
-    "width": 1740,
-    "height": 1305,
-    "color": "#7A7875.14",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/outside/patapsco_green.JPG",
-    "width": 293,
-    "height": 220,
-    "color": "#68774D.D",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/outside/patapsco_snow.JPG",
-    "width": 1740,
-    "height": 1305,
-    "color": "#69798B.08",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/outside/quad_biking.jpg",
-    "width": 2320,
-    "height": 1305,
-    "color": "#554532.C4",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/outside/solar_eclispe.JPG",
-    "width": 1740,
-    "height": 1305,
-    "color": "#848383.78",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/outside/yellowstone_artist.JPG",
-    "width": 1740,
-    "height": 1305,
-    "color": "#80817D.8C",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/outside/yellowstone_falls.JPG",
-    "width": 979,
-    "height": 1305,
-    "color": "#7E837B.F",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/outside/yellowstone_steam.JPG",
-    "width": 1740,
-    "height": 1305,
-    "color": "#79828D.C4",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/rov/capstone_fair.jpg",
-    "width": 1958,
-    "height": 1305,
-    "color": "#594921.58",
-    "blurb": ""
-  },
-  {
-    "url": "resources/images/thumbnails/rov/rov_carrier_bare.jpg",
-    "width": 979,
-    "height": 1305,
-    "color": "#7C6C5D.D4",
-    "blurb": ""
+    "blurb": "09/13/2026\r\nThe Patapsco River in the fall.\r\nBy my favorite trail."
   },
   {
     "url": "resources/images/thumbnails/rov/rov_corpse.jpg",
     "width": 979,
     "height": 1305,
     "color": "#8C8170.3",
-    "blurb": ""
+    "blurb": "05/11/2026\r\nBoth Halves of the ROV Electronics, almost completed.\r\nOn the left: a Luckfox Pico Plus with ethernet leading outside. Two wires from the ethernet are fed into a 5V regulator.\r\nOn the right: the almost-complete power train of the ROV. 5 ESC's, 5 BLDC motors, two control-mosfets, and a PWM light controller.\r\nBoth sides feature an intensely powerful epoxy-encased LED.\r\nThe two halves interface with a sketchy homebrew plug."
+  },
+  {
+    "url": "resources/images/thumbnails/food/shrimp_pesto.jpg",
+    "width": 979,
+    "height": 1305,
+    "color": "#908679.34",
+    "blurb": "10/26/2025 - Lunch\r\nHomemade pesto from a long time ago.\r\nHand-grated Parmesan, Costco Shrimp and Trader Joes pasta."
+  },
+  {
+    "url": "resources/images/thumbnails/food/hand_noodles.jpg",
+    "width": 979,
+    "height": 1305,
+    "color": "#99866D.38",
+    "blurb": "10/16/2025 - Lunch\r\nHand-cut noodles with soy-garlic peanut butter sauce.\r\nSliced cucumber, spring onions.\r\nFried egg, Soft-boiled egg, Marinated beef."
+  },
+  {
+    "url": "resources/images/thumbnails/food/musubi.jpg",
+    "width": 809,
+    "height": 606,
+    "color": "#96897B.C8",
+    "blurb": "10/8/2025\r\nSpam and Egg Musubi, saved in plastic wrap."
+  },
+  {
+    "url": "resources/images/thumbnails/rov/capstone_fair.jpg",
+    "width": 1958,
+    "height": 1305,
+    "color": "#594921.58",
+    "blurb": "5/16/2025\r\nPresentation of my ROV at the Design, Cultures, and Creativity (DCC) Capstone Fair.\r\nThe Boat sits aloft my contraband storage box.\r\nThe ROV sits below atop a piece of contraband (3D-Printing Filament).\r\nThe ROV's camera feed is displayed on the monitor to my side."
+  },
+  {
+    "url": "resources/images/thumbnails/rov/rov_carrier_bare.jpg",
+    "width": 979,
+    "height": 1305,
+    "color": "#7C6C5D.D4",
+    "blurb": "05/08/2025\r\nAn empty Boat on my floor, set to become the carrier vessel of my ROV.\r\nDesign: Catamaran Airboat with a spool for carrying the ROV's tether.\r\nOne motor is capable of driving the spool and the propeller via last-minute gearbox design.\r\nThe gearbox uses two sliding clutches to output forward or reverse to one of two outputs."
   },
   {
     "url": "resources/images/thumbnails/rov/rov_disemboweled.jpg",
     "width": 979,
     "height": 1305,
     "color": "#9B856E.B",
-    "blurb": ""
+    "blurb": "05/08/2025 - Bathroom Soldering\r\nMy ROV's powertrain, halfway through the soldering process.\r\n5 Brushless drone ESC's are wrapped around a single 18650 battery cell.\r\nThe 3 output channels of each ESC are routed through an epoxy endcap to breach the ROV's air-water seal.\r\nEnameled copper wire was the only suitable option at this scale, with limited resources.\r\nA single scratch through the water-exposed enamel could compromise the entire unit for long-term use.\r\nI should have just put the ESC's outside the vehicle for cooling, modularity, space, and shorter wires."
+  },
+  {
+    "url": "resources/images/thumbnails/fish/earlyfish.jpg",
+    "width": 1740,
+    "height": 1305,
+    "color": "#5A5550.FC",
+    "blurb": "10/06/2024 - 6 AM\r\nOn a Chesapeake Bay Sportfishing Rockfish Charter.\r\nTo be honest, this charter has always been a bit hit-or-miss."
+  },
+  {
+    "url": "resources/images/thumbnails/outside/kenilworth.jpg",
+    "width": 1740,
+    "height": 1305,
+    "color": "#697665.08",
+    "blurb": "09/21/2024\r\nLotus blossoms at the Kenilworth Aquatic Gardens.\r\nThe walking path flooded up to our ankles while we were exploring inside.\r\nWe biked back to College Park with wet feet."
+  },
+  {
+    "url": "resources/images/thumbnails/outside/kenilworth_bud.jpg",
+    "width": 979,
+    "height": 1305,
+    "color": "#61765B.68",
+    "blurb": "09/21/2024\r\nA lotus bud at the Kenilworth Aquatic Gardens."
+  },
+  {
+    "url": "resources/images/thumbnails/outside/kenilworth_keychain.jpg",
+    "width": 979,
+    "height": 1305,
+    "color": "#888C8D.AC",
+    "blurb": "09/21/2024\r\nMy favorite keychain.\r\nBought from the gift store at the Kenilworth Aquatic Gardens."
+  },
+  {
+    "url": "resources/images/thumbnails/outside/patapsco_green.JPG",
+    "width": 293,
+    "height": 220,
+    "color": "#68774D.D",
+    "blurb": "5/30/2024\r\nThe Patapsco River in the spring."
+  },
+  {
+    "url": "resources/images/thumbnails/outside/yellowstone_artist.JPG",
+    "width": 1740,
+    "height": 1305,
+    "color": "#80817D.8C",
+    "blurb": "5/21/2024\r\nArtist Point at Yellowstone National Park"
+  },
+  {
+    "url": "resources/images/thumbnails/outside/yellowstone_steam.JPG",
+    "width": 1740,
+    "height": 1305,
+    "color": "#79828D.C4",
+    "blurb": "05/21/2024\r\nThe Grand Prismatic Spring at Yellowstone National Park."
+  },
+  {
+    "url": "resources/images/thumbnails/outside/yellowstone_falls.JPG",
+    "width": 979,
+    "height": 1305,
+    "color": "#7E837B.F",
+    "blurb": "05/20/2024\r\nUndyne Falls at Yellowstone National Park."
+  },
+  {
+    "url": "resources/images/thumbnails/fish/naval_academy_cart.JPG",
+    "width": 979,
+    "height": 1305,
+    "color": "#726D70.F4",
+    "blurb": "4/14/2024\r\nWalking out our fishing setup at the Naval Academy."
+  },
+  {
+    "url": "resources/images/thumbnails/fish/naval_academy_fish.JPG",
+    "width": 979,
+    "height": 1305,
+    "color": "#5B676E.E8",
+    "blurb": "4/14/2024\r\nFishing setup at the Naval Academy.\r\nTargetting white perch and catfish.\r\nCherry Blossoms in full bloom."
+  },
+  {
+    "url": "resources/images/thumbnails/outside/solar_eclipse.JPG",
+    "width": 1740,
+    "height": 1305,
+    "color": "#848383.78",
+    "blurb": "04/08/2024\r\nEdited photo of the sun during a partial solar eclipse.\r\nPhoto taken from UMD, College Park (McKeldin Mall)."
+  },
+  {
+    "url": "resources/images/thumbnails/outside/patapsco_again.JPG",
+    "width": 1740,
+    "height": 1305,
+    "color": "#7A7875.14",
+    "blurb": "03/20/2024\r\nThe Patapsco River in the early spring."
+  },
+  {
+    "url": "resources/images/thumbnails/outside/patapsco_snow.JPG",
+    "width": 1740,
+    "height": 1305,
+    "color": "#69798B.08",
+    "blurb": "01/17/2024\r\nThe Patapsco River in the winter."
+  },
+  {
+    "url": "resources/images/thumbnails/outside/quad_biking.jpg",
+    "width": 2320,
+    "height": 1305,
+    "color": "#554532.C4",
+    "blurb": "10/28/2023\r\nBiked to D.C. with some friends from the Terrapin Trail Club.\r\nVisited the U.S. Botanical Gardens afterwards.\r\nBeautiful weather."
+  },
+  {
+    "url": "resources/images/thumbnails/food/dried_tomatoes.JPG",
+    "width": 979,
+    "height": 1305,
+    "color": "#94765D.14",
+    "blurb": "08/15/2023\r\n\"Sun-dried\" tomatoes.\r\nBaked with olive oil over thyme and rosemary from the garden."
   }
 ]

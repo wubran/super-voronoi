@@ -1,0 +1,7 @@
+05/08/2025 - Bathroom Soldering
+My ROV's powertrain, halfway through the soldering process.
+5 Brushless drone ESC's are wrapped around a single 18650 battery cell.
+The 3 output channels of each ESC are routed through an epoxy endcap to breach the ROV's air-water seal.
+Enameled copper wire was the only suitable option at this scale, with limited resources.
+A single scratch through the water-exposed enamel could compromise the entire unit for long-term use.
+I should have just put the ESC's outside the vehicle for cooling, modularity, space, and shorter wires.
