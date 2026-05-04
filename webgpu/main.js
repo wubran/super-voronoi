@@ -282,11 +282,17 @@ function setGpuOverlay({ url, x = 0, y = 0, scale = 1, blurb = '' } = {}) {
     }
   }
 
+  let bodyStart = 1;
   const filename = url ? url.replace(/^.*[\/]/, '').replace(/\.[^/.]+$/, '') : '';
   const rawBlurb = typeof blurb === 'string' ? blurb : '';
   const lines = rawBlurb.split(/\r?\n/);
   const dateLine = lines.length > 0 && lines[0].trim() !== '' ? lines[0].trim() : filename;
-  const bodyText = lines.slice(1).join('\n').trim();
+//   const tags = lines.length > 1 && lines[1].startsWith('TAGS') ? lines[1].trim().split("#").slice(1) : [];
+//   if(tags.length > 0){
+//     // console.log(tags)
+//     bodyStart = 2;
+//   }
+  const bodyText = lines.length >= bodyStart ? lines.slice(bodyStart).join('\n').trim() : "";
   const headerText = filename ? `${dateLine} · ${filename}` : dateLine;
 
   overlayState.anchor = 'center';
@@ -684,7 +690,7 @@ async function main() {
       addressModeV: 'clamp-to-edge',
     });
 
-    const thumbnailMetadata = await retrieveThumbnailMetadata();
+    const [thumbnailMetadata, tags] = await retrieveThumbnailMetadata();
     const thumbnailUrls = thumbnailMetadata.map((entry) => entry.url);
     // createImageOverlay(thumbnailUrls[0]);
     const entries = thumbnailMetadata.slice(0, 64);

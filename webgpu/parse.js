@@ -27,57 +27,47 @@ const FALLBACK_THUMBNAIL_PATHS = [
   'resources/images/thumbnails/rov/rov_disemboweled.jpg',
 ];
 
-function flattenThumbnailManifest(manifest, basePath = '') {
+// warning: all this basepath concat stuff has been lazily nullified
+function getArtifactsManifest(manifest) {
+  let artifacts = manifest["artifacts"];
   const results = [];
 
-  if (Array.isArray(manifest)) {
-    for (const entry of manifest) {
-      if (typeof entry === 'string') {
-        results.push({
-          url: basePath ? `${basePath}/${entry}` : entry,
-          width: 1,
-          height: 1,
-          color: "#000000.FF",
-          blurb: '',
-        });
-      } else if (entry && typeof entry === 'object') {
-        if (typeof entry.url === 'string') {
-          results.push({
-            url: basePath ? `${basePath}/${entry.url}` : entry.url,
-            width: typeof entry.width === 'number' ? entry.width : 1,
-            height: typeof entry.height === 'number' ? entry.height : 1,
-            color: typeof entry.color === 'string' ? entry.color : "#000000.FF",
-            blurb: typeof entry.blurb === 'string' ? entry.blurb : '',
-          });
-        } else {
-          results.push(...flattenThumbnailManifest(entry, basePath));
-        }
-      }
-    }
-    return results;
+  for (const entry of artifacts) {
+    results.push({
+      url: entry.url,
+      width: typeof entry.width === 'number' ? entry.width : 1,
+      height: typeof entry.height === 'number' ? entry.height : 1,
+      color: typeof entry.color === 'string' ? entry.color : "#000000.FF",
+      blurb: typeof entry.blurb === 'string' ? entry.blurb : '',
+    });
   }
+  return results;
+}
 
-  if (manifest && typeof manifest === 'object') {
-    for (const key of Object.keys(manifest)) {
-      results.push(...flattenThumbnailManifest(manifest[key], basePath ? `${basePath}/${key}` : key));
-    }
+function getTagsManifest(manifest){
+  const results = [];
+  let tags = manifest["tags"];
+  for (const tag of tags){
+    results.push({
+      url: tag.url,
+      blurb: tag.blurb,
+    });
   }
-
   return results;
 }
 
 async function fetchThumbnailManifest(url = THUMBNAIL_MANIFEST_URL) {
-  try {
+  // try {
     const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch thumbnail manifest: ${response.status} ${response.statusText}`);
-    }
+  //   if (!response.ok) {
+  //     throw new Error(`Failed to fetch thumbnail manifest: ${response.status} ${response.statusText}`);
+  //   }
     const manifest = await response.json();
-    return flattenThumbnailManifest(manifest);
-  } catch (error) {
-    console.warn('Could not load thumbnail manifest, using fallback list.', error);
-    return flattenThumbnailManifest(FALLBACK_THUMBNAIL_PATHS);
-  }
+    return [getArtifactsManifest(manifest), getTagsManifest(manifest)];
+  // } catch (error) {
+  //   console.warn('Could not load thumbnail manifest, using fallback list.', error);
+  //   return flattenThumbnailManifest(FALLBACK_THUMBNAIL_PATHS);
+  // }
 }
 
 async function retrieveThumbnailMetadata(manifestUrl = THUMBNAIL_MANIFEST_URL) {
@@ -85,7 +75,7 @@ async function retrieveThumbnailMetadata(manifestUrl = THUMBNAIL_MANIFEST_URL) {
 }
 
 async function retrieveThumbnailPaths(manifestUrl = THUMBNAIL_MANIFEST_URL) {
-  const metadata = await retrieveThumbnailMetadata(manifestUrl);
+  const [metadata, tags] = await retrieveThumbnailMetadata(manifestUrl);
   return metadata.map((item) => item.url);
 }
 
@@ -264,7 +254,7 @@ async function fillThumbnailTextureArray(device, texture, infoBuffer, items, wid
 }
 
 async function loadThumbnailTextureArray(device, manifestUrl = THUMBNAIL_MANIFEST_URL) {
-  const items = await retrieveThumbnailMetadata(manifestUrl);
+  const [items, tags] = await retrieveThumbnailMetadata(manifestUrl);
   const entries = items.slice(0, MAX_THUMBNAIL_LAYERS);
   const layerCount = Math.max(1, entries.length);
   const sampler = createThumbnailSampler(device);

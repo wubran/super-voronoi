@@ -13,20 +13,29 @@ function isImageFile(fileName) {
   return IMAGE_EXTENSIONS.includes(path.extname(fileName).toLowerCase());
 }
 
+function isTagFile(fileName) {
+  let base = path.basename(fileName).slice(0, -4);
+  return path.extname(fileName).toLowerCase() == ".txt" && base == base.toUpperCase();
+}
+
 function walkDirectory(directory) {
   const entries = fs.readdirSync(directory, { withFileTypes: true });
-  const files = [];
+  const imagefiles = [];
+  const tagFiles = [];
 
   for (const entry of entries) {
     const targetPath = path.join(directory, entry.name);
     if (entry.isDirectory()) {
-      files.push(...walkDirectory(targetPath));
+      let [imgs, tags] = walkDirectory(targetPath)
+      imagefiles.push(...imgs);
+      tagFiles.push(...tags);
     } else if (entry.isFile() && isImageFile(entry.name)) {
-      files.push(targetPath);
-    }
+      imagefiles.push(targetPath);
+    } else if (entry.isFile() && isTagFile(entry.name)) {
+      tagFiles.push(targetPath);
+    } 
   }
-
-  return files;
+  return [imagefiles, tagFiles];
 }
 
 function readUInt24BE(buffer, offset) {
@@ -139,12 +148,29 @@ async function getRepresentativeColor(filePath) {
   return rgbToHex(r / total, g / total, b / total);
 }
 
+
+function parseBlurb(blurb, url){
+  let bodyStart = 1;
+  const filename = url ? url.replace(/^.*[\/]/, '').replace(/\.[^/.]+$/, '') : '';
+  const rawBlurb = typeof blurb === 'string' ? blurb : '';
+  const lines = rawBlurb.split(/\r?\n/);
+  const dateLine = lines.length > 0 && lines[0].trim() !== '' ? lines[0].trim() : filename;
+  const tags = lines.length > 1 && lines[1].startsWith('TAGS') ? lines[1].trim().split("#").slice(1) : [];
+  if(tags.length > 0){
+    bodyStart = 2;
+  }
+  const bodyText = lines.length >= bodyStart ? lines.slice(bodyStart).join('\n').trim() : "";
+  const headerText = filename ? `${dateLine} · ${filename}` : dateLine;
+  return [headerText, tags, bodyText]
+}
+
+
 async function generateManifest() {
   if (!fs.existsSync(THUMBNAIL_DIR)) {
     throw new Error(`Thumbnail directory not found: ${THUMBNAIL_DIR}`);
   }
 
-  const imageFiles = walkDirectory(THUMBNAIL_DIR).sort();
+  const [imageFiles, tagFiles] = walkDirectory(THUMBNAIL_DIR).sort();
   const manifestItems = await Promise.all(imageFiles.map(async (filePath) => {
     const { width, height } = getImageSize(filePath);
     const color = await getRepresentativeColor(filePath);
@@ -153,12 +179,16 @@ async function generateManifest() {
     if (fs.existsSync(blurbPath) && fs.statSync(blurbPath).isFile()) {
       blurb = fs.readFileSync(blurbPath, 'utf8').trim();
     }
+    const [headerText, tags, bodyText] = parseBlurb(blurb, filePath)
     return {
       url: normalizeUrl(filePath),
       width,
       height,
       color,
       blurb,
+      headerText,
+      tags,
+      bodyText,
     };
   }));
   manifestItems.sort((a, b) => {
@@ -168,6 +198,16 @@ async function generateManifest() {
     };
     return parse(b.blurb) - parse(a.blurb);
   });
+  const tagItems = await Promise.all(tagFiles.map(async (filePath) => {
+    let blurb = '';
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      blurb = fs.readFileSync(filePath, 'utf8').trim();
+    }
+    return {
+      url: normalizeUrl(filePath),
+      blurb,
+    }
+  }));
   // for(let i = 0; i<manifestItems.length; i++){
   //   const item = manifestItems[i];
   //   const parse = s => {
@@ -177,7 +217,8 @@ async function generateManifest() {
   //   };
   //   console.log(parse(item.blurb), item.url)
   // }
-  fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifestItems, null, 2) + '\n');
+  let output = {"artifacts": manifestItems, "tags":tagItems}
+  fs.writeFileSync(MANIFEST_PATH, JSON.stringify(output, null, 2) + '\n');
   console.log(`Generated ${manifestItems.length} thumbnail entries in ${MANIFEST_PATH}`);
 }
 

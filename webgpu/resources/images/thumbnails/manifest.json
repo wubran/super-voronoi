@@ -1,177 +1,296 @@
-[
-  {
-    "url": "resources/images/thumbnails/special/tutorial.png",
-    "width": 401,
-    "height": 252,
-    "color": "#F7F7F7.08",
-    "blurb": "05/04/9999\r\nWARNING: I am working on optimizing this site's performance. I apologize if it makes your PC hot.\r\n\r\n1. Hover your mouse over ANYTHING but this tutorial, then scroll \"up\" to travel back in time.\r\n2. Once a cell comes \"into focus,\" it will be clickable.\r\n3. Click a cell to see an info card.\r\n4. Minimize the card by clicking it or another \"in focus\" cell."
-  },
-  {
-    "url": "resources/images/thumbnails/special/info.png",
-    "width": 401,
-    "height": 252,
-    "color": "#313793.68",
-    "blurb": "05/04/9998\r\nThis is my ePortfolio where I will store my Human Things.\r\nHere, you will find pictures of projects, food, and other things that I enjoy.\r\n\r\nThis site uses your GPU to render a power diagram.\r\nSpecifically, this site renders the intersection of a 3D weighted Voronoi Diagram with a flat plane.\r\nBy scrolling back and forth, you control the height of this plane."
-  },
-  {
-    "url": "resources/images/thumbnails/outside/patapsco.jpg",
-    "width": 1278,
-    "height": 959,
-    "color": "#42443B.DC",
-    "blurb": "09/13/2026\r\nThe Patapsco River in the fall.\r\nBy my favorite trail."
-  },
-  {
-    "url": "resources/images/thumbnails/food/shrimp_pesto.jpg",
-    "width": 979,
-    "height": 1305,
-    "color": "#908679.34",
-    "blurb": "10/26/2025 - Lunch\r\nHomemade pesto from a long time ago.\r\nHand-grated Parmesan, Costco Shrimp and Trader Joes pasta."
-  },
-  {
-    "url": "resources/images/thumbnails/food/hand_noodles.jpg",
-    "width": 979,
-    "height": 1305,
-    "color": "#99866D.38",
-    "blurb": "10/16/2025 - Lunch\r\nHand-cut noodles with soy-garlic peanut butter sauce.\r\nSliced cucumber, spring onions.\r\nFried egg, Soft-boiled egg, Marinated beef."
-  },
-  {
-    "url": "resources/images/thumbnails/food/musubi.jpg",
-    "width": 809,
-    "height": 606,
-    "color": "#96897B.C8",
-    "blurb": "10/8/2025\r\nSpam and Egg Musubi, saved in plastic wrap."
-  },
-  {
-    "url": "resources/images/thumbnails/rov/capstone_fair.jpg",
-    "width": 1958,
-    "height": 1305,
-    "color": "#594921.58",
-    "blurb": "5/16/2025\r\nPresentation of my ROV at the Design, Cultures, and Creativity (DCC) Capstone Fair.\r\nThe Boat sits aloft my contraband storage box.\r\nThe ROV sits below atop a piece of contraband (3D-Printing Filament).\r\nThe ROV's camera feed is displayed on the monitor to my side."
-  },
-  {
-    "url": "resources/images/thumbnails/rov/rov_corpse.jpg",
-    "width": 979,
-    "height": 1305,
-    "color": "#8C8170.3",
-    "blurb": "05/11/2025\r\nBoth Halves of the ROV Electronics, almost completed.\r\nOn the left: a Luckfox Pico Plus with ethernet leading outside. Two wires from the ethernet are fed into a 5V regulator.\r\nOn the right: the almost-complete power train of the ROV. 5 ESC's, 5 BLDC motors, two control-mosfets, and a PWM light controller.\r\nBoth sides feature an intensely powerful epoxy-encased LED.\r\nThe two halves interface with a sketchy homebrew plug."
-  },
-  {
-    "url": "resources/images/thumbnails/rov/rov_carrier_bare.jpg",
-    "width": 979,
-    "height": 1305,
-    "color": "#7C6C5D.D4",
-    "blurb": "05/08/2025\r\nAn empty Boat on my floor, set to become the carrier vessel of my ROV.\r\nDesign: Catamaran Airboat with a spool for carrying the ROV's tether.\r\nOne motor is capable of driving the spool and the propeller via last-minute gearbox design.\r\nThe gearbox uses two sliding clutches to output forward or reverse to one of two outputs."
-  },
-  {
-    "url": "resources/images/thumbnails/rov/rov_disemboweled.jpg",
-    "width": 979,
-    "height": 1305,
-    "color": "#9B856E.B",
-    "blurb": "05/08/2025 - Bathroom Soldering\r\nMy ROV's powertrain, halfway through the soldering process.\r\n5 Brushless drone ESC's are wrapped around a single 18650 battery cell.\r\nThe 3 output channels of each ESC are routed through an epoxy endcap to breach the ROV's air-water seal.\r\nEnameled copper wire was the only suitable option at this scale, with limited resources.\r\nA single scratch through the water-exposed enamel could compromise the entire unit for long-term use.\r\nI should have just put the ESC's outside the vehicle for cooling, modularity, space, and shorter wires."
-  },
-  {
-    "url": "resources/images/thumbnails/fish/earlyfish.jpg",
-    "width": 1740,
-    "height": 1305,
-    "color": "#5A5550.FC",
-    "blurb": "10/06/2024 - 6 AM\r\nOn a Chesapeake Bay Sportfishing Rockfish Charter.\r\nTo be honest, this charter has always been a bit hit-or-miss."
-  },
-  {
-    "url": "resources/images/thumbnails/outside/kenilworth.jpg",
-    "width": 1740,
-    "height": 1305,
-    "color": "#697665.08",
-    "blurb": "09/21/2024\r\nLotus blossoms at the Kenilworth Aquatic Gardens.\r\nThe walking path flooded up to our ankles while we were exploring inside.\r\nWe biked back to College Park with wet feet."
-  },
-  {
-    "url": "resources/images/thumbnails/outside/kenilworth_bud.jpg",
-    "width": 979,
-    "height": 1305,
-    "color": "#61765B.68",
-    "blurb": "09/21/2024\r\nA lotus bud at the Kenilworth Aquatic Gardens."
-  },
-  {
-    "url": "resources/images/thumbnails/outside/kenilworth_keychain.jpg",
-    "width": 979,
-    "height": 1305,
-    "color": "#888C8D.AC",
-    "blurb": "09/21/2024\r\nMy favorite keychain.\r\nBought from the gift store at the Kenilworth Aquatic Gardens."
-  },
-  {
-    "url": "resources/images/thumbnails/outside/patapsco_green.JPG",
-    "width": 293,
-    "height": 220,
-    "color": "#68774D.D",
-    "blurb": "5/30/2024\r\nThe Patapsco River in the spring."
-  },
-  {
-    "url": "resources/images/thumbnails/outside/yellowstone_artist.JPG",
-    "width": 1740,
-    "height": 1305,
-    "color": "#80817D.8C",
-    "blurb": "5/21/2024\r\nArtist Point at Yellowstone National Park"
-  },
-  {
-    "url": "resources/images/thumbnails/outside/yellowstone_steam.JPG",
-    "width": 1740,
-    "height": 1305,
-    "color": "#79828D.C4",
-    "blurb": "05/21/2024\r\nThe Grand Prismatic Spring at Yellowstone National Park."
-  },
-  {
-    "url": "resources/images/thumbnails/outside/yellowstone_falls.JPG",
-    "width": 979,
-    "height": 1305,
-    "color": "#7E837B.F",
-    "blurb": "05/20/2024\r\nUndyne Falls at Yellowstone National Park."
-  },
-  {
-    "url": "resources/images/thumbnails/fish/naval_academy_cart.JPG",
-    "width": 979,
-    "height": 1305,
-    "color": "#726D70.F4",
-    "blurb": "4/14/2024\r\nWalking out our fishing setup at the Naval Academy."
-  },
-  {
-    "url": "resources/images/thumbnails/fish/naval_academy_fish.JPG",
-    "width": 979,
-    "height": 1305,
-    "color": "#5B676E.E8",
-    "blurb": "4/14/2024\r\nFishing setup at the Naval Academy.\r\nTargetting white perch and catfish.\r\nCherry Blossoms in full bloom."
-  },
-  {
-    "url": "resources/images/thumbnails/outside/solar_eclipse.JPG",
-    "width": 1740,
-    "height": 1305,
-    "color": "#848383.78",
-    "blurb": "04/08/2024\r\nEdited photo of the sun during a partial solar eclipse.\r\nPhoto taken from UMD, College Park (McKeldin Mall)."
-  },
-  {
-    "url": "resources/images/thumbnails/outside/patapsco_again.JPG",
-    "width": 1740,
-    "height": 1305,
-    "color": "#7A7875.14",
-    "blurb": "03/20/2024\r\nThe Patapsco River in the early spring."
-  },
-  {
-    "url": "resources/images/thumbnails/outside/patapsco_snow.JPG",
-    "width": 1740,
-    "height": 1305,
-    "color": "#69798B.08",
-    "blurb": "01/17/2024\r\nThe Patapsco River in the winter."
-  },
-  {
-    "url": "resources/images/thumbnails/outside/quad_biking.jpg",
-    "width": 2320,
-    "height": 1305,
-    "color": "#554532.C4",
-    "blurb": "10/28/2023\r\nBiked to D.C. with some friends from the Terrapin Trail Club.\r\nVisited the U.S. Botanical Gardens afterwards.\r\nBeautiful weather."
-  },
-  {
-    "url": "resources/images/thumbnails/food/dried_tomatoes.JPG",
-    "width": 979,
-    "height": 1305,
-    "color": "#94765D.14",
-    "blurb": "08/15/2023\r\n\"Sun-dried\" tomatoes.\r\nBaked with olive oil over thyme and rosemary from the garden."
-  }
-]
+{
+  "artifacts": [
+    {
+      "url": "resources/images/thumbnails/special/tutorial.png",
+      "width": 401,
+      "height": 252,
+      "color": "#F7F7F7.08",
+      "blurb": "05/04/9999\r\nTAGS#TUTORIAL#INTRO#ARTIFACT\r\nWARNING: I am working on optimizing this site's performance. I apologize if it makes your PC hot.\r\n\r\n1. Hover your mouse over ANYTHING but this tutorial, then scroll \"up\" to travel back in time.\r\n2. Once an artifact comes \"into focus,\" it will be clickable.\r\n3. Click a artifact to see an info card.\r\n4. Minimize the card by clicking it or another \"in focus\" artifact.",
+      "headerText": "05/04/9999 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\special\\tutorial",
+      "tags": [
+        "TUTORIAL",
+        "INTRO",
+        "ARTIFACT"
+      ],
+      "bodyText": "WARNING: I am working on optimizing this site's performance. I apologize if it makes your PC hot.\n\n1. Hover your mouse over ANYTHING but this tutorial, then scroll \"up\" to travel back in time.\n2. Once an artifact comes \"into focus,\" it will be clickable.\n3. Click a artifact to see an info card.\n4. Minimize the card by clicking it or another \"in focus\" artifact."
+    },
+    {
+      "url": "resources/images/thumbnails/special/info.png",
+      "width": 401,
+      "height": 252,
+      "color": "#313793.68",
+      "blurb": "05/04/9998\r\nTAGS#TUTORIAL#INTRO\r\nThis is my ePortfolio where I will store my Human Things.\r\nHere, you will find pictures of projects, food, and other things that I enjoy.\r\n\r\nThis site uses your GPU to render a power diagram.\r\nSpecifically, this site renders the intersection of a 3D weighted Voronoi Diagram with a flat plane.\r\nBy scrolling back and forth, you control the height of this plane.",
+      "headerText": "05/04/9998 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\special\\info",
+      "tags": [
+        "TUTORIAL",
+        "INTRO"
+      ],
+      "bodyText": "This is my ePortfolio where I will store my Human Things.\nHere, you will find pictures of projects, food, and other things that I enjoy.\n\nThis site uses your GPU to render a power diagram.\nSpecifically, this site renders the intersection of a 3D weighted Voronoi Diagram with a flat plane.\nBy scrolling back and forth, you control the height of this plane."
+    },
+    {
+      "url": "resources/images/thumbnails/outside/patapsco.jpg",
+      "width": 1278,
+      "height": 959,
+      "color": "#42443B.DC",
+      "blurb": "09/13/2026\r\nThe Patapsco River in the fall.\r\nBy my favorite trail.",
+      "headerText": "09/13/2026 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\outside\\patapsco",
+      "tags": [],
+      "bodyText": "The Patapsco River in the fall.\nBy my favorite trail."
+    },
+    {
+      "url": "resources/images/thumbnails/food/shrimp_pesto.jpg",
+      "width": 979,
+      "height": 1305,
+      "color": "#908679.34",
+      "blurb": "10/26/2025 - Lunch\r\nHomemade pesto from a long time ago.\r\nHand-grated Parmesan, Costco Shrimp and Trader Joes pasta.",
+      "headerText": "10/26/2025 - Lunch · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\food\\shrimp_pesto",
+      "tags": [],
+      "bodyText": "Homemade pesto from a long time ago.\nHand-grated Parmesan, Costco Shrimp and Trader Joes pasta."
+    },
+    {
+      "url": "resources/images/thumbnails/food/hand_noodles.jpg",
+      "width": 979,
+      "height": 1305,
+      "color": "#99866D.38",
+      "blurb": "10/16/2025 - Lunch\r\nHand-cut noodles with soy-garlic peanut butter sauce.\r\nSliced cucumber, spring onions.\r\nFried egg, Soft-boiled egg, Marinated beef.",
+      "headerText": "10/16/2025 - Lunch · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\food\\hand_noodles",
+      "tags": [],
+      "bodyText": "Hand-cut noodles with soy-garlic peanut butter sauce.\nSliced cucumber, spring onions.\nFried egg, Soft-boiled egg, Marinated beef."
+    },
+    {
+      "url": "resources/images/thumbnails/food/musubi.jpg",
+      "width": 809,
+      "height": 606,
+      "color": "#96897B.C8",
+      "blurb": "10/8/2025\r\nSpam and Egg Musubi, saved in plastic wrap.",
+      "headerText": "10/8/2025 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\food\\musubi",
+      "tags": [],
+      "bodyText": "Spam and Egg Musubi, saved in plastic wrap."
+    },
+    {
+      "url": "resources/images/thumbnails/rov/capstone_fair.jpg",
+      "width": 1958,
+      "height": 1305,
+      "color": "#594921.58",
+      "blurb": "5/16/2025\r\nTAGS#ROBOTICS#DIY#PERSONAL STATEMENT#RESUME\r\nPresentation of my ROV at the Design, Cultures, and Creativity (DCC) Capstone Fair.\r\nThe Boat sits aloft my contraband storage box.\r\nThe ROV sits below atop a piece of contraband (3D-Printing Filament).\r\nThe ROV's camera feed is displayed on the monitor to my side.",
+      "headerText": "5/16/2025 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\rov\\capstone_fair",
+      "tags": [
+        "ROBOTICS",
+        "DIY",
+        "PERSONAL STATEMENT",
+        "RESUME"
+      ],
+      "bodyText": "Presentation of my ROV at the Design, Cultures, and Creativity (DCC) Capstone Fair.\nThe Boat sits aloft my contraband storage box.\nThe ROV sits below atop a piece of contraband (3D-Printing Filament).\nThe ROV's camera feed is displayed on the monitor to my side."
+    },
+    {
+      "url": "resources/images/thumbnails/rov/rov_corpse.jpg",
+      "width": 979,
+      "height": 1305,
+      "color": "#8C8170.3",
+      "blurb": "05/11/2025\r\nBoth Halves of the ROV Electronics, almost completed.\r\nOn the left: a Luckfox Pico Plus with ethernet leading outside. Two wires from the ethernet are fed into a 5V regulator.\r\nOn the right: the almost-complete power train of the ROV. 5 ESC's, 5 BLDC motors, two control-mosfets, and a PWM light controller.\r\nBoth sides feature an intensely powerful epoxy-encased LED.\r\nThe two halves interface with a sketchy homebrew plug.",
+      "headerText": "05/11/2025 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\rov\\rov_corpse",
+      "tags": [],
+      "bodyText": "Both Halves of the ROV Electronics, almost completed.\nOn the left: a Luckfox Pico Plus with ethernet leading outside. Two wires from the ethernet are fed into a 5V regulator.\nOn the right: the almost-complete power train of the ROV. 5 ESC's, 5 BLDC motors, two control-mosfets, and a PWM light controller.\nBoth sides feature an intensely powerful epoxy-encased LED.\nThe two halves interface with a sketchy homebrew plug."
+    },
+    {
+      "url": "resources/images/thumbnails/rov/rov_carrier_bare.jpg",
+      "width": 979,
+      "height": 1305,
+      "color": "#7C6C5D.D4",
+      "blurb": "05/08/2025\r\nAn empty Boat on my floor, set to become the carrier vessel of my ROV.\r\nDesign: Catamaran Airboat with a spool for carrying the ROV's tether.\r\nOne motor is capable of driving the spool and the propeller via last-minute gearbox design.\r\nThe gearbox uses two sliding clutches to output forward or reverse to one of two outputs.",
+      "headerText": "05/08/2025 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\rov\\rov_carrier_bare",
+      "tags": [],
+      "bodyText": "An empty Boat on my floor, set to become the carrier vessel of my ROV.\nDesign: Catamaran Airboat with a spool for carrying the ROV's tether.\nOne motor is capable of driving the spool and the propeller via last-minute gearbox design.\nThe gearbox uses two sliding clutches to output forward or reverse to one of two outputs."
+    },
+    {
+      "url": "resources/images/thumbnails/rov/rov_disemboweled.jpg",
+      "width": 979,
+      "height": 1305,
+      "color": "#9B856E.B",
+      "blurb": "05/08/2025 - Bathroom Soldering\r\nMy ROV's powertrain, halfway through the soldering process.\r\n5 Brushless drone ESC's are wrapped around a single 18650 battery cell.\r\nThe 3 output channels of each ESC are routed through an epoxy endcap to breach the ROV's air-water seal.\r\nEnameled copper wire was the only suitable option at this scale, with limited resources.\r\nA single scratch through the water-exposed enamel could compromise the entire unit for long-term use.\r\nI should have just put the ESC's outside the vehicle for cooling, modularity, space, and shorter wires.",
+      "headerText": "05/08/2025 - Bathroom Soldering · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\rov\\rov_disemboweled",
+      "tags": [],
+      "bodyText": "My ROV's powertrain, halfway through the soldering process.\n5 Brushless drone ESC's are wrapped around a single 18650 battery cell.\nThe 3 output channels of each ESC are routed through an epoxy endcap to breach the ROV's air-water seal.\nEnameled copper wire was the only suitable option at this scale, with limited resources.\nA single scratch through the water-exposed enamel could compromise the entire unit for long-term use.\nI should have just put the ESC's outside the vehicle for cooling, modularity, space, and shorter wires."
+    },
+    {
+      "url": "resources/images/thumbnails/fish/earlyfish.jpg",
+      "width": 1740,
+      "height": 1305,
+      "color": "#5A5550.FC",
+      "blurb": "10/06/2024 - 6 AM\r\nOn a Chesapeake Bay Sportfishing Rockfish Charter.\r\nTo be honest, this charter has always been a bit hit-or-miss.",
+      "headerText": "10/06/2024 - 6 AM · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\fish\\earlyfish",
+      "tags": [],
+      "bodyText": "On a Chesapeake Bay Sportfishing Rockfish Charter.\nTo be honest, this charter has always been a bit hit-or-miss."
+    },
+    {
+      "url": "resources/images/thumbnails/outside/kenilworth.jpg",
+      "width": 1740,
+      "height": 1305,
+      "color": "#697665.08",
+      "blurb": "09/21/2024\r\nLotus blossoms at the Kenilworth Aquatic Gardens.\r\nThe walking path flooded up to our ankles while we were exploring inside.\r\nWe biked back to College Park with wet feet.",
+      "headerText": "09/21/2024 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\outside\\kenilworth",
+      "tags": [],
+      "bodyText": "Lotus blossoms at the Kenilworth Aquatic Gardens.\nThe walking path flooded up to our ankles while we were exploring inside.\nWe biked back to College Park with wet feet."
+    },
+    {
+      "url": "resources/images/thumbnails/outside/kenilworth_bud.jpg",
+      "width": 979,
+      "height": 1305,
+      "color": "#61765B.68",
+      "blurb": "09/21/2024\r\nA lotus bud at the Kenilworth Aquatic Gardens.",
+      "headerText": "09/21/2024 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\outside\\kenilworth_bud",
+      "tags": [],
+      "bodyText": "A lotus bud at the Kenilworth Aquatic Gardens."
+    },
+    {
+      "url": "resources/images/thumbnails/outside/kenilworth_keychain.jpg",
+      "width": 979,
+      "height": 1305,
+      "color": "#888C8D.AC",
+      "blurb": "09/21/2024\r\nMy favorite keychain.\r\nBought from the gift store at the Kenilworth Aquatic Gardens.",
+      "headerText": "09/21/2024 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\outside\\kenilworth_keychain",
+      "tags": [],
+      "bodyText": "My favorite keychain.\nBought from the gift store at the Kenilworth Aquatic Gardens."
+    },
+    {
+      "url": "resources/images/thumbnails/outside/patapsco_green.JPG",
+      "width": 293,
+      "height": 220,
+      "color": "#68774D.D",
+      "blurb": "5/30/2024\r\nThe Patapsco River in the spring.",
+      "headerText": "5/30/2024 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\outside\\patapsco_green",
+      "tags": [],
+      "bodyText": "The Patapsco River in the spring."
+    },
+    {
+      "url": "resources/images/thumbnails/outside/yellowstone_artist.JPG",
+      "width": 1740,
+      "height": 1305,
+      "color": "#80817D.8C",
+      "blurb": "5/21/2024\r\nArtist Point at Yellowstone National Park",
+      "headerText": "5/21/2024 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\outside\\yellowstone_artist",
+      "tags": [],
+      "bodyText": "Artist Point at Yellowstone National Park"
+    },
+    {
+      "url": "resources/images/thumbnails/outside/yellowstone_steam.JPG",
+      "width": 1740,
+      "height": 1305,
+      "color": "#79828D.C4",
+      "blurb": "05/21/2024\r\nThe Grand Prismatic Spring at Yellowstone National Park.",
+      "headerText": "05/21/2024 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\outside\\yellowstone_steam",
+      "tags": [],
+      "bodyText": "The Grand Prismatic Spring at Yellowstone National Park."
+    },
+    {
+      "url": "resources/images/thumbnails/outside/yellowstone_falls.JPG",
+      "width": 979,
+      "height": 1305,
+      "color": "#7E837B.F",
+      "blurb": "05/20/2024\r\nUndyne Falls at Yellowstone National Park.",
+      "headerText": "05/20/2024 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\outside\\yellowstone_falls",
+      "tags": [],
+      "bodyText": "Undyne Falls at Yellowstone National Park."
+    },
+    {
+      "url": "resources/images/thumbnails/fish/naval_academy_cart.JPG",
+      "width": 979,
+      "height": 1305,
+      "color": "#726D70.F4",
+      "blurb": "4/14/2024\r\nWalking out our fishing setup at the Naval Academy.",
+      "headerText": "4/14/2024 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\fish\\naval_academy_cart",
+      "tags": [],
+      "bodyText": "Walking out our fishing setup at the Naval Academy."
+    },
+    {
+      "url": "resources/images/thumbnails/fish/naval_academy_fish.JPG",
+      "width": 979,
+      "height": 1305,
+      "color": "#5B676E.E8",
+      "blurb": "4/14/2024\r\nFishing setup at the Naval Academy.\r\nTargetting white perch and catfish.\r\nCherry Blossoms in full bloom.",
+      "headerText": "4/14/2024 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\fish\\naval_academy_fish",
+      "tags": [],
+      "bodyText": "Fishing setup at the Naval Academy.\nTargetting white perch and catfish.\nCherry Blossoms in full bloom."
+    },
+    {
+      "url": "resources/images/thumbnails/outside/solar_eclipse.JPG",
+      "width": 1740,
+      "height": 1305,
+      "color": "#848383.78",
+      "blurb": "04/08/2024\r\nEdited photo of the sun during a partial solar eclipse.\r\nPhoto taken from UMD, College Park (McKeldin Mall).",
+      "headerText": "04/08/2024 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\outside\\solar_eclipse",
+      "tags": [],
+      "bodyText": "Edited photo of the sun during a partial solar eclipse.\nPhoto taken from UMD, College Park (McKeldin Mall)."
+    },
+    {
+      "url": "resources/images/thumbnails/outside/patapsco_again.JPG",
+      "width": 1740,
+      "height": 1305,
+      "color": "#7A7875.14",
+      "blurb": "03/20/2024\r\nThe Patapsco River in the early spring.",
+      "headerText": "03/20/2024 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\outside\\patapsco_again",
+      "tags": [],
+      "bodyText": "The Patapsco River in the early spring."
+    },
+    {
+      "url": "resources/images/thumbnails/outside/patapsco_snow.JPG",
+      "width": 1740,
+      "height": 1305,
+      "color": "#69798B.08",
+      "blurb": "01/17/2024\r\nThe Patapsco River in the winter.",
+      "headerText": "01/17/2024 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\outside\\patapsco_snow",
+      "tags": [],
+      "bodyText": "The Patapsco River in the winter."
+    },
+    {
+      "url": "resources/images/thumbnails/outside/quad_biking.jpg",
+      "width": 2320,
+      "height": 1305,
+      "color": "#554532.C4",
+      "blurb": "10/28/2023\r\nBiked to D.C. with some friends from the Terrapin Trail Club.\r\nVisited the U.S. Botanical Gardens afterwards.\r\nBeautiful weather.",
+      "headerText": "10/28/2023 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\outside\\quad_biking",
+      "tags": [],
+      "bodyText": "Biked to D.C. with some friends from the Terrapin Trail Club.\nVisited the U.S. Botanical Gardens afterwards.\nBeautiful weather."
+    },
+    {
+      "url": "resources/images/thumbnails/food/dried_tomatoes.JPG",
+      "width": 979,
+      "height": 1305,
+      "color": "#94765D.14",
+      "blurb": "08/15/2023\r\n\"Sun-dried\" tomatoes.\r\nBaked with olive oil over thyme and rosemary from the garden.",
+      "headerText": "08/15/2023 · c:\\Users\\killb\\Documents\\javascriptSims\\@WebGPU\\super voronoi\\webgpu\\resources\\images\\thumbnails\\food\\dried_tomatoes",
+      "tags": [],
+      "bodyText": "\"Sun-dried\" tomatoes.\nBaked with olive oil over thyme and rosemary from the garden."
+    }
+  ],
+  "tags": [
+    {
+      "url": "resources/images/thumbnails/tags/DIY.txt",
+      "blurb": "I do DIY because..."
+    },
+    {
+      "url": "resources/images/thumbnails/tags/FISHING.txt",
+      "blurb": "I go fishing with my family."
+    },
+    {
+      "url": "resources/images/thumbnails/tags/NATURE.txt",
+      "blurb": "I enjoy existing in nature."
+    },
+    {
+      "url": "resources/images/thumbnails/tags/PERSONAL STATEMENT.txt",
+      "blurb": "Personal Statement Here"
+    },
+    {
+      "url": "resources/images/thumbnails/tags/RESUME.txt",
+      "blurb": "This project is/was on my resume!"
+    },
+    {
+      "url": "resources/images/thumbnails/tags/ROBOTICS.txt",
+      "blurb": "I do Robotics for fun."
+    },
+    {
+      "url": "resources/images/thumbnails/tags/TUTORIAL.txt",
+      "blurb": "1. Scroll wheel to travel through time.\r\n2. Left click to select an artifact that is 'in focus.'\r\n4. Left click again to minimize an artifact's card."
+    }
+  ]
+}
