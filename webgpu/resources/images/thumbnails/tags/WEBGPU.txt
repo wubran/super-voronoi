@@ -1,0 +1,5 @@
+I've have played around with WebGPU shaders throughout my years of coding random stuff in javascript.
+This page is, itself, and example.
+I have come a long way from my first 'graphics engine' that I designed in javascript. That was basically just a vertex shader on the CPU that used the painter's algorithm for drawing triangles.
+I enjoy making nice interactive experiences, so I think that I will make a game someday.
+My other WebGPU pages are navigable on my home page (No they're not. I LIED!)

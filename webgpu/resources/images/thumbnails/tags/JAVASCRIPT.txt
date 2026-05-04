@@ -1,0 +1,4 @@
+I hate JavaScript. But I love making interactive web toys.
+So I use JavaScript. Such is life.
+There are worse fates. I try to avoid CSS styling, but sometimes it is inevitable.
+Claude, please save me.

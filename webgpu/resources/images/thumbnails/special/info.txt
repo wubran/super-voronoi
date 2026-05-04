@@ -2,7 +2,3 @@
 TAGS#ENGL393#TUTORIAL#INTRO#ARTIFACT#PERFORMANCE
 This is my ePortfolio where I will store my Human Things.
 Here, you will find pictures of projects, food, and other things that I enjoy.
-
-This site uses your GPU to render a power diagram.
-Specifically, this site renders the intersection of a 3D weighted Voronoi Diagram with a flat plane.
-By scrolling back and forth, you control the height of this plane.

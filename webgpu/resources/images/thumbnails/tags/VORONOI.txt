@@ -1,0 +1,4 @@
+A Voronoi Diagram in 2D is a structure based on some input points called "sites."
+It consists of all points who are equidistant to their nearest two sites.
+The points of a Voronoi Diagram form edges/boundaries of influence which seperate each site.
+A site's area of influence can be called its cell.

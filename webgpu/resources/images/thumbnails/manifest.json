@@ -21,7 +21,7 @@
       "width": 401,
       "height": 252,
       "color": "#313793.68",
-      "blurb": "05/04/9998\r\nTAGS#ENGL393#TUTORIAL#INTRO#ARTIFACT#PERFORMANCE\r\nThis is my ePortfolio where I will store my Human Things.\r\nHere, you will find pictures of projects, food, and other things that I enjoy.\r\n\r\nThis site uses your GPU to render a power diagram.\r\nSpecifically, this site renders the intersection of a 3D weighted Voronoi Diagram with a flat plane.\r\nBy scrolling back and forth, you control the height of this plane.",
+      "blurb": "05/04/9998\r\nTAGS#ENGL393#TUTORIAL#INTRO#ARTIFACT#PERFORMANCE\r\nThis is my ePortfolio where I will store my Human Things.\r\nHere, you will find pictures of projects, food, and other things that I enjoy.",
       "headerText": "05/04/9998 · info",
       "tags": [
         "ENGL393",
@@ -30,7 +30,7 @@
         "ARTIFACT",
         "PERFORMANCE"
       ],
-      "bodyText": "This is my ePortfolio where I will store my Human Things.\nHere, you will find pictures of projects, food, and other things that I enjoy.\n\nThis site uses your GPU to render a power diagram.\nSpecifically, this site renders the intersection of a 3D weighted Voronoi Diagram with a flat plane.\nBy scrolling back and forth, you control the height of this plane."
+      "bodyText": "This is my ePortfolio where I will store my Human Things.\nHere, you will find pictures of projects, food, and other things that I enjoy."
     },
     {
       "url": "resources/images/thumbnails/outside/patapsco_fall.jpg",
@@ -44,6 +44,20 @@
         "NATURE"
       ],
       "bodyText": "The Patapsco River in the fall.\nBy my favorite trail."
+    },
+    {
+      "url": "resources/images/thumbnails/webgpu/voronoi_white.png",
+      "width": 1467,
+      "height": 1439,
+      "color": "#DCDCDC.58",
+      "blurb": "4/25/2026\r\nTAGS#VORONOI#WEBGPU#JAVASCRIPT\r\nThis is a precursor of this website.\r\nIt had no image textures, minimal mouse interaction, and a simple kernel-based edge detection method.\r\nThe straight lines of the cell boundaries indicate that I was using a different distance metric to calculate cell boundaries.\r\nI deemed the edge drawing too expensive for less-fortunate devices, and cut it out.\r\n\r\nThis site uses your GPU to render a power diagram.\r\nSpecifically, this site renders the intersection of a 3D weighted Voronoi Diagram with a flat plane.\r\nBy scrolling back and forth, you control the height of this plane.",
+      "headerText": "4/25/2026 · voronoi_white",
+      "tags": [
+        "VORONOI",
+        "WEBGPU",
+        "JAVASCRIPT"
+      ],
+      "bodyText": "This is a precursor of this website.\nIt had no image textures, minimal mouse interaction, and a simple kernel-based edge detection method.\nThe straight lines of the cell boundaries indicate that I was using a different distance metric to calculate cell boundaries.\nI deemed the edge drawing too expensive for less-fortunate devices, and cut it out.\n\nThis site uses your GPU to render a power diagram.\nSpecifically, this site renders the intersection of a 3D weighted Voronoi Diagram with a flat plane.\nBy scrolling back and forth, you control the height of this plane."
     },
     {
       "url": "resources/images/thumbnails/food/shrimp_pesto.jpg",
@@ -322,12 +336,16 @@
     "FISHING": "I go fishing with my family.",
     "FOOD": "Cooking stuff here...",
     "FRIENDS": "Friends info here...",
+    "INTRO": "I'm Brian Wu.\r\nI wrote this website by hand. (if building a house using heavy machinery is called building it by hand...)\r\nI value Creativity, Individuality, and the pursuit of constant growth with respect to a whole other list of values.\r\nImportantly, these values are in constant war against my innate apeish urges.",
+    "JAVASCRIPT": "I hate JavaScript. But I love making interactive web toys.\r\nSo I use JavaScript. Such is life.\r\nThere are worse fates. I try to avoid CSS styling, but sometimes it is inevitable.\r\nClaude, please save me.",
     "NATURE": "I enjoy existing in nature.",
     "PATAPSCO": "The Patapsco River has long been a happy place for me.\r\nI take short hikes to the river frequently, no matter the season.\r\nI occasionally go fishing during the warmer months, but have never caught anything bigger than a bluegill/green sunfish.\r\nThe diverse selection of interesting flora, fauna, and fungi has left a permanent mark on my artistic style and overall attitude towards nature.",
     "PERFORMANCE": "Read this if your PC is struggling to render this site.\r\nIf your fan is screaming, or the screen movement feels stuttery or exhaustingly slow, then here are a few tips:\r\n1. Plug in your PC to avoid running low-power mode.\r\n2. If your device has a GPU, then it is capable of running this site smoothly. If it is not runnning smoothly, then your browser is not using the correct GPU (requires hardware acceleration on... can be finicky).\r\n3. Otherwise, good luck! (I am implementing a fall-back site for this case.)",
     "PERSONAL STATEMENT": "Brian Wu is an ambitious maker who values both breadth and depth in learning, turning curiosity into challenge-driven projects that bridge theory and application. Brian is currently exploring how math and nature can shape creative work across robotics, machine learning, computer graphics, and more.",
     "RESUME": "This project is/was on my resume!",
     "ROBOTICS": "I have been doing robotics projects at home for years.",
-    "TUTORIAL": "1. Scroll wheel to travel through time.\r\n2. Left click to select an artifact that is 'in focus.'\r\n4. Left click again to minimize an artifact's card."
+    "TUTORIAL": "1. Scroll wheel to travel through time.\r\n2. Left click to select an artifact that is 'in focus.'\r\n4. Left click again to minimize an artifact's card.",
+    "VORONOI": "A Voronoi Diagram in 2D is a structure based on some input points called \"sites.\"\r\nIt consists of all points who are equidistant to their nearest two sites.\r\nThe points of a Voronoi Diagram form edges/boundaries of influence which seperate each site.\r\nA site's area of influence can be called its cell.",
+    "WEBGPU": "I've have played around with WebGPU shaders throughout my years of coding random stuff in javascript.\r\nThis page is, itself, and example.\r\nI have come a long way from my first 'graphics engine' that I designed in javascript. That was basically just a vertex shader on the CPU that used the painter's algorithm for drawing triangles.\r\nI enjoy making nice interactive experiences, so I think that I will make a game someday.\r\nMy other WebGPU pages are navigable on my home page (No they're not. I LIED!)"
   }
 }
