@@ -151,7 +151,8 @@ async function getRepresentativeColor(filePath) {
 
 function parseBlurb(blurb, url){
   let bodyStart = 1;
-  const filename = url ? url.replace(/^.*[\/]/, '').replace(/\.[^/.]+$/, '') : '';
+  // url = path.normalize(url);
+  const filename = url ? url.replace(/^.*[\\/]/, '').replace(/\.[^/.]+$/, '') : '';
   const rawBlurb = typeof blurb === 'string' ? blurb : '';
   const lines = rawBlurb.split(/\r?\n/);
   const dateLine = lines.length > 0 && lines[0].trim() !== '' ? lines[0].trim() : filename;

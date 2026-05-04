@@ -39,6 +39,9 @@ function getArtifactsManifest(manifest) {
       height: typeof entry.height === 'number' ? entry.height : 1,
       color: typeof entry.color === 'string' ? entry.color : "#000000.FF",
       blurb: typeof entry.blurb === 'string' ? entry.blurb : '',
+      headerText: typeof entry.headerText === 'string' ? entry.headerText : '',
+      tags: typeof entry.tags === 'object' ? entry.tags : [],
+      bodyText: typeof entry.bodyText === 'string' ? entry.bodyText : '',
     });
   }
   return results;

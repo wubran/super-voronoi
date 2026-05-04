@@ -273,41 +273,26 @@ function createImageOverlay(initialImageUrl = '') {
   updateImageOverlay();
 }
 
-function setGpuOverlay({ url, x = 0, y = 0, scale = 1, blurb = '' } = {}) {
-  if (url) {
-    if (!overlayImage) {
-      createImageOverlay(url);
-    } else {
-      overlayImage.src = url;
+function setGpuOverlay({ meta, x = 0, y = 0, scale = 1 } = {}) {
+    // console.log(meta)
+    const url = meta.url;
+    if (url) {
+        if (!overlayImage) {
+        createImageOverlay(url);
+        } else {
+        overlayImage.src = url;
+        }
     }
-  }
 
-  let bodyStart = 1;
-  const filename = url ? url.replace(/^.*[\/]/, '').replace(/\.[^/.]+$/, '') : '';
-  const rawBlurb = typeof blurb === 'string' ? blurb : '';
-  const lines = rawBlurb.split(/\r?\n/);
-  const dateLine = lines.length > 0 && lines[0].trim() !== '' ? lines[0].trim() : filename;
-//   const tags = lines.length > 1 && lines[1].startsWith('TAGS') ? lines[1].trim().split("#").slice(1) : [];
-//   if(tags.length > 0){
-//     // console.log(tags)
-//     bodyStart = 2;
-//   }
-  const bodyText = lines.length >= bodyStart ? lines.slice(bodyStart).join('\n').trim() : "";
-  const headerText = filename ? `${dateLine} · ${filename}` : dateLine;
-
-  overlayState.anchor = 'center';
-  overlayState.x = x;
-  overlayState.y = y;
-  overlayState.scale = scale;
-  overlayState.blurb = rawBlurb;
-  overlayState.headerText = headerText;
-  overlayState.bodyText = bodyText;
-  overlayState.hidden = false;
-  updateImageOverlay();
-}
-
-function setGpuOverlayImage(url) {
-  setGpuOverlay({ url, x: overlayState.x, y: overlayState.y, scale: overlayState.scale, blurb: overlayState.blurb });
+    overlayState.anchor = 'center';
+    overlayState.x = x;
+    overlayState.y = y;
+    overlayState.scale = scale;
+    overlayState.blurb = meta.blurb;
+    overlayState.headerText = meta.headerText;
+    overlayState.bodyText = meta.bodyText;
+    overlayState.hidden = false;
+    updateImageOverlay();
 }
 
 function setGpuOverlayTransform(x, y, scale = 1) {
@@ -339,7 +324,6 @@ function setGpuOverlayCenter(x, y, scale = 1, url) {
 }
 
 window.setGpuOverlay = setGpuOverlay;
-window.setGpuOverlayImage = setGpuOverlayImage;
 window.setGpuOverlayTransform = setGpuOverlayTransform;
 window.setGpuOverlayCenter = setGpuOverlayCenter;
 window.setGpuOverlayClickHandler = (handler) => {
@@ -841,14 +825,13 @@ async function main() {
         if (activeSiteId >= 0 && activeSiteId < DEFAULT_MAX_SITES){
             // let url = thumbnailUrls[sitesShown[activeSiteId]];
             let id = activeSiteId;
-            let url = thumbnailUrls[id];
+            // let url = thumbnailUrls[id];
             let pic = thumbnailMetadata[id];
             let site = sites[id];
             // scale such that everythign is 500 pixels
             let screenX = site.pos.x/ID_TEXTURE_SCALE;
             let screenY = site.pos.y/ID_TEXTURE_SCALE;
-            setGpuOverlay({ url, x: screenX, y: screenY, scale: 400 / pic.height, blurb: pic.blurb });
-            // setGpuOverlay({ url, x:screenX/2, y:screenY/2, scale:1.25});
+            setGpuOverlay({ meta:pic, x: screenX, y: screenY, scale: 400 / pic.height });
 
         }
 
